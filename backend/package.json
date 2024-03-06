@@ -4,7 +4,7 @@
   "description": "The Ger Movie Universe is a project for all moview lovers",
   "main": "index.ts",
   "scripts": {
-    "lint": "eslint --ignore-path .eslintignore --ext .js,.ts",
+    "lint": "eslint . --ignore-path .eslintignore --ext .js,.ts",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "test": "jest --detectOpenHandles --coverage --forceExit",
     "build": "npx tsc",
