@@ -7,7 +7,7 @@ const logger = console; // TODO: replace with custom logger implementation
 export class BaseController<ModelType> {
   private loggerPrefix: string;
   constructor(public model: Model<ModelType>) {
-    this.loggerPrefix = `Model ${model.name}:`;
+    this.loggerPrefix = `${model.name} (${model.db.name}.${model.collection.name}):`; // Ex. User (tgmu.users): ...
   }
 
   private debug(...msg: string[]) {
