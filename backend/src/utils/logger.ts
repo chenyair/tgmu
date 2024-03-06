@@ -10,8 +10,8 @@ const logger = winston.createLogger({
   format: logFormat,
   defaultMeta: { service: 'backend' },
   transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'backend.log' }),
+    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'logs/backend.log' }),
     new winston.transports.Console(),
   ],
 });
