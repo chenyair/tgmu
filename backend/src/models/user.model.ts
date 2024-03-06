@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 
-export interface IUser {
+export type IUser = {
   email: string;
   password: string;
   imgUrl?: string;
   _id?: string;
   refreshTokens?: string[];
-}
+};
 
 const userSchema = new mongoose.Schema<IUser>({
   email: {
