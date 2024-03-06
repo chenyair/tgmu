@@ -43,18 +43,18 @@ export class BaseController<ModelType> {
     res.status(201).send(obj);
   }
 
-  putById(req: Request, res: Response) {
-    const updateQuery = this.sanitizeObject(req.query);
-    this.debug(`Updating by query ${updateQuery}`);
+  async putById(req: Request, res: Response) {
+    const { id } = req.query;
+    this.debug(`Updating ${id}`);
     const updatePayload = this.sanitizeObject(req.body, '_id');
-    const doc = this.model.updateOne(updateQuery, updatePayload);
+    const doc = await this.model.findByIdAndUpdate(id, updatePayload, { new: true }); // Update and return new object
     res.status(201).send(doc);
   }
 
-  deleteById(req: Request, res: Response) {
+  async deleteById(req: Request, res: Response) {
     const { id } = req.params;
     this.debug(`Delete by id ${id}`);
-    const doc = this.model.deleteOne({ id });
+    const doc = await this.model.findByIdAndDelete(id);
     res.send(201).send(doc);
   }
 }
