@@ -1,16 +1,21 @@
 import express, { Request, Response, Application } from 'express';
 import dotenv from 'dotenv';
+import initDB from './db';
 
 dotenv.config();
 
-const app: Application = express();
+(async () => {
+  await initDB();
 
-const port = process.env.PORT || 8000;
+  const app: Application = express();
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome to The Ger Movie Universe API');
-});
+  const port = process.env.PORT || 8000;
 
-app.listen(port, () => {
-  console.log(`The Ger Movie Universe API is running on port ${port}`);
-});
+  app.get('/', (req: Request, res: Response) => {
+    res.send('Welcome to The Ger Movie Universe API');
+  });
+
+  app.listen(port, () => {
+    console.log(`The Ger Movie Universe API is running on port ${port}`);
+  });
+})();
