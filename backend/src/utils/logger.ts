@@ -28,7 +28,7 @@ const getFileNameAndLineNumber = () => {
     const fileName = fullFilePath.includes(BASE_DIR_NAME)
       ? fullFilePath.substring(fullFilePath.indexOf(BASE_DIR_NAME))
       : fullFilePath;
-    return `${fileName}:${callSite.getLineNumber()}}`;
+    return `${fileName}:${callSite.getLineNumber()}`;
   } finally {
     Error.prepareStackTrace = originalStackTrace;
     Error.stackTraceLimit = originalStackTraceLimit;
