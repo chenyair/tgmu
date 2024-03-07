@@ -1,21 +1,56 @@
-import express, { Request, Response, Application } from 'express';
-import dotenv from 'dotenv';
-import initDB from './db';
+import { Express } from 'express';
+import swaggerUI from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
+import createLogger from './utils/logger';
+import userModel from 'models/user.model';
+import initApp from 'app';
+import http from 'http';
+import https from 'https';
+import fs from 'fs';
+userModel.find();
 
-dotenv.config();
+const logger = createLogger('Express');
+const ENV = process.env.NODE_ENV!;
 
-(async () => {
-  await initDB();
+initApp().then((app: Express) => {
+  logger.debug(`Running in ${ENV}`);
 
-  const app: Application = express();
+  const swaggerOptions: swaggerJsDoc.Options = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'TGMU Backend API',
+        version: '1.0.0',
+        description: 'TGMU REST API for serving any app related requests including JWT authentication',
+      },
+      servers: [{ url: 'http://localhost:3000' }],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
+    },
+    apis: ['./src/routes/*.ts'],
+  };
 
-  const port = process.env.PORT || 8000;
+  logger.debug('Initializing Swagger...');
+  const specs = swaggerJsDoc(swaggerOptions);
+  app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
+  logger.debug('Successfully Initialized Swagger at /docs');
 
-  app.get('/', (req: Request, res: Response) => {
-    res.send('Welcome to The Ger Movie Universe API');
-  });
-
-  app.listen(port, () => {
-    console.log(`The Ger Movie Universe API is running on port ${port}`);
-  });
-})();
+  const port = process.env.PORT;
+  if (ENV !== 'production') {
+    http.createServer(app).listen(port || 8000);
+  } else {
+    const httpsConf = {
+      key: fs.readFileSync('../client-key.pem'),
+      cert: fs.readFileSync('../client-cert.pem'),
+    };
+    https.createServer(httpsConf, app).listen(port || 443);
+  }
+  logger.debug(`The Ger Movie Universe API is running on port ${port}`);
+});
