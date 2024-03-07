@@ -136,7 +136,7 @@ export const logout = async (req: Request, res: Response) => {
     }
   } catch (err) {
     logger.error(err);
-    return res.sendStatus(httpStatus.UNAUTHORIZED).send((err as Error).message);
+    return res.status(httpStatus.UNAUTHORIZED).send((err as Error).message);
   }
 };
 
@@ -160,6 +160,6 @@ export const refresh = async (req: Request, res: Response) => {
     return res.status(httpStatus.OK).send(tokens);
   } catch (err) {
     logger.error(err);
-    return res.sendStatus(httpStatus.UNAUTHORIZED).send((err as Error).message);
+    return res.status(httpStatus.UNAUTHORIZED).send((err as Error).message);
   }
 };
