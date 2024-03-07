@@ -54,13 +54,13 @@ export const googleSignIn = async (req: Request, res: Response) => {
       }));
     const tokens = await createTokensForUser(user);
 
-    return res.status(200).send({
+    return res.status(httpStatus.OK).send({
       _id: user._id,
       ...tokens,
     });
   } catch (err) {
     logger.error(err);
-    return res.status(400).send((err as Error).message);
+    return res.status(httpStatus.BAD_REQUEST).send((err as Error).message);
   }
 };
 
@@ -68,11 +68,11 @@ export const register = async (req: Request, res: Response) => {
   const { email, password, firstName, lastName, age, imgUrl }: IUser = req.body;
   logger.debug(`begin registration for email ${email}`);
   if (!email || !password) {
-    return res.status(400).send('missing email or password');
+    return res.status(httpStatus.BAD_REQUEST).send('missing email or password');
   }
   const exists = await User.exists({ email: email });
   if (exists) {
-    return res.status(406).send('a user with this email already exists');
+    return res.status(httpStatus.NOT_ACCEPTABLE).send('a user with this email already exists');
   }
   const salt = await bcrypt.genSalt(10);
   const encryptedPassword = await bcrypt.hash(password, salt);
@@ -87,7 +87,7 @@ export const register = async (req: Request, res: Response) => {
   const tokens = await createTokensForUser(newUser);
   logger.debug(`successfully created user ${email}`);
 
-  return res.status(201).send({
+  return res.status(httpStatus.CREATED).send({
     _id: newUser._id,
     ...tokens,
   });
@@ -97,69 +97,69 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   logger.debug(`attempting login with email ${email}`);
   if (!email || !password) {
-    return res.status(400).send('missing email or password');
+    return res.status(httpStatus.BAD_REQUEST).send('missing email or password');
   }
   try {
     const user = await User.findOne({ email });
     if (user === null) {
-      return res.status(401).send('email or password incorrect');
+      return res.status(httpStatus.UNAUTHORIZED).send('email or password incorrect');
     }
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(401).send('email or password incorrect');
+      return res.status(httpStatus.UNAUTHORIZED).send('email or password incorrect');
     }
 
     const tokens = await createTokensForUser(user);
     logger.debug(`successfully logged in ${email}`);
 
-    return res.status(200).send(tokens);
+    return res.status(httpStatus.OK).send(tokens);
   } catch (err) {
-    return res.status(400).send('missing email or password');
+    return res.status(httpStatus.BAD_REQUEST).send('missing email or password');
   }
 };
 
 export const logout = async (req: Request, res: Response) => {
   const authHeader = req.headers['authorization'];
   const refreshToken = authHeader && authHeader.split(' ')[1]; // Bearer <token>
-  if (refreshToken == null) return res.sendStatus(401);
+  if (refreshToken == null) return res.sendStatus(httpStatus.UNAUTHORIZED);
   try {
     const user = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as IUserDetails; // Cast to access _id prop;
     logger.debug(`attempting logout for user ${user._id} token ${refreshToken}`);
     const userDb = (await User.findById(user._id))!; // Assume return value is not null
     if (!userDb.refreshTokens || !userDb.refreshTokens.includes(refreshToken)) {
       await userDb.updateOne({ refreshTokens: [] });
-      return res.sendStatus(401);
+      return res.sendStatus(httpStatus.UNAUTHORIZED);
     } else {
       await userDb.updateOne({ refreshTokens: userDb.refreshTokens.filter((t) => t !== refreshToken) });
       logger.debug(`successfully logged out user ${user._id} token ${refreshToken}`);
-      return res.sendStatus(200);
+      return res.sendStatus(httpStatus.OK);
     }
   } catch (err) {
     logger.error(err);
-    return res.sendStatus(401).send((err as Error).message);
+    return res.sendStatus(httpStatus.UNAUTHORIZED).send((err as Error).message);
   }
 };
 
 export const refresh = async (req: Request, res: Response) => {
   const authHeader = req.headers['authorization'];
   const refreshToken = authHeader && authHeader.split(' ')[1]; // Bearer <token>
-  if (refreshToken == null) return res.sendStatus(401);
+  if (refreshToken == null) return res.sendStatus(httpStatus.UNAUTHORIZED);
   try {
     const user = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as IUserDetails;
     logger.debug(`attempting refresh for user ${user._id} token ${refreshToken}`);
     const userDb = (await User.findById(user._id))!;
     if (!userDb.refreshTokens || !userDb.refreshTokens.includes(refreshToken)) {
       await userDb.updateOne({ refreshTokens: [] });
-      return res.sendStatus(401);
+      return res.sendStatus(httpStatus.UNAUTHORIZED);
     }
     const tokens = generateTokens(userDb);
     await userDb.updateOne({
       refreshTokens: [...userDb.refreshTokens.filter((t) => t !== refreshToken), tokens.refreshToken],
     });
     logger.debug(`successfully refreshed token for user ${userDb._id}`);
-    return res.status(200).send(tokens);
+    return res.status(httpStatus.OK).send(tokens);
   } catch (err) {
     logger.error(err);
-    return res.sendStatus(401).send((err as Error).message);
+    return res.sendStatus(httpStatus.UNAUTHORIZED).send((err as Error).message);
   }
 };
