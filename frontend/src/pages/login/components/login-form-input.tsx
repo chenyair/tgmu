@@ -1,18 +1,33 @@
-import React, { ChangeEventHandler } from 'react';
+import React, { ChangeEvent } from 'react';
 
 interface LoginFormTextInputProps {
   title: string;
+  name: string;
+  value?: string;
   type: 'text' | 'password';
-  onChange?: ChangeEventHandler;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const LoginFormInput: React.FC<LoginFormTextInputProps> = ({ title, onChange, type }: LoginFormTextInputProps) => {
+const LoginFormInput: React.FC<LoginFormTextInputProps> = ({
+  title,
+  onChange,
+  type,
+  name,
+  value,
+}: LoginFormTextInputProps) => {
   return (
     <div>
-      <label htmlFor="inputEmail" className="form-label fw-bold">
+      <label htmlFor={name} className="form-label fw-bold">
         {title}
       </label>
-      <input type={type} id="inputEmail" className="form-control form-control-lg" onChange={onChange} />
+      <input
+        type={type}
+        id={name}
+        name={name}
+        className="form-control form-control-lg"
+        value={value ?? ''}
+        onChange={onChange}
+      />
     </div>
   );
 };
