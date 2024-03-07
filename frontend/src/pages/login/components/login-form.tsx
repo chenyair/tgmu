@@ -1,12 +1,12 @@
 import React from 'react';
 import LoginFormInput from './login-form-input';
-import GoogleSignInButton from '../../../assets/google-sign-in.svg';
 import './login-form.scss';
+import GoogleSignInButton from './google-sign-in-button';
 
 const LoginForm: React.FC = () => {
   return (
-    <div className="d-flex h-100 justify-content-center flex-column flex-wrap">
-      <img alt="google-sign-in-btn" src={GoogleSignInButton} />
+    <div className="d-flex gap-3 h-100 justify-content-center flex-column flex-wrap">
+      <GoogleSignInButton />
       <div className="align-self-center fw-semibold">- OR -</div>
       <LoginFormInput title="Email Adress" type="text" />
       <LoginFormInput title="Password" type="password" />
