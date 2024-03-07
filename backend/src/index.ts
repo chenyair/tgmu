@@ -1,17 +1,19 @@
-import express, { Request, Response, Application } from 'express';
-import dotenv from 'dotenv';
+import { Express } from 'express';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import createLogger from './utils/logger';
-import initDB from './db';
+import userModel from 'models/user.model';
+import initApp from 'app';
+import http from 'http';
+import https from 'https';
+import fs from 'fs';
+userModel.find();
 
 const logger = createLogger('Express');
+const ENV = process.env.NODE_ENV!;
 
-dotenv.config();
-
-(async () => {
-  const app: Application = express();
-  const port = process.env.PORT || 8000;
+initApp().then((app: Express) => {
+  logger.debug(`Running in ${ENV}`);
 
   const swaggerOptions: swaggerJsDoc.Options = {
     definition: {
@@ -35,19 +37,20 @@ dotenv.config();
     apis: ['./src/routes/*.ts'],
   };
 
-  const specs = swaggerJsDoc(swaggerOptions);
-
   logger.debug('Initializing Swagger...');
+  const specs = swaggerJsDoc(swaggerOptions);
   app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
   logger.debug('Successfully Initialized Swagger at /docs');
-  app.get('/', (req: Request, res: Response) => {
-    res.send('Welcome to The Ger Movie Universe API');
-  });
 
-  logger.debug('calling init DB');
-  await initDB();
-
-  app.listen(port, () => {
-    logger.debug(`The Ger Movie Universe API is running on port ${port}`);
-  });
-})();
+  const port = process.env.PORT;
+  if (ENV !== 'production') {
+    http.createServer(app).listen(port || 8000);
+  } else {
+    const httpsConf = {
+      key: fs.readFileSync('../client-key.pem'),
+      cert: fs.readFileSync('../client-cert.pem'),
+    };
+    https.createServer(httpsConf, app).listen(port || 443);
+  }
+  logger.debug(`The Ger Movie Universe API is running on port ${port}`);
+});
