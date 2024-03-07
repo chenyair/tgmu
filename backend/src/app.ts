@@ -4,8 +4,6 @@ import dotenv from 'dotenv';
 import createLogger from './utils/logger';
 import initDB from 'db';
 import authRoute from 'routes/auth.route';
-import userModel from 'models/user.model';
-userModel.find();
 
 const logger = createLogger('Express');
 
