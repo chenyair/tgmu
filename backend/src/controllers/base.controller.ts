@@ -44,7 +44,7 @@ export class BaseController<ModelType> {
   }
 
   async putById(req: Request, res: Response) {
-    const { id } = req.query;
+    const { id } = req.params;
     this.debug(`Updating ${id}`);
     const updatePayload = this.sanitizeObject(req.body, '_id');
     const doc = await this.model.findByIdAndUpdate(id, updatePayload, { new: true }); // Update and return new object
