@@ -82,7 +82,7 @@ import * as authController from '../controllers/auth.controller';
  * @swagger
  * /auth/register:
  *   post:
- *     summary: registers a new user
+ *     summary: Registers a new user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -93,7 +93,11 @@ import * as authController from '../controllers/auth.controller';
  *               - $ref: '#/components/schemas/UserCredentials'
  *               - $ref: '#/components/schemas/UserDetails'
  *     responses:
- *       200:
+ *       BAD_REQUEST:
+ *         description: Missing email or password
+ *       NOT_ACCEPTABLE:
+ *         description: Provided email already already is registered
+ *       CREATED:
  *         description: The new user
  *         content:
  *           application/json:
@@ -116,7 +120,7 @@ router.post('/register', authController.register);
  * @swagger
  * /auth/google:
  *   post:
- *     summary: signs in a user with google sign in
+ *     summary: Signs in a user with google sign in
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -132,7 +136,9 @@ router.post('/register', authController.register);
  *             example:
  *               credentials: fhsd7nf78yno24nfoagh87wyn4f
  *     responses:
- *       200:
+ *       BAD_REQUEST:
+ *         description: Invalid credentials or google app permissions
+ *       OK:
  *         description: The new user
  *         content:
  *           application/json:
@@ -155,7 +161,7 @@ router.post('/google', authController.googleSignIn);
  * @swagger
  * /auth/login:
  *   post:
- *     summary: performs a user login, creates JWT tokens
+ *     summary: Performs a user login, creates JWT tokens
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -164,7 +170,11 @@ router.post('/google', authController.googleSignIn);
  *           schema:
  *             $ref: '#/components/schemas/UserCredentials'
  *     responses:
- *       200:
+ *       BAD_REQUEST:
+ *         description: Missing email or password
+ *       UNAUTHORIZED:
+ *         description: Email or password incorrect
+ *       OK:
  *         description: The access & refresh tokens
  *         content:
  *           application/json:
@@ -177,16 +187,38 @@ router.post('/login', authController.login);
  * @swagger
  * /auth/logout:
  *   get:
- *     summary: logout a user
+ *     summary: Logout a user
  *     tags: [Auth]
- *     description: required to provide the refresh token in the auth header
+ *     description: Required to provide the refresh token in the auth header
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       200:
- *         description: logout completed successfully
+ *       UNAUTHORIZED:
+ *         description: No refresh token / Invalid refresh token provided
+ *       OK:
+ *         description: Logout completed successfully
  */
 router.get('/logout', authController.logout);
+
+/** [Refresh]
+ * @swagger
+ * /auth/refresh:
+ *   get:
+ *     summary: Logout A User
+ *     tags: [Auth]
+ *     description: Required to provide the refresh token in the auth header
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       UNAUTHORIZED:
+ *         description: No refresh token / invalid refresh token provided
+ *       OK:
+ *         description: Successfully created new tokens
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Tokens'
+ */
 router.get('/refresh', authController.refresh);
 
 export default router;
