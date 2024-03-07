@@ -39,15 +39,17 @@ const createAxiosInstance = (options: CreateAxiosDefaults = {}): AxiosInstance =
     },
     (error: AxiosError) => {
       // Handle your error here
+      const requestConfig = error?.response?.request?.config as AxiosRequestConfigWithId;
+      const requestUUID = requestConfig?.reqId ?? '';
       if (error.response) {
         // The request was made, and the server responded with a status code
-        logger.error('Response error:', error.response.status, error.response.data);
+        logger.error(`Response for ${requestUUID} error:`, error.response.status, error.response.data);
       } else if (error.request) {
         // The request was made but no response was received
-        logger.error('No response received:', error.request);
+        logger.error(`No response received for ${requestUUID}:`, error.request);
       } else {
         // Something happened in setting up the request that triggered an Error
-        logger.error('Request setup error:', error.message);
+        logger.error(`Request ${requestUUID} setup error:`, error.message);
       }
 
       // Return a rejected promise with the error
