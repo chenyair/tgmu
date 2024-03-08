@@ -9,7 +9,7 @@
     "test": "jest --detectOpenHandles --coverage --forceExit",
     "build": "npx tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts"
+    "dev": "NODE_PATH=./src nodemon src/index.ts"
   },
   "author": "",
   "license": "ISC",
