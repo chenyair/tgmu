@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import LoginPage from '../pages/login';
+import LoginPage from '@/pages/login';
 import { z } from 'zod';
 
 export const Route = createFileRoute('/login')({

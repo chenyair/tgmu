@@ -1,5 +1,5 @@
 import React from 'react';
-import loginBackground from '../../assets/login-background.jpg';
+import loginBackground from '@/assets/login-background.jpg';
 import './index.scss';
 import LoginForm from './components/login-form';
 

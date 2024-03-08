@@ -1,5 +1,5 @@
 import React from 'react';
-import googleIcon from '../../../assets/google.svg';
+import googleIcon from '@/assets/google.svg';
 import './google-sign-in-button.scss';
 
 const GoogleSignInButton: React.FC = () => {
