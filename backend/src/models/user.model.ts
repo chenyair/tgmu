@@ -1,17 +1,6 @@
 import mongoose from 'mongoose';
 import { validateAlphabet } from 'utils/validator';
-
-export interface IUser {
-  _id?: string;
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  age: number;
-  imgUrl?: string;
-  refreshTokens?: string[];
-}
-export type IUserDetails = Pick<IUser, '_id' | 'age' | 'email' | 'firstName' | 'lastName'>;
+import { IUser, IUserDetails } from 'shared-types';
 
 export const getUserDetails = ({ _id, email, firstName, lastName, age }: IUser): IUserDetails => ({
   _id,

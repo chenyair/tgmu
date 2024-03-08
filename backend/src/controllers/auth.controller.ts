@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import User, { IUser, IUserDetails, getUserDetails } from '../models/user.model';
+import User, { getUserDetails } from '../models/user.model';
+import { IUser, IUserDetails } from 'shared-types';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
@@ -123,7 +124,7 @@ export const logout = async (req: Request, res: Response) => {
   const refreshToken = authHeader && authHeader.split(' ')[1]; // Bearer <token>
   if (refreshToken == null) return res.sendStatus(httpStatus.UNAUTHORIZED);
   try {
-    const user = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as IUserDetails; // Cast to access _id prop;
+    const user = <IUserDetails>jwt.verify(refreshToken, JWT_REFRESH_SECRET);
     logger.debug(`attempting logout for user ${user._id} token ${refreshToken}`);
     const userDb = (await User.findById(user._id))!; // Assume return value is not null
     if (!userDb.refreshTokens || !userDb.refreshTokens.includes(refreshToken)) {
@@ -136,7 +137,7 @@ export const logout = async (req: Request, res: Response) => {
     }
   } catch (err) {
     logger.error(err);
-    return res.sendStatus(httpStatus.UNAUTHORIZED).send((err as Error).message);
+    return res.status(httpStatus.UNAUTHORIZED).send((err as Error).message);
   }
 };
 
@@ -145,7 +146,7 @@ export const refresh = async (req: Request, res: Response) => {
   const refreshToken = authHeader && authHeader.split(' ')[1]; // Bearer <token>
   if (refreshToken == null) return res.sendStatus(httpStatus.UNAUTHORIZED);
   try {
-    const user = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as IUserDetails;
+    const user = <IUserDetails>jwt.verify(refreshToken, JWT_REFRESH_SECRET);
     logger.debug(`attempting refresh for user ${user._id} token ${refreshToken}`);
     const userDb = (await User.findById(user._id))!;
     if (!userDb.refreshTokens || !userDb.refreshTokens.includes(refreshToken)) {
@@ -160,6 +161,6 @@ export const refresh = async (req: Request, res: Response) => {
     return res.status(httpStatus.OK).send(tokens);
   } catch (err) {
     logger.error(err);
-    return res.sendStatus(httpStatus.UNAUTHORIZED).send((err as Error).message);
+    return res.status(httpStatus.UNAUTHORIZED).send((err as Error).message);
   }
 };
