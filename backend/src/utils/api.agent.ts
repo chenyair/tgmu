@@ -8,7 +8,7 @@ type AxiosRequestConfigWithId = AxiosRequestConfig & {
   reqId?: UUID;
 };
 
-const createAxiosInstance = (options: CreateAxiosDefaults = {}): AxiosInstance => {
+const createApiAgent = (options: CreateAxiosDefaults = {}): AxiosInstance => {
   const instance = axios.create({
     timeout: 5000,
     ...options,
@@ -19,7 +19,7 @@ const createAxiosInstance = (options: CreateAxiosDefaults = {}): AxiosInstance =
     const requestUUID = randomUUID();
     const { method, url, headers } = config;
     const contentLength = headers['Content-Length'] || 0;
-    logger.debug(`Starting Request ${requestUUID} - ${method} ${url} ${contentLength}b`);
+    logger.debug(`Starting Request ${requestUUID} - ${method?.toUpperCase()} ${url} ${contentLength}b`);
     return {
       ...config,
       reqId: requestUUID,
@@ -31,15 +31,15 @@ const createAxiosInstance = (options: CreateAxiosDefaults = {}): AxiosInstance =
     // Response Interceptor
     (response: AxiosResponse) => {
       // Log successful responses
-      const requestConfig = response.request.config as AxiosRequestConfigWithId;
-      const requestUUID = requestConfig?.reqId ?? '';
+      const config = response.config as AxiosRequestConfigWithId;
+      const requestUUID = config?.reqId ?? '';
       logger.debug(`Response for ${requestUUID} - status: ${response.status}`);
 
       return response;
     },
     (error: AxiosError) => {
       // Handle your error here
-      const requestConfig = error?.response?.request?.config as AxiosRequestConfigWithId;
+      const requestConfig = error?.config as AxiosRequestConfigWithId;
       const requestUUID = requestConfig?.reqId ?? '';
       if (error.response) {
         // The request was made, and the server responded with a status code
@@ -60,4 +60,4 @@ const createAxiosInstance = (options: CreateAxiosDefaults = {}): AxiosInstance =
   return instance;
 };
 
-export default createAxiosInstance;
+export default createApiAgent;
