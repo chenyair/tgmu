@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import User, { IUser, IUserDetails, getUserDetails } from '../models/user.model';
+import User, { getUserDetails } from '../models/user.model';
+import { IUser, IUserDetails } from 'shared-types';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
