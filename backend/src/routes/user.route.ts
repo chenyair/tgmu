@@ -58,16 +58,17 @@ import UserController from '../controllers/user.controller';
  *       OK:
  *         description: The list of users
  *         content:
- *         application/json:
- *         schema:
- *           type: array
- *           items:
- *           $ref: '#/components/schemas/UserDetails'
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/UserDetails'
  *       UNAUTHORIZED:
- *           description: No refresh token / invalid refresh token provided
+ *         description: No refresh token / invalid refresh token provided
  *       INTERNAL_SERVER_ERROR:
+ *         description: Internal server error
  */
-router.get('/', UserController.get);
+router.get('/', UserController.get.bind(UserController));
 
 /** [Get User by ID]
  * @swagger
@@ -98,7 +99,7 @@ router.get('/', UserController.get);
  *           description: No refresh token / invalid refresh token provided
  *       INTERNAL_SERVER_ERROR:
  */
-router.get('/', UserController.getById);
+router.get('/', UserController.getById.bind(UserController));
 
 /** [UPDATE USER]
  * @swagger
@@ -136,7 +137,7 @@ router.get('/', UserController.getById);
  *       INTERNAL_SERVER_ERROR:
  *         description: Internal server error
  */
-router.put('/:id', UserController.putById);
+router.put('/:id', UserController.putById.bind(UserController));
 
 /** [DELETE USER]
  * @swagger
@@ -166,6 +167,6 @@ router.put('/:id', UserController.putById);
  *       INTERNAL_SERVER_ERROR:
  *         description: Internal server error
  */
-router.delete('/:id', UserController.deleteById);
+router.delete('/:id', UserController.deleteById.bind(UserController));
 
 export default router;
