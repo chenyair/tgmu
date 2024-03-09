@@ -167,3 +167,5 @@ router.put('/:id', UserController.putById);
  *         description: Internal server error
  */
 router.delete('/:id', UserController.deleteById);
+
+export default router;
