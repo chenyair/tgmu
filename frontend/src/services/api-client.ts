@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { authenticationService } from './auth-service';
 import { writeTokens } from '@/helpers/local-storage';
 
-export const createApiClient = (endpoint: string): AxiosInstance => {
+export const createApiClient = (endpoint: string = ''): AxiosInstance => {
   const apiClient = axios.create({ baseURL: `http://localhost:8000${endpoint}` });
 
   apiClient.interceptors.request.use(
