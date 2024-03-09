@@ -1,13 +1,14 @@
 import { UserTokens } from 'shared-types';
-import apiClient from './api-client';
+import { createApiClient } from './api-client';
+import { AxiosInstance } from 'axios';
 
 export class AuthenticationService {
-  endpoint: string = '/auth';
+  apiClient: AxiosInstance = createApiClient('/auth');
 
   async login(email: string, password: string, signal?: AbortSignal): Promise<UserTokens> {
     return (
-      await apiClient.post<UserTokens>(
-        `${this.endpoint}/login`,
+      await this.apiClient.post<UserTokens>(
+        '/login',
         { email, password },
         {
           headers: { 'Content-Type': 'application/json' },
@@ -19,7 +20,7 @@ export class AuthenticationService {
 
   async refreshAccessToken(refreshToken: string, signal?: AbortSignal): Promise<UserTokens> {
     return (
-      await apiClient.get<UserTokens>(`${this.endpoint}/refresh`, {
+      await this.apiClient.get<UserTokens>('/refresh', {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refreshToken}` },
         signal,
       })
