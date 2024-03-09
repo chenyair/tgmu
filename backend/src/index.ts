@@ -2,12 +2,10 @@ import { Express } from 'express';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import createLogger from './utils/logger';
-import userModel from 'models/user.model';
 import initApp from 'app';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
-userModel.find();
 
 const logger = createLogger('Express');
 const ENV = process.env.NODE_ENV!;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { authenticationService } from './auth-service';
-import { writeTokens } from '@/helpers/local-storage';
+import { writeTokens } from '@/utils/local-storage';
 
 const apiClient = axios.create({ baseURL: 'http://localhost:8000' });
 
