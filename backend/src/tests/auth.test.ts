@@ -18,7 +18,6 @@ const user: Partial<IUser> = {
 
 beforeAll(async () => {
   app = await initApp();
-  console.log('beforeAll');
   await User.deleteMany({ email: user.email });
 }, 20000);
 
