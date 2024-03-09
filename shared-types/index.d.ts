@@ -15,7 +15,7 @@ declare namespace sharedTypes {
     refreshTokens?: string[];
   }
   
-  export type IUserDetails = Pick<IUser, '_id' | 'age' | 'email' | 'firstName' | 'lastName'>;
+  export type IUserDetails = Pick<IUser, '_id' | 'age' | 'email' | 'firstName' | 'lastName' | 'imgUrl'>;
 }
 
 export = sharedTypes;

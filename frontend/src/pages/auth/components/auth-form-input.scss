@@ -1,0 +1,6 @@
+@import 'bootstrap/scss/bootstrap';
+
+.react-datepicker-wrapper input {
+  @extend .form-control;
+  @extend .form-control-lg;
+}
