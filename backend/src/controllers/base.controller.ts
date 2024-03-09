@@ -8,6 +8,7 @@ const logger = createLogger('base controller');
 
 export class BaseController<ModelType> {
   private loggerPrefix: string;
+
   constructor(public model: Model<ModelType>) {
     this.loggerPrefix = `${model.name} (${model.db.name}.${model.collection.name}):`; // Ex. User (tgmu.users): ...
   }
@@ -57,7 +58,7 @@ export class BaseController<ModelType> {
     const { id } = req.params;
     this.debug(`Delete by id ${id}`);
     const doc = await this.model.findByIdAndDelete(id);
-    res.send(httpStatus.CREATED).send(doc);
+    res.status(httpStatus.CREATED).send(doc);
   }
 }
 
