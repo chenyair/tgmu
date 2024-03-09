@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import User, { getUserDetails } from '../models/user.model';
-import { IUser, IUserDetails } from 'shared-types';
 import bcrypt from 'bcrypt';
+import User, { getUserDetails } from 'models/user.model';
+import { IUser, IUserDetails } from 'shared-types';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import httpStatus from 'http-status';
@@ -24,9 +24,10 @@ const generateTokens = (user: IUser) => {
 const createTokensForUser = async (user: Document & IUser) => {
   logger.debug(`creating tokens for user: ${user._id}`);
   const tokens = generateTokens(user);
+  const { refreshToken } = tokens;
   const currTokens = user.refreshTokens ?? [];
   await user.updateOne({
-    refreshTokens: [...currTokens, tokens.refreshToken],
+    refreshTokens: [...currTokens.filter((t) => t !== refreshToken), refreshToken],
   });
   return tokens;
 };
@@ -71,19 +72,17 @@ export const register = async (req: Request, res: Response) => {
   if (!email || !password) {
     return res.status(httpStatus.BAD_REQUEST).send('missing email or password');
   }
-  const exists = await User.exists({ email: email });
+  const exists = await User.exists({ email });
   if (exists) {
     return res.status(httpStatus.NOT_ACCEPTABLE).send('a user with this email already exists');
   }
-  const salt = await bcrypt.genSalt(10);
-  const encryptedPassword = await bcrypt.hash(password, salt);
   const newUser = await User.create({
     email,
     firstName,
     lastName,
     age,
     imgUrl,
-    password: encryptedPassword,
+    password,
   });
   const tokens = await createTokensForUser(newUser);
   logger.debug(`successfully created user ${email}`);

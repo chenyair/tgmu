@@ -2,7 +2,8 @@ import request from 'supertest';
 import initApp from '../app';
 import mongoose from 'mongoose';
 import { Express } from 'express';
-import User, { IUser } from '../models/user.model';
+import { IUser } from 'shared-types';
+import User from '../models/user.model';
 import httpStatus from 'http-status';
 
 let app: Express;
