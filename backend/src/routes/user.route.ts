@@ -99,7 +99,7 @@ router.get('/', UserController.get.bind(UserController));
  *           description: No refresh token / invalid refresh token provided
  *       INTERNAL_SERVER_ERROR:
  */
-router.get('/', UserController.getById.bind(UserController));
+router.get('/:id', UserController.getById.bind(UserController));
 
 /** [UPDATE USER]
  * @swagger
