@@ -58,6 +58,14 @@ describe('User tests', () => {
     expect(user?.age).toBe(30);
   });
 
+  // TODO: add tests for non existing users after adding error handling
+  // test('Update non existing user', async () => {
+  //   const response = await request(app).put(`/users/${new ObjectId()}`).send({
+  //     age: 30,
+  //   });
+  //   expect(response.statusCode).toBe(httpStatus.NOT_FOUND);
+  // });
+
   test('Delete user by ID', async () => {
     const response = await request(app).delete(`/users/${userId}`);
     expect(response.statusCode).toBe(httpStatus.CREATED);
