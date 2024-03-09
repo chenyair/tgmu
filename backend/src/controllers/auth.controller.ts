@@ -48,9 +48,9 @@ export const googleSignIn = async (req: Request, res: Response) => {
 
     // Attempt to query existing user, otherwise create a new user
     const user =
-      (await User.findOne({ email: email })) ??
+      (await User.findOne({ email }).select('+password')) ??
       (await User.create({
-        email: email,
+        email,
         password: '0',
         imgUrl: payload?.picture,
       }));
@@ -100,7 +100,7 @@ export const login = async (req: Request, res: Response) => {
     return res.status(httpStatus.BAD_REQUEST).send('missing email or password');
   }
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password +refreshTokens');
     if (user === null) {
       return res.status(httpStatus.UNAUTHORIZED).send('email or password incorrect');
     }
@@ -125,7 +125,7 @@ export const logout = async (req: Request, res: Response) => {
   try {
     const user = <IUserDetails>jwt.verify(refreshToken, JWT_REFRESH_SECRET);
     logger.debug(`attempting logout for user ${user._id} token ${refreshToken}`);
-    const userDb = (await User.findById(user._id))!; // Assume return value is not null
+    const userDb = (await User.findById(user._id).select('+refreshTokens'))!; // Assume return value is not null
     if (!userDb.refreshTokens || !userDb.refreshTokens.includes(refreshToken)) {
       await userDb.updateOne({ refreshTokens: [] });
       return res.sendStatus(httpStatus.UNAUTHORIZED);
@@ -147,7 +147,7 @@ export const refresh = async (req: Request, res: Response) => {
   try {
     const user = <IUserDetails>jwt.verify(refreshToken, JWT_REFRESH_SECRET);
     logger.debug(`attempting refresh for user ${user._id} token ${refreshToken}`);
-    const userDb = (await User.findById(user._id))!;
+    const userDb = (await User.findById(user._id).select('+refreshTokens'))!;
     if (!userDb.refreshTokens || !userDb.refreshTokens.includes(refreshToken)) {
       await userDb.updateOne({ refreshTokens: [] });
       return res.sendStatus(httpStatus.UNAUTHORIZED);

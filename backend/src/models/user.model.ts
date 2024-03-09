@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema<IUser>({
   password: {
     type: String,
     required: false,
+    select: false,
   },
   firstName: {
     type: String,
@@ -44,6 +45,7 @@ const userSchema = new mongoose.Schema<IUser>({
   refreshTokens: {
     type: [String],
     required: false,
+    select: false,
   },
 });
 
