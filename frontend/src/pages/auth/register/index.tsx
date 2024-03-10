@@ -2,7 +2,7 @@ import { useAuth } from '@/helpers/auth.context';
 import { authenticationService } from '@/services/auth-service';
 import { writeTokens } from '@/utils/local-storage';
 import { useForm } from '@tanstack/react-form';
-import { useNavigate } from '@tanstack/react-router';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 import React from 'react';
 import { flushSync } from 'react-dom';
@@ -12,6 +12,8 @@ import AuthFormInput from '../components/auth-form-input';
 const RegisterPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const routeApi = getRouteApi('/_auth/register');
+  const search = routeApi.useSearch();
 
   const registerForm = useForm({
     defaultValues: {
@@ -37,6 +39,10 @@ const RegisterPage: React.FC = () => {
       navigate({ to: '/' });
     },
   });
+
+  const openLoginPage = () => {
+    navigate({ to: '/login', search });
+  };
 
   return (
     <registerForm.Provider>
@@ -120,6 +126,15 @@ const RegisterPage: React.FC = () => {
             />
           )}
         />
+        <button type="submit" className="btn btn-success w-100">
+          Register now
+        </button>
+        <div>
+          <span className="no-account-text">Already have an account? </span>
+          <span className="no-account-text create-new-account-text" onClick={openLoginPage}>
+            Click here to login!
+          </span>
+        </div>
       </form>
     </registerForm.Provider>
   );
