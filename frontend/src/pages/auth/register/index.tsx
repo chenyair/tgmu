@@ -45,6 +45,7 @@ const RegisterPage: React.FC = () => {
     <registerForm.Provider>
       <form
         className="d-flex gap-1 h-100 justify-content-center flex-column flex-wrap"
+        style={{ width: '85%' }}
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();

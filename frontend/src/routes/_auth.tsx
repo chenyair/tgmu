@@ -5,7 +5,7 @@ import './_auth.scss';
 const AuthLayout: React.FC = () => {
   return (
     <div className="row h-100">
-      <div className="col-3 login-section p-5 h-100">
+      <div className="col-3 login-section p-2 h-100 d-flex justify-content-center align-items-center">
         <Outlet />
       </div>
       <div className="col-9 p-0 h-100 d-flex justify-content-center align-items-center auth-image">
