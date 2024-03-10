@@ -23,7 +23,7 @@ initApp().then((app: Express) => {
         version: '1.0.0',
         description: 'TGMU REST API for serving any app related requests including JWT authentication',
       },
-      servers: [{ url: 'http://localhost:3000' }],
+      servers: [{ url: 'http://localhost:8000' }],
       components: {
         securitySchemes: {
           bearerAuth: {
@@ -42,15 +42,15 @@ initApp().then((app: Express) => {
   app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
   logger.debug('Successfully Initialized Swagger at /docs');
 
-  const port = process.env.PORT;
+  const port = process.env.PORT || 8000;
+  logger.debug(`The Ger Movie Universe API is running on port ${port}`);
   if (ENV !== 'production') {
-    http.createServer(app).listen(port || 8000);
+    http.createServer(app).listen(port);
   } else {
     const httpsConf = {
       key: fs.readFileSync('../client-key.pem'),
       cert: fs.readFileSync('../client-cert.pem'),
     };
-    https.createServer(httpsConf, app).listen(port || 443);
+    https.createServer(httpsConf, app).listen(port);
   }
-  logger.debug(`The Ger Movie Universe API is running on port ${port}`);
 });
