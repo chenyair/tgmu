@@ -5,6 +5,7 @@ import createLogger from './utils/logger';
 import initDB from 'db';
 import authRoute from 'routes/auth.route';
 import userRoute from 'routes/user.route';
+import movieRoute from 'routes/movie.route';
 
 const logger = createLogger('Express');
 
@@ -28,6 +29,7 @@ const initApp = async (): Promise<Express> => {
 
   app.use('/auth', authRoute);
   app.use('/users', userRoute);
+  app.use('/movies', movieRoute);
 
   logger.debug('calling init DB');
   await initDB();
