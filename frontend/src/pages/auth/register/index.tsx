@@ -2,7 +2,7 @@ import { useAuth } from '@/helpers/auth.context';
 import { authenticationService } from '@/services/auth-service';
 import { writeTokens } from '@/utils/local-storage';
 import { useForm } from '@tanstack/react-form';
-import { getRouteApi, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 import React from 'react';
 import { flushSync } from 'react-dom';

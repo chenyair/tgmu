@@ -3,6 +3,7 @@ import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { AuthContext } from '@/helpers/auth.context';
 import { QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import '../main.scss';
 
 interface MyRouterContext {
   auth: AuthContext;
@@ -10,7 +11,7 @@ interface MyRouterContext {
 }
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
-    <div className="vh-100 vw-100">
+    <div className="root-route">
       <Outlet />
       <TanStackRouterDevtools position="bottom-right" />
       <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" />

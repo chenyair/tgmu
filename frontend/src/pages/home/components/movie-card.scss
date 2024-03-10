@@ -1,0 +1,19 @@
+$rounded-corners: 25px;
+
+.movie-card {
+  border-radius: $rounded-corners;
+  display: inline-block;
+  text-align: center;
+  background-color: transparent;
+
+  :hover {
+    filter: brightness(110%);
+    cursor: pointer;
+  }
+}
+
+.movie-poster {
+  -webkit-box-shadow: 0px 8px 16px -1px rgba(0, 0, 0, 0.38);
+  box-shadow: 0px 8px 16px -1px rgba(0, 0, 0, 0.38);
+  border-radius: $rounded-corners;
+}
