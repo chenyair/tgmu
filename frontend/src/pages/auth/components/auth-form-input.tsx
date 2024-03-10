@@ -37,7 +37,14 @@ const AuthFormInput: React.FC<AuthFormTextInputProps> = ({
       </label>
       {type === 'date' ? (
         <div>
-          <DatePicker selected={value} onChange={onChange} dateFormat="dd/MM/yyy" />
+          <DatePicker
+            selected={value}
+            onChange={onChange}
+            dateFormat="dd/MM/yyyy"
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
+          />
         </div>
       ) : (
         <input

@@ -66,7 +66,7 @@ export const googleSignIn = async (req: Request, res: Response) => {
 };
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password, firstName, lastName, age, imgUrl }: IUser = req.body;
+  const { email, password, firstName, lastName, birthdate, imgUrl }: IUser = req.body;
   logger.debug(`begin registration for email ${email}`);
   if (!email || !password) {
     return res.status(httpStatus.BAD_REQUEST).send('missing email or password');
@@ -81,7 +81,7 @@ export const register = async (req: Request, res: Response) => {
     email,
     firstName,
     lastName,
-    age,
+    birthdate,
     imgUrl,
     password: encryptedPassword,
   });

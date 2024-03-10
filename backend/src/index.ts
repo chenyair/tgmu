@@ -21,7 +21,7 @@ initApp().then((app: Express) => {
         version: '1.0.0',
         description: 'TGMU REST API for serving any app related requests including JWT authentication',
       },
-      servers: [{ url: 'http://localhost:3000' }],
+      servers: [{ url: 'http://localhost:8000' }],
       components: {
         securitySchemes: {
           bearerAuth: {

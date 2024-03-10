@@ -35,7 +35,7 @@ import * as authController from '../controllers/auth.controller';
  *         - email
  *         - firstName
  *         - lastName
- *         - age
+ *         - birthdate
  *         - imgUrl
  *       properties:
  *         email:
@@ -47,10 +47,9 @@ import * as authController from '../controllers/auth.controller';
  *         lastName:
  *           type: string
  *           description: The user's last name
- *         age:
- *           type: number
- *           description: The user's age
- *           min: 0
+ *         birthdate:
+ *           type: Date
+ *           description: The user's birthdate
  *         imgUrl:
  *           type: url
  *           description: The URL of the user's image
@@ -58,7 +57,7 @@ import * as authController from '../controllers/auth.controller';
  *         email: 'bob@gmail.com'
  *         firstName: 'bob'
  *         lastName: 'thebuilder'
- *         age: 80
+ *         date: 2000-09-19T00:00:00.000Z
  *         imgUrl: 'www.images.com/bob/the/builder.png'
  *
  *     Tokens:

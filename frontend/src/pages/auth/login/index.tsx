@@ -93,14 +93,16 @@ const LoginPage: React.FC = () => {
             </div>
           )}
         />
-        <button type="submit" className="btn btn-success w-100">
-          Log In
-        </button>
         <div>
-          <span className="no-account-text">Don't have an account? </span>
-          <span className="no-account-text create-new-account-text" onClick={openRegisterPage}>
-            Create new one!
-          </span>
+          <button type="submit" className="btn btn-success w-100">
+            Log In
+          </button>
+          <div>
+            <span className="no-account-text">Don't have an account? </span>
+            <span className="no-account-text create-new-account-text" onClick={openRegisterPage}>
+              Create new one!
+            </span>
+          </div>
         </div>
       </form>
     </loginForm.Provider>

@@ -2,12 +2,12 @@ import mongoose from 'mongoose';
 import { validateAlphabet } from 'utils/validator';
 import { IUser, IUserDetails } from 'shared-types';
 
-export const getUserDetails = ({ _id, email, firstName, lastName, age, imgUrl }: IUser): IUserDetails => ({
+export const getUserDetails = ({ _id, email, firstName, lastName, birthdate, imgUrl }: IUser): IUserDetails => ({
   _id,
   email,
   firstName,
   lastName,
-  age,
+  birthdate,
   imgUrl,
 });
 
@@ -32,8 +32,8 @@ const userSchema = new mongoose.Schema<IUser>({
     trim: true,
     validate: validateAlphabet,
   },
-  age: {
-    type: Number,
+  birthdate: {
+    type: Date,
     required: true,
     min: 0,
   },

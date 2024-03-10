@@ -12,24 +12,21 @@ import AuthFormInput from '../components/auth-form-input';
 const RegisterPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
-  const routeApi = getRouteApi('/_auth/register');
-  const search = routeApi.useSearch();
 
   const registerForm = useForm({
     defaultValues: {
       email: '',
       password: '',
       retypePassword: '',
-      remember: false,
-      age: new Date(),
+      birthdate: new Date(),
       firstName: '',
       lastName: '',
       imgUrl: '',
     },
     onSubmit: async ({ value }) => {
-      const { email, password, age, firstName, lastName, imgUrl, remember } = value;
-      const tokens = await authenticationService.register({ firstName, lastName, email, password, age: 18, imgUrl });
-      writeTokens(tokens, remember);
+      const { email, password, birthdate, firstName, lastName, imgUrl } = value;
+      const tokens = await authenticationService.register({ firstName, lastName, email, password, birthdate, imgUrl });
+      writeTokens(tokens, false);
 
       flushSync(() => {
         const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
@@ -41,7 +38,7 @@ const RegisterPage: React.FC = () => {
   });
 
   const openLoginPage = () => {
-    navigate({ to: '/login', search });
+    navigate({ to: '/login', search: { redirect: '/' } });
   };
 
   return (
@@ -115,7 +112,7 @@ const RegisterPage: React.FC = () => {
           )}
         />
         <registerForm.Field
-          name="age"
+          name="birthdate"
           children={(field) => (
             <AuthFormInput
               title="Birthdate"
@@ -126,14 +123,16 @@ const RegisterPage: React.FC = () => {
             />
           )}
         />
-        <button type="submit" className="btn btn-success w-100">
-          Register now
-        </button>
-        <div>
-          <span className="no-account-text">Already have an account? </span>
-          <span className="no-account-text create-new-account-text" onClick={openLoginPage}>
-            Click here to login!
-          </span>
+        <div className="mt-3">
+          <button type="submit" className="btn btn-success w-100">
+            Register now
+          </button>
+          <div>
+            <span className="no-account-text">Already have an account? </span>
+            <span className="no-account-text create-new-account-text" onClick={openLoginPage}>
+              Click here to login!
+            </span>
+          </div>
         </div>
       </form>
     </registerForm.Provider>
