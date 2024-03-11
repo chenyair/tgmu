@@ -1,4 +1,4 @@
-import { UserTokens } from 'shared-types';
+import { IUserDetails, UserTokens } from 'shared-types';
 import { createApiClient } from './api-client';
 import { AxiosInstance } from 'axios';
 
@@ -23,6 +23,14 @@ export class AuthenticationService {
       await this.apiClient.get<UserTokens>('/refresh', {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${refreshToken}` },
         signal,
+      })
+    ).data;
+  }
+
+  async register(newUser: IUserDetails & { password: string }): Promise<UserTokens> {
+    return (
+      await this.apiClient.post<UserTokens>('/register', newUser, {
+        headers: { 'Content-Type': 'application/json' },
       })
     ).data;
   }

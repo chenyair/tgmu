@@ -10,12 +10,10 @@ declare namespace sharedTypes {
     password: string;
     firstName: string;
     lastName: string;
-    age: number;
+    birthdate: Date;
     imgUrl?: string;
     refreshTokens?: string[];
   }
-  
-  export type IUserDetails = Pick<IUser, '_id' | 'age' | 'email' | 'firstName' | 'lastName'>;
 
   export interface Movie {
     adult: boolean;
@@ -26,13 +24,14 @@ declare namespace sharedTypes {
     original_title: string;
     overview: string;
     popularity: number;
-    poster_path: string;  
+    poster_path: string;
     realease_date: string;
     title: string;
     video: boolean;
     vote_average: number;
     vote_count: number;
   }
+  export type IUserDetails = Pick<IUser, '_id' | 'birthdate' | 'email' | 'firstName' | 'lastName' | 'imgUrl'>;
 }
 
 export = sharedTypes;

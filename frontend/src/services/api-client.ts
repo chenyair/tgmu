@@ -1,13 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
 import { authenticationService } from './auth-service';
-import { writeTokens } from '@/helpers/local-storage';
+import { writeTokens } from '@/utils/local-storage';
 
 export const createApiClient = (endpoint: string = ''): AxiosInstance => {
   const apiClient = axios.create({ baseURL: `http://localhost:8000${endpoint}` });
 
   apiClient.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
 
       if (token && !config.headers['Authorization']) {
         config.headers['Authorization'] = `Bearer ${token}`;
@@ -23,13 +23,13 @@ export const createApiClient = (endpoint: string = ''): AxiosInstance => {
     (response) => response,
     async (error) => {
       if (axios.isAxiosError(error) && error.config) {
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = sessionStorage.getItem('refreshToken');
         if (error.response?.status === 403 && error.response?.data === 'jwt expired' && refreshToken) {
           const tokens = await authenticationService.refreshAccessToken(refreshToken);
           error.config.headers.Authorization = `Bearer ${tokens.accessToken}`;
 
           // Save new tokens
-          writeTokens(tokens);
+          writeTokens(tokens, localStorage.getItem('token') !== null);
 
           // Retry request with newly fetched token
           return apiClient(error.config);

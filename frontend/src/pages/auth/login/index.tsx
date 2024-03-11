@@ -1,19 +1,20 @@
 import React from 'react';
-import LoginFormInput from './login-form-input';
-import './login-form.scss';
-import GoogleSignInButton from './google-sign-in-button';
+import LoginFormInput from '../components/auth-form-input';
+import './index.scss';
+import GoogleSignInButton from '../components/google-sign-in-button';
 import { useForm } from '@tanstack/react-form';
 import { authenticationService } from '@/services/auth-service';
-import { writeTokens } from '@/helpers/local-storage';
+import { writeTokens } from '@/utils/local-storage';
 import { useAuth } from '@/helpers/auth.context';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { flushSync } from 'react-dom';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { IUserDetails } from 'shared-types';
 
-const LoginForm: React.FC = () => {
+const LoginPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
-  const routeApi = getRouteApi('/login');
+  const routeApi = getRouteApi('/_auth/login');
   const search = routeApi.useSearch();
 
   const loginForm = useForm({
@@ -22,18 +23,20 @@ const LoginForm: React.FC = () => {
       const { email, password, remember } = value;
       const tokens = await authenticationService.login(email, password);
 
-      if (remember) {
-        writeTokens(tokens);
-      }
+      writeTokens(tokens, remember);
 
       flushSync(() => {
-        const payload = jwtDecode<JwtPayload & { email: string }>(tokens.accessToken, {});
-        auth.setUser(payload.email); // TODO: add typing and remove !
+        const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
+        auth.setUser(payload);
       });
 
       navigate({ to: search.redirect });
     },
   });
+
+  const openRegisterPage = () => {
+    navigate({ to: '/register', search });
+  };
 
   return (
     <loginForm.Provider>
@@ -90,16 +93,20 @@ const LoginForm: React.FC = () => {
             </div>
           )}
         />
-        <button type="submit" className="btn btn-success w-100">
-          Log In
-        </button>
         <div>
-          <span className="no-account-text">Don't have an account? </span>
-          <span className="no-account-text create-new-account-text">Create new one!</span>
+          <button type="submit" className="btn btn-success w-100">
+            Log In
+          </button>
+          <div>
+            <span className="no-account-text">Don't have an account? </span>
+            <span className="no-account-text create-new-account-text" onClick={openRegisterPage}>
+              Create new one!
+            </span>
+          </div>
         </div>
       </form>
     </loginForm.Provider>
   );
 };
 
-export default LoginForm;
+export default LoginPage;

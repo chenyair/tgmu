@@ -1,0 +1,10 @@
+@import 'bootstrap/scss/bootstrap';
+
+.react-datepicker-wrapper {
+  width: 100%;
+
+  input {
+    @extend .form-control;
+    @extend .form-control-lg;
+  }
+}
