@@ -12,15 +12,19 @@ const user: Partial<IUser> = {
   password: '1234567890',
   firstName: 'user',
   lastName: 'test',
-  age: 20,
+  birthdate: new Date('2000-09-19'),
   imgUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Bob_the_builder.jpg/220px-Bob_the_builder.jpg',
 };
 
 let userId: string;
+let accessToken: string;
 
 beforeAll(async () => {
   app = await initApp();
-  userId = (await User.create(user)).id;
+  await User.deleteMany({ email: user.email });
+  const response = await request(app).post('/auth/register').send(user);
+  userId = response.body._id;
+  accessToken = response.body.accessToken;
 }, 20000);
 
 afterAll(async () => {
@@ -29,7 +33,7 @@ afterAll(async () => {
 
 describe('User tests', () => {
   test('Get All Users', async () => {
-    const response = await request(app).get('/users/');
+    const response = await request(app).get('/users/').set('Authorization', `JWT ${accessToken}`);
     expect(response.statusCode).toBe(httpStatus.OK);
     expect(response.body).toBeDefined();
     const matchUser = response.body.find((u: IUser) => u._id === userId);
@@ -41,21 +45,24 @@ describe('User tests', () => {
   });
 
   test('Get User by ID', async () => {
-    const response = await request(app).get(`/users/${userId}`);
+    const response = await request(app).get(`/users/${userId}`).set('Authorization', `JWT ${accessToken}`);
     expect(response.statusCode).toBe(httpStatus.OK);
     expect(response.body).toBeDefined();
   });
 
   test('Update user details by ID', async () => {
-    const response = await request(app).put(`/users/${userId}`).send({
-      age: 30,
-    });
+    const response = await request(app)
+      .put(`/users/${userId}`)
+      .set('Authorization', `JWT ${accessToken}`)
+      .send({
+        birthdate: new Date('1990-09-19'),
+      });
     expect(response.statusCode).toBe(httpStatus.CREATED);
     expect(response.body).toBeDefined();
-    expect(response.body.age).toBe(30);
+    expect(response.body.birthdate).toBe(new Date('1990-09-19').toISOString());
 
     const user = await User.findById(userId);
-    expect(user?.age).toBe(30);
+    expect(user?.birthdate.toISOString()).toBe(new Date('1990-09-19').toISOString());
   });
 
   // TODO: add tests for non existing users after adding error handling
@@ -67,7 +74,7 @@ describe('User tests', () => {
   // });
 
   test('Delete user by ID', async () => {
-    const response = await request(app).delete(`/users/${userId}`);
+    const response = await request(app).delete(`/users/${userId}`).set('Authorization', `JWT ${accessToken}`);
     expect(response.statusCode).toBe(httpStatus.CREATED);
     expect(response.body).toBeDefined();
     const user = await User.findById(userId);

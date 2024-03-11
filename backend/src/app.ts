@@ -6,6 +6,7 @@ import initDB from 'db';
 import authRoute from 'routes/auth.route';
 import userRoute from 'routes/user.route';
 import movieRoute from 'routes/movie.route';
+import authMiddleware from 'common/auth.middleware';
 
 const logger = createLogger('Express');
 
@@ -28,6 +29,8 @@ const initApp = async (): Promise<Express> => {
   });
 
   app.use('/auth', authRoute);
+
+  app.use(authMiddleware);
   app.use('/users', userRoute);
   app.use('/movies', movieRoute);
 
