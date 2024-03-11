@@ -31,7 +31,23 @@ declare namespace sharedTypes {
     vote_average: number;
     vote_count: number;
   }
+
   export type IUserDetails = Pick<IUser, '_id' | 'birthdate' | 'email' | 'firstName' | 'lastName' | 'imgUrl'>;
+
+  interface IExperience {
+    _id?: string;
+    title: string;
+    description: string;
+    comments: IComment[];
+    likedUsers: string[];
+    imgUrl: string;
+    createdAt: Date;
+  }
+
+  interface IComment {
+    userId: string;
+    text: string;
+  }
 }
 
 export = sharedTypes;
