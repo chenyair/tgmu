@@ -6,6 +6,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { routeTree } from './routeTree.gen.ts';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { AuthProvider, useAuth } from './helpers/auth.context.tsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 const router = createRouter({
   routeTree,
@@ -13,6 +16,7 @@ const router = createRouter({
   defaultPreload: 'intent',
   context: {
     auth: undefined!,
+    queryClient,
   },
 });
 
@@ -24,13 +28,19 @@ declare module '@tanstack/react-router' {
 
 const App: React.FC = () => {
   const auth = useAuth();
-  return <RouterProvider router={router} context={{ auth }} />;
+  return auth.refreshTokenStatus === 'pending' ? (
+    <div>Refreshing token</div> // TODO: Implement loader
+  ) : (
+    <RouterProvider router={router} context={{ auth }} />
+  );
 };
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <App />
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
     </AuthProvider>
-  </React.StrictMode>
+  </QueryClientProvider>
 );
