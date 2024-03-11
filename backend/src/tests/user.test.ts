@@ -5,6 +5,7 @@ import { Express } from 'express';
 import { IUser } from 'shared-types';
 import User from '../models/user.model';
 import httpStatus from 'http-status';
+import { ObjectId } from 'mongodb';
 
 let app: Express;
 const user: Partial<IUser> = {
@@ -63,6 +64,21 @@ describe('User tests', () => {
 
     const user = await User.findById(userId);
     expect(user?.birthdate.toISOString()).toBe(new Date('1990-09-19').toISOString());
+  });
+
+  test('Update other user details', async () => {
+    const response = await request(app)
+      .put(`/users/${new ObjectId()}`)
+      .set('Authorization', `JWT ${accessToken}`)
+      .send({
+        birthdate: new Date('1990-09-19'),
+      });
+    expect(response.statusCode).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  test('Delete other user', async () => {
+    const response = await request(app).delete(`/users/${new ObjectId()}`).set('Authorization', `JWT ${accessToken}`);
+    expect(response.statusCode).toBe(httpStatus.UNAUTHORIZED);
   });
 
   // TODO: add tests for non existing users after adding error handling
