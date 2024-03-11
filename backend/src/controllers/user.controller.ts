@@ -27,4 +27,4 @@ class UserController extends BaseController<IUser> {
   }
 }
 
-export default UserController;
+export default new UserController();
