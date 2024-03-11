@@ -2,9 +2,9 @@ import request from 'supertest';
 import initApp from '../app';
 import mongoose from 'mongoose';
 import { Express } from 'express';
-import { IUser } from 'shared-types';
 import User from '../models/user.model';
 import httpStatus from 'http-status';
+import { IUser } from 'shared-types';
 
 let app: Express;
 const user: Partial<IUser> = {
@@ -12,7 +12,7 @@ const user: Partial<IUser> = {
   password: '1234567890',
   firstName: 'bob',
   lastName: 'thebuilder',
-  age: 80,
+  birthdate: new Date('2000-09-19'),
   imgUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Bob_the_builder.jpg/220px-Bob_the_builder.jpg',
 };
 
