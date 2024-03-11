@@ -10,20 +10,20 @@ class UserController extends BaseController<IUser> {
     super(UserModel);
   }
 
-  private validateSelfAccess(req: AuthRequest, res: Response) {
+  async putById(req: AuthRequest, res: Response) {
     if (req.params.id !== req.user?._id) {
       res.status(httpStatus.UNAUTHORIZED).send('Unauthorized to perform actions on other user');
+    } else {
+      super.putById(req, res);
     }
   }
 
-  async putById(req: AuthRequest, res: Response) {
-    this.validateSelfAccess(req, res);
-    super.putById(req, res);
-  }
-
   async deleteById(req: AuthRequest, res: Response) {
-    this.validateSelfAccess(req, res);
-    super.deleteById(req, res);
+    if (req.params.id !== req.user?._id) {
+      res.status(httpStatus.UNAUTHORIZED).send('Unauthorized to perform actions on other user');
+    } else {
+      super.deleteById(req, res);
+    }
   }
 }
 
