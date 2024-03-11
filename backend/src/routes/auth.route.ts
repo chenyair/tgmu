@@ -1,6 +1,8 @@
-import express from 'express';
+import express, { Response } from 'express';
 const router = express.Router();
 import * as authController from '../controllers/auth.controller';
+import authMiddleware from 'common/auth.middleware';
+import httpStatus from 'http-status';
 
 /** [Swagger Tag]
  * @swagger
@@ -188,5 +190,8 @@ router.get('/logout', authController.logout);
  *               $ref: '#/components/schemas/Tokens'
  */
 router.get('/refresh', authController.refresh);
+
+// This route returns OK is the user is authenticated
+router.get('/status', authMiddleware, (_, res: Response) => res.sendStatus(httpStatus.OK));
 
 export default router;
