@@ -42,6 +42,7 @@ const LoginPage: React.FC = () => {
     <loginForm.Provider>
       <form
         className="d-flex gap-3 h-100 justify-content-center flex-column flex-wrap"
+        style={{ width: '85%' }}
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();

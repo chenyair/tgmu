@@ -19,8 +19,15 @@ body,
 html {
   margin: 0;
   padding: 0;
+  background-color: white;
+  overflow: hidden;
 }
 
 * {
   box-sizing: border-box;
+}
+
+.root-route {
+  height: 100vh;
+  width: 100vw;
 }

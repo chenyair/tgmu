@@ -51,7 +51,7 @@ const AuthFormInput: React.FC<AuthFormTextInputProps> = ({
           type={type}
           id={name}
           name={name}
-          className="form-control form-control-lg"
+          className="form-control form-control-lg auth-form-input"
           value={value ?? ''}
           onChange={onChange}
         />

@@ -29,37 +29,6 @@ import * as authController from '../controllers/auth.controller';
  *         email: 'bob@gmail.com'
  *         password: '123456'
  *
- *     UserDetails:
- *       type: object
- *       required:
- *         - email
- *         - firstName
- *         - lastName
- *         - birthdate
- *         - imgUrl
- *       properties:
- *         email:
- *           type: string
- *           description: The user's email
- *         firstName:
- *           type: string
- *           description: The user's first name
- *         lastName:
- *           type: string
- *           description: The user's last name
- *         birthdate:
- *           type: Date
- *           description: The user's birthdate
- *         imgUrl:
- *           type: url
- *           description: The URL of the user's image
- *       example:
- *         email: 'bob@gmail.com'
- *         firstName: 'bob'
- *         lastName: 'thebuilder'
- *         date: 2000-09-19T00:00:00.000Z
- *         imgUrl: 'www.images.com/bob/the/builder.png'
- *
  *     Tokens:
  *       type: object
  *       required:

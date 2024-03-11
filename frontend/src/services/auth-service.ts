@@ -1,9 +1,12 @@
 import { IUserDetails, UserTokens } from 'shared-types';
-import { createApiClient } from './api-client';
-import { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 export class AuthenticationService {
-  apiClient: AxiosInstance = createApiClient('/auth');
+  private apiClient: AxiosInstance;
+
+  constructor() {
+    this.apiClient = axios.create({ baseURL: `http://localhost:8000/auth` });
+  }
 
   async login(email: string, password: string, signal?: AbortSignal): Promise<UserTokens> {
     return (

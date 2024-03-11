@@ -2,7 +2,7 @@ import { useAuth } from '@/helpers/auth.context';
 import { authenticationService } from '@/services/auth-service';
 import { writeTokens } from '@/utils/local-storage';
 import { useForm } from '@tanstack/react-form';
-import { getRouteApi, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 import React from 'react';
 import { flushSync } from 'react-dom';
@@ -45,6 +45,7 @@ const RegisterPage: React.FC = () => {
     <registerForm.Provider>
       <form
         className="d-flex gap-1 h-100 justify-content-center flex-column flex-wrap"
+        style={{ width: '85%' }}
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
