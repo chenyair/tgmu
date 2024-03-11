@@ -1,7 +1,7 @@
 import React from 'react';
-import MovieCard from './components/movie-card';
 import { useQuery } from '@tanstack/react-query';
 import { movieService } from '@/services/movie-service';
+import MoviesList from './components/movies-list';
 
 const HomePage: React.FC = () => {
   const { data, error, status } = useQuery({
@@ -21,17 +21,7 @@ const HomePage: React.FC = () => {
           return <div>Error</div>;
         }
 
-        return (
-          <div className="d-flex justify-content-center align-items-center flex-wrap gap-3" style={{ width: '60%' }}>
-            {data.map((movie) => (
-              <MovieCard
-                key={movie.id}
-                posterImageUrl={`https://image.tmdb.org/t/p/w154${movie.poster_path}`}
-                title={movie.title}
-              />
-            ))}
-          </div>
-        );
+        return MoviesList({ movies: data });
       })()}
       )
     </div>
