@@ -49,8 +49,15 @@ export class BaseController<ModelType> {
   async putById(req: Request, res: Response) {
     const { id } = req.params;
     this.debug(`Updating ${id}`);
-    const updatePayload = this.sanitizeObject(req.body, '_id');
-    const doc = await this.model.findByIdAndUpdate(id, updatePayload, { new: true }); // Update and return new object
+    const updatePayload: Partial<ModelType> = this.sanitizeObject(req.body, '_id');
+    const doc = await this.model.findById(id);
+
+    // Set the new values with this syntax to use `save` (for pre-save middleware)
+    Object.keys(updatePayload).forEach((key) => {
+      doc?.set(key, updatePayload[key as keyof ModelType]);
+    });
+
+    await doc?.save();
     return res.status(httpStatus.CREATED).send(doc);
   }
 

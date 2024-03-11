@@ -1,8 +1,8 @@
-import bodyParser from 'body-parser';
 import express, { Request, Response, Express } from 'express';
 import dotenv from 'dotenv';
 import createLogger from './utils/logger';
 import initDB from 'db';
+import cors from 'cors';
 import authRoute from 'routes/auth.route';
 import userRoute from 'routes/user.route';
 import movieRoute from 'routes/movie.route';
@@ -14,8 +14,9 @@ dotenv.config();
 
 const initApp = async (): Promise<Express> => {
   const app: Express = express();
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(express.json());
+  app.use(cors());
+  app.use(express.urlencoded({ extended: true }));
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', '*');
