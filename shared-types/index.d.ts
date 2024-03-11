@@ -32,6 +32,14 @@ declare namespace sharedTypes {
     vote_count: number;
   }
   export type IUserDetails = Pick<IUser, '_id' | 'birthdate' | 'email' | 'firstName' | 'lastName' | 'imgUrl'>;
+
+  export interface IUserUpdatePayload extends Partial<IUserDetails> {
+    changePassword?: {
+      currentPassword: string;
+      newPassword: string;
+    }
+  }
 }
+
 
 export = sharedTypes;
