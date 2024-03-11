@@ -10,7 +10,7 @@ export class BaseController<ModelType> {
   private loggerPrefix: string;
 
   constructor(public model: Model<ModelType>) {
-    this.loggerPrefix = `${model.name} (${model.db.name}.${model.collection.name}):`; // Ex. User (tgmu.users): ...
+    this.loggerPrefix = `model ${model.collection.name}:`;
   }
 
   private debug(...msg: string[]) {
