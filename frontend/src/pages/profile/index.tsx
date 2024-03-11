@@ -7,6 +7,7 @@ import { flushSync } from 'react-dom';
 import { clearTokens } from '@/utils/local-storage';
 import { useNavigate } from '@tanstack/react-router';
 import { IUserUpdatePayload } from 'shared-types';
+import { useState } from 'react';
 
 const Divider: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const Divider: React.FC = () => {
 const ProfilePage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [updateStatus, setUpdatedStatus] = useState<boolean | undefined>(undefined);
 
   const user = auth.user!;
 
@@ -36,11 +38,17 @@ const ProfilePage: React.FC = () => {
     },
 
     onSubmit: async ({ value }) => {
-      const updatedUser = await usersService.updateById(user._id!, value);
+      try {
+        const updatedUser = await usersService.updateById(user._id!, value);
+        setUpdatedStatus(true);
 
-      flushSync(() => {
-        auth.setUser(updatedUser);
-      });
+        flushSync(() => {
+          auth.setUser(updatedUser);
+        });
+      } catch (err) {
+        setUpdatedStatus(false);
+        console.error(err);
+      }
     },
   });
 
@@ -183,6 +191,7 @@ const ProfilePage: React.FC = () => {
               </button>
             </div>
           </div>
+          <div>{updateStatus ?? 'none'}</div>
         </form>
       </userDetailsForm.Provider>
     </div>
