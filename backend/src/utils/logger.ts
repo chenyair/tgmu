@@ -51,5 +51,8 @@ const logger = winston.createLogger({
   ],
 });
 
+// Silence logs when running tests (can comment out if you want to debug tests)
+logger.silent = process.env.NODE_ENV === 'test';
+
 // Export a function that receives a module name and returns a child logger for that module
 export default (module: string) => logger.child({ label: module });
