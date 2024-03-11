@@ -25,9 +25,10 @@ const initDB = async (): Promise<mongoose.mongo.Db> => {
 
   // Attach log listener to every client event
   // see https://www.mongodb.com/docs/drivers/node/current/fundamentals/logging/
-  ['Started', 'Succeeded', 'Failed'].forEach((action) =>
-    connection.getClient().addListener(`command${action}`, (event) => logger.debug(JSON.stringify(event)))
-  );
+  const dbClient = connection.getClient();
+  dbClient.addListener('commandStarted', (event) => logger.debug(JSON.stringify(event)));
+  dbClient.addListener('commandSucceeded', (event) => logger.debug(JSON.stringify(event)));
+  dbClient.addListener('commandFailed', (event) => logger.error(JSON.stringify(event)));
   return connection.db;
 };
 
