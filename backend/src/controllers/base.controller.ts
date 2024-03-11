@@ -29,21 +29,21 @@ export class BaseController<ModelType> {
     const query = this.sanitizeObject(req.query);
     this.debug(`Get`);
     const docs = await this.model.find(query);
-    res.status(httpStatus.OK).send(docs);
+    return res.status(httpStatus.OK).send(docs);
   }
 
   async getById(req: Request, res: Response) {
     const { id } = req.params;
     this.debug(`Get by id ${id}`);
     const docs = await this.model.findById(id);
-    res.status(httpStatus.OK).send(docs);
+    return res.status(httpStatus.OK).send(docs);
   }
 
   async post(req: Request, res: Response) {
     this.debug(`Creating`); // Not logging body for security (passwords, private information etc...)
     const obj = await this.model.create(this.sanitizeObject(req.body));
     this.debug(`Created ${obj._id}`);
-    res.status(httpStatus.CREATED).send(obj);
+    return res.status(httpStatus.CREATED).send(obj);
   }
 
   async putById(req: Request, res: Response) {
@@ -51,14 +51,14 @@ export class BaseController<ModelType> {
     this.debug(`Updating ${id}`);
     const updatePayload = this.sanitizeObject(req.body, '_id');
     const doc = await this.model.findByIdAndUpdate(id, updatePayload, { new: true }); // Update and return new object
-    res.status(httpStatus.CREATED).send(doc);
+    return res.status(httpStatus.CREATED).send(doc);
   }
 
   async deleteById(req: Request, res: Response) {
     const { id } = req.params;
     this.debug(`Delete by id ${id}`);
     const doc = await this.model.findByIdAndDelete(id);
-    res.status(httpStatus.CREATED).send(doc);
+    return res.status(httpStatus.CREATED).send(doc);
   }
 }
 
