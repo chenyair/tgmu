@@ -6,13 +6,13 @@ import createLogger from 'utils/logger';
 
 const logger = createLogger('auth middleware');
 
-export interface AuthResquest extends Request {
+export interface AuthRequest extends Request {
   user?: IUserDetails;
 }
 
 const { JWT_SECRET } = process.env as Record<string, string>;
 
-const authMiddleware = (req: AuthResquest, res: Response, next: NextFunction) => {
+const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
   if (!token) return res.status(httpStatus.UNAUTHORIZED).send('No token provided');
