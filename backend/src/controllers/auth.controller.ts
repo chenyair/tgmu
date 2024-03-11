@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import User, { getUserDetails } from '../models/user.model';
-import { IUser, IUserDetails } from 'shared-types';
 import bcrypt from 'bcrypt';
+import User, { getUserDetails } from 'models/user.model';
+import { IUser, IUserDetails } from 'shared-types';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import httpStatus from 'http-status';
@@ -24,9 +24,10 @@ const generateTokens = (user: IUser) => {
 const createTokensForUser = async (user: Document & IUser) => {
   logger.debug(`creating tokens for user: ${user._id}`);
   const tokens = generateTokens(user);
+  const { refreshToken } = tokens;
   const currTokens = user.refreshTokens ?? [];
   await user.updateOne({
-    refreshTokens: [...currTokens, tokens.refreshToken],
+    refreshTokens: [...currTokens.filter((t) => t !== refreshToken), refreshToken],
   });
   return tokens;
 };
@@ -47,9 +48,9 @@ export const googleSignIn = async (req: Request, res: Response) => {
 
     // Attempt to query existing user, otherwise create a new user
     const user =
-      (await User.findOne({ email: email })) ??
+      (await User.findOne({ email }).select('+password')) ??
       (await User.create({
-        email: email,
+        email,
         password: '0',
         imgUrl: payload?.picture,
       }));
@@ -71,19 +72,17 @@ export const register = async (req: Request, res: Response) => {
   if (!email || !password) {
     return res.status(httpStatus.BAD_REQUEST).send('missing email or password');
   }
-  const exists = await User.exists({ email: email });
+  const exists = await User.exists({ email });
   if (exists) {
     return res.status(httpStatus.NOT_ACCEPTABLE).send('a user with this email already exists');
   }
-  const salt = await bcrypt.genSalt(10);
-  const encryptedPassword = await bcrypt.hash(password, salt);
   const newUser = await User.create({
     email,
     firstName,
     lastName,
     birthdate,
     imgUrl,
-    password: encryptedPassword,
+    password,
   });
   const tokens = await createTokensForUser(newUser);
   logger.debug(`successfully created user ${email}`);
@@ -101,7 +100,7 @@ export const login = async (req: Request, res: Response) => {
     return res.status(httpStatus.BAD_REQUEST).send('missing email or password');
   }
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password +refreshTokens');
     if (user === null) {
       return res.status(httpStatus.UNAUTHORIZED).send('email or password incorrect');
     }
@@ -126,7 +125,7 @@ export const logout = async (req: Request, res: Response) => {
   try {
     const user = <IUserDetails>jwt.verify(refreshToken, JWT_REFRESH_SECRET);
     logger.debug(`attempting logout for user ${user._id} token ${refreshToken}`);
-    const userDb = (await User.findById(user._id))!; // Assume return value is not null
+    const userDb = (await User.findById(user._id).select('+refreshTokens'))!; // Assume return value is not null
     if (!userDb.refreshTokens || !userDb.refreshTokens.includes(refreshToken)) {
       await userDb.updateOne({ refreshTokens: [] });
       return res.sendStatus(httpStatus.UNAUTHORIZED);
@@ -148,7 +147,7 @@ export const refresh = async (req: Request, res: Response) => {
   try {
     const user = <IUserDetails>jwt.verify(refreshToken, JWT_REFRESH_SECRET);
     logger.debug(`attempting refresh for user ${user._id} token ${refreshToken}`);
-    const userDb = (await User.findById(user._id))!;
+    const userDb = (await User.findById(user._id).select('+refreshTokens'))!;
     if (!userDb.refreshTokens || !userDb.refreshTokens.includes(refreshToken)) {
       await userDb.updateOne({ refreshTokens: [] });
       return res.sendStatus(httpStatus.UNAUTHORIZED);

@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import { FilterQuery, Model } from 'mongoose';
 import { omit, pick } from 'lodash';
+import httpStatus from 'http-status';
+import createLogger from 'utils/logger';
 
-const logger = console; // TODO: replace with custom logger implementation
+const logger = createLogger('base controller');
 
 export class BaseController<ModelType> {
   private loggerPrefix: string;
+
   constructor(public model: Model<ModelType>) {
     this.loggerPrefix = `${model.name} (${model.db.name}.${model.collection.name}):`; // Ex. User (tgmu.users): ...
   }
@@ -26,21 +29,21 @@ export class BaseController<ModelType> {
     const query = this.sanitizeObject(req.query);
     this.debug(`Get`);
     const docs = await this.model.find(query);
-    res.status(200).send(docs);
+    res.status(httpStatus.OK).send(docs);
   }
 
   async getById(req: Request, res: Response) {
     const { id } = req.params;
     this.debug(`Get by id ${id}`);
     const docs = await this.model.findById(id);
-    res.status(200).send(docs);
+    res.status(httpStatus.OK).send(docs);
   }
 
   async post(req: Request, res: Response) {
     this.debug(`Creating`); // Not logging body for security (passwords, private information etc...)
     const obj = await this.model.create(this.sanitizeObject(req.body));
     this.debug(`Created ${obj._id}`);
-    res.status(201).send(obj);
+    res.status(httpStatus.CREATED).send(obj);
   }
 
   async putById(req: Request, res: Response) {
@@ -48,14 +51,14 @@ export class BaseController<ModelType> {
     this.debug(`Updating ${id}`);
     const updatePayload = this.sanitizeObject(req.body, '_id');
     const doc = await this.model.findByIdAndUpdate(id, updatePayload, { new: true }); // Update and return new object
-    res.status(201).send(doc);
+    res.status(httpStatus.CREATED).send(doc);
   }
 
   async deleteById(req: Request, res: Response) {
     const { id } = req.params;
     this.debug(`Delete by id ${id}`);
     const doc = await this.model.findByIdAndDelete(id);
-    res.send(201).send(doc);
+    res.status(httpStatus.CREATED).send(doc);
   }
 }
 
