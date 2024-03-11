@@ -35,6 +35,11 @@ describe('Auth tests', () => {
     expect(response.statusCode).toBe(httpStatus.CREATED);
   });
 
+  test('Test auth status without JWT', async () => {
+    const response = await request(app).get('/auth/status').send();
+    expect(response.statusCode).toBe(httpStatus.UNAUTHORIZED);
+  });
+
   test('Test Register exist email', async () => {
     const response = await request(app).post('/auth/register').send(user);
     expect(response.statusCode).toBe(httpStatus.NOT_ACCEPTABLE);
@@ -55,6 +60,14 @@ describe('Auth tests', () => {
     refreshToken = response.body.refreshToken;
     expect(accessToken).toBeDefined();
     expect(refreshToken).toBeDefined();
+  });
+
+  test('Test auth status with valid token', async () => {
+    const response = await request(app)
+      .get('/auth/status')
+      .set('Authorization', 'JWT ' + accessToken)
+      .send();
+    expect(response.statusCode).toBe(httpStatus.OK);
   });
 
   test('Test refresh token', async () => {
@@ -82,5 +95,14 @@ describe('Auth tests', () => {
       .set('Authorization', 'JWT ' + newRefreshToken)
       .send();
     expect(response1.statusCode).not.toBe(httpStatus.OK);
+  });
+
+  test('Test auth with expired token', async () => {
+    const response = await request(app)
+      .get('/auth/status')
+      .set('Authorization', 'JWT ' + refreshToken) // send refresh token as valid JWT but invalid access token
+      .send();
+
+    expect(response.statusCode).toBe(httpStatus.UNAUTHORIZED);
   });
 });
