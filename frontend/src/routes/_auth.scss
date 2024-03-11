@@ -1,7 +1,9 @@
+@import '@/utils/app-colors';
+
 .login-section {
-  background-color: #fffcf2;
+  background-color: $app-light;
 }
 
 .auth-image {
-  background-color: black;
+  background-color: $app-dark;
 }

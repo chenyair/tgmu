@@ -1,7 +1,9 @@
+@import '@/utils/app-colors';
+
 .navbar {
-  background-color: #fffcf2;
+  background-color: $app-light;
 }
 
 .application {
-  background-color: #252422;
+  background-color: $app-dark;
 }
