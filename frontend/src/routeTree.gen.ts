@@ -14,6 +14,8 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedExperiencesImport } from './routes/_authenticated/experiences'
 import { Route as AuthRegisterImport } from './routes/_auth/register'
 import { Route as AuthLoginImport } from './routes/_auth/login'
 
@@ -31,6 +33,16 @@ const AuthRoute = AuthImport.update({
 
 const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
   path: '/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedProfileRoute = AuthenticatedProfileImport.update({
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedExperiencesRoute = AuthenticatedExperiencesImport.update({
+  path: '/experiences',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -64,6 +76,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRegisterImport
       parentRoute: typeof AuthImport
     }
+    '/_authenticated/experiences': {
+      preLoaderRoute: typeof AuthenticatedExperiencesImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/profile': {
+      preLoaderRoute: typeof AuthenticatedProfileImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/': {
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedImport
@@ -75,7 +95,11 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   AuthRoute.addChildren([AuthLoginRoute, AuthRegisterRoute]),
-  AuthenticatedRoute.addChildren([AuthenticatedIndexRoute]),
+  AuthenticatedRoute.addChildren([
+    AuthenticatedExperiencesRoute,
+    AuthenticatedProfileRoute,
+    AuthenticatedIndexRoute,
+  ]),
 ])
 
 /* prettier-ignore-end */

@@ -1,0 +1,15 @@
+@import '@radix-ui/colors/gray.css';
+@import '@/utils/app-colors';
+
+.tgmu-navbar {
+  a {
+    text-decoration: none;
+    color: var(--gray-9);
+
+    .active {
+      color: $accent-color;
+      border-radius: 25px;
+      border: 2px solid $accent-color;
+    }
+  }
+}
