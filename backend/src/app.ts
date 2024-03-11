@@ -6,6 +6,7 @@ import initDB from 'db';
 import authRoute from 'routes/auth.route';
 import userRoute from 'routes/user.route';
 import movieRoute from 'routes/movie.route';
+import experienceRoute from 'routes/experience.route';
 import authMiddleware from 'common/auth.middleware';
 
 const logger = createLogger('Express');
@@ -33,6 +34,7 @@ const initApp = async (): Promise<Express> => {
   app.use(authMiddleware);
   app.use('/users', userRoute);
   app.use('/movies', movieRoute);
+  app.use('/experiences', experienceRoute);
 
   logger.debug('calling init DB');
   await initDB();

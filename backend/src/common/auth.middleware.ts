@@ -13,6 +13,8 @@ export interface AuthRequest extends Request {
 const { JWT_SECRET } = process.env as Record<string, string>;
 
 const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (/\/docs.*/.test(req.originalUrl)) return next();
+
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
   if (!token) return res.status(httpStatus.UNAUTHORIZED).send('No token provided');
