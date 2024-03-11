@@ -31,8 +31,8 @@ import UserController from '../controllers/user.controller';
  *         lastName:
  *           type: string
  *           description: The user's last name
- *         age:
- *           type: number
+ *         birthdate:
+ *           type: date
  *           description: The user's age
  *           min: 0
  *         imgUrl:
@@ -122,9 +122,47 @@ router.get('/:id', UserController.getById.bind(UserController));
  *       content:
  *         application/json:
  *           schema:
- *             allOf:
- *              - $ref: '#/components/schemas/UserDetails'
- *              - $ref: '#/components/schemas/UserCredentials'
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The user's email
+ *               firstName:
+ *                 type: string
+ *                 description: The user's first name
+ *               lastName:
+ *                 type: string
+ *                 description: The user's last name
+ *               birthdate:
+ *                 type: date
+ *                 description: The user's age
+ *                 min: 0
+ *               changePassword:
+ *                 type: object
+ *                 properties:
+ *                   currentPassword:
+ *                     type: string
+ *                   newPassword:
+ *                     type: string
+ *               image:
+ *                 type: object
+ *                 properties:
+ *                   file:
+ *                     type: file
+ *                     description: The user's image file
+ *                   currImgUrl:
+ *                     type: string
+ *             example:
+ *               email: 'bob@gmail.com'
+ *               firstName: 'bob'
+ *               lastName: 'thebuilder'
+ *               age: 80
+ *               image:
+ *                 file: <FileData>
+ *                 currImgUrl: 'www.images.com/bob/the/builder.png'
+ *               changePassword:
+ *                 currentPassword: '123'
+ *                 newPassword: '456'
  *     responses:
  *       OK:
  *         description: Updated user successfully. returns updated user

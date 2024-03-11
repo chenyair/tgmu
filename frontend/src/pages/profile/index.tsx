@@ -25,6 +25,10 @@ const ProfilePage: React.FC = () => {
   const userDetailsForm = useForm<IUserUpdatePayload>({
     defaultValues: {
       ...user,
+      image: {
+        file: null,
+        currImgUrl: user.imgUrl,
+      },
       changePassword: {
         currentPassword: '',
         newPassword: '',
@@ -111,16 +115,16 @@ const ProfilePage: React.FC = () => {
           />
           <Divider />
           <userDetailsForm.Field
-            name="imgUrl"
+            name="image"
             children={(field) => (
               <FormInput
                 title="Image"
                 type="image"
                 inline={true}
                 name={field.name}
-                value={field.state.value || ''}
+                value={field.state.value}
                 description="Your profile photo"
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e) => field.handleChange({ ...field.state.value, file: e.target.files?.[0] || null })}
               />
             )}
           />

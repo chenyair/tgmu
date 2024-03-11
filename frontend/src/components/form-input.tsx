@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import * as Avatar from '@radix-ui/react-avatar';
 
 import './form-input.scss';
+import { IUserUpdatePayload } from 'shared-types';
 
 interface BaseFormTextInputProps {
   title: string;
@@ -28,7 +29,7 @@ interface StringValueProps {
 
 interface ImageValueProps {
   type: 'image';
-  value: string;
+  value: IUserUpdatePayload['image'];
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -40,9 +41,9 @@ const FormInput: React.FC<FormTextInputProps> = ({
   type,
   name,
   value,
+  description,
   inline = false,
   disabled = false,
-  description,
 }: FormTextInputProps) => {
   return (
     <div className={inline ? 'd-flex flex-row justify-content-between' : ''} style={inline ? { maxHeight: '2em' } : {}}>
@@ -68,10 +69,19 @@ const FormInput: React.FC<FormTextInputProps> = ({
           <Avatar.Root className="AvatarRoot flex-row justify-content-center">
             <Avatar.Image
               className="AvatarImage"
-              src={value || 'https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80'}
+              src={
+                value.currImgUrl ||
+                'https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80'
+              }
             />
           </Avatar.Root>
-          <input className="form-control flex-row w-50" style={{ marginLeft: '8%' }} type="file" id="formFile"></input>
+          <input
+            accept=".png,.jpg,.jpeg"
+            className="form-control flex-row w-50"
+            style={{ marginLeft: '8%' }}
+            type="file"
+            id="formFile"
+          ></input>
         </div>
       ) : (
         // Text input
