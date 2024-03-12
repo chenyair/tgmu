@@ -1,6 +1,7 @@
 import express from 'express';
 import { experienceController } from '../controllers/experience.controller';
 const router = express.Router();
+import 'express-async-errors';
 
 /** [Swagger Tag]
  * @swagger
