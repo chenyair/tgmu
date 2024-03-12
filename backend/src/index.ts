@@ -7,6 +7,7 @@ import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import errorMiddleware from 'common/error.middleware';
+import 'express-async-errors';
 
 const logger = createLogger('Express');
 const ENV = process.env.NODE_ENV!;
