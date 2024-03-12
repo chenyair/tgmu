@@ -5,7 +5,6 @@ import { BaseController } from './base.controller';
 import { Response } from 'express';
 import { AuthRequest } from 'common/auth.middleware';
 import httpStatus from 'http-status';
-import { SERVER_URL } from 'index';
 
 class UserController extends BaseController<IUser> {
   constructor() {

@@ -1,6 +1,7 @@
 import express from 'express';
 import { experienceController } from '../controllers/experience.controller';
 const router = express.Router();
+import saveFileMiddleware from 'common/file.middleware';
 import 'express-async-errors';
 
 /** [Swagger Tag]
@@ -171,6 +172,6 @@ router.get('', experienceController.getAll.bind(experienceController));
  *                 message:
  *                   type: string
  */
-router.post('', experienceController.post.bind(experienceController));
+router.post('', saveFileMiddleware.single('experienceImage'), experienceController.post.bind(experienceController));
 
 export default router;

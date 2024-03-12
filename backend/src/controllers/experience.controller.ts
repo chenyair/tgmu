@@ -7,6 +7,13 @@ class ExperienceController extends BaseController<IExperience> {
   constructor() {
     super(ExperienceModel);
   }
+  async post(req: Request, res: Response) {
+    const body = req.body as IExperience;
+    if (req.file?.path) {
+      body.imgUrl = req.file.path;
+    }
+    return super.post(req, res);
+  }
 
   async getAll(
     req: Request<

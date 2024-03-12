@@ -54,7 +54,7 @@ declare namespace sharedTypes {
     totalPages: number;
   }
 
-  type NewExperience = Pick<IExperience, 'userId' | 'title' | 'description'> & {'imgUrl': File};
+  type NewExperience = Pick<IExperience, 'userId' | 'title' | 'description'> & {'experienceImage': File};
 
   interface IComment {
     userId: string;
