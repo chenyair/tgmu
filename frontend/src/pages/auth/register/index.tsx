@@ -4,14 +4,16 @@ import { writeTokens } from '@/utils/local-storage';
 import { useForm } from '@tanstack/react-form';
 import { useNavigate } from '@tanstack/react-router';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
-import React from 'react';
+import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { IUserDetails } from 'shared-types';
 import FormInput from '@/components/form-input';
+import { isEmail, isEmpty } from 'validator';
 
 const RegisterPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [errorOccurred, setErrorOccurred] = useState(false);
 
   const registerForm = useForm({
     defaultValues: {
@@ -24,18 +26,56 @@ const RegisterPage: React.FC = () => {
       imgUrl: '',
     },
     onSubmit: async ({ value }) => {
-      const { email, password, birthdate, firstName, lastName, imgUrl } = value;
-      const tokens = await authenticationService.register({ firstName, lastName, email, password, birthdate, imgUrl });
-      writeTokens(tokens, false);
+      try {
+        setErrorOccurred(false);
+        const { email, password, birthdate, firstName, lastName, imgUrl } = value;
+        const tokens = await authenticationService.register({
+          firstName,
+          lastName,
+          email,
+          password,
+          birthdate,
+          imgUrl,
+        });
+        writeTokens(tokens, false);
 
-      flushSync(() => {
-        const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
-        auth.setUser(payload);
-      });
+        flushSync(() => {
+          const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
+          auth.setUser(payload);
+        });
 
-      navigate({ to: '/' });
+        navigate({ to: '/' });
+      } catch {
+        setErrorOccurred(true);
+      }
+    },
+    validators: {
+      onSubmit({ value }) {
+        // All fields are required besides imgUrl
+        const requiredFields = Object.keys(value).filter((key) => key !== 'imgUrl') as Array<keyof typeof value>;
+        if (
+          validateEmail(value.email) ||
+          !validatePasswordsMatch(value.retypePassword) ||
+          !validateName(value.firstName) ||
+          !validateName(value.lastName) ||
+          requiredFields.some((field) => isEmpty(value[field].toString()))
+        )
+          return 'Missing or invalid values';
+      },
     },
   });
+
+  const validateEmail = (email: string) => !isEmpty(email) && isEmail(email);
+
+  const validatePasswordsMatch = (retypePassword: string) => {
+    const password = registerForm.getFieldValue('password');
+    if (retypePassword.length > 0) {
+      return password === retypePassword;
+    }
+    return true;
+  };
+
+  const validateName = (name: string) => !isEmpty(name) && /^[a-zA-Z]+$/.test(name);
 
   const openLoginPage = () => {
     navigate({ to: '/login', search: { redirect: '/' } });
@@ -56,8 +96,10 @@ const RegisterPage: React.FC = () => {
           name="email"
           children={(field) => (
             <FormInput
-              title="Email Adress"
+              title="Email Address"
+              validate={validateEmail}
               type="text"
+              valid={!errorOccurred}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -70,6 +112,7 @@ const RegisterPage: React.FC = () => {
             <FormInput
               title="Password"
               type="password"
+              valid={!errorOccurred}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -82,6 +125,8 @@ const RegisterPage: React.FC = () => {
             <FormInput
               title="Retype Password"
               type="password"
+              validate={validatePasswordsMatch}
+              valid={!errorOccurred}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -94,6 +139,7 @@ const RegisterPage: React.FC = () => {
             <FormInput
               title="First Name"
               type="text"
+              validate={validateName}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -107,6 +153,7 @@ const RegisterPage: React.FC = () => {
               title="Last Name"
               type="text"
               name={field.name}
+              validate={validateName}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -134,6 +181,14 @@ const RegisterPage: React.FC = () => {
               Click here to login!
             </span>
           </div>
+        </div>
+        <div>
+          {errorOccurred && (
+            <div className="alert alert-danger text-center" style={{ position: 'absolute' }}>
+              <div>Invalid information</div>
+              <div>Please try again with a different email</div>
+            </div>
+          )}
         </div>
       </form>
     </registerForm.Provider>

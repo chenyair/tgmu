@@ -11,6 +11,7 @@ import { IUserDetails } from 'shared-types';
 import { useState } from 'react';
 import { authenticationService } from '@/services/auth-service';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { isEmpty } from 'validator';
 
 const Divider: React.FC = () => {
   return (
@@ -76,11 +77,21 @@ const ProfilePage: React.FC = () => {
         setLoadingStatus(false);
       }
     },
+    validators: {
+      onSubmit({ value }) {
+        if (!validateName(value.firstName) || !validateName(value.lastName)) return 'invalid values';
+      },
+    },
   });
 
   const logout = () => {
     clearTokens();
     navigate({ to: '/login', search: { redirect: '/' } });
+  };
+
+  const validateName = (name: string) => {
+    const valid = !isEmpty(name) && /^[a-zA-Z]+$/.test(name);
+    return valid;
   };
 
   return (
@@ -126,6 +137,7 @@ const ProfilePage: React.FC = () => {
               <FormInput
                 title="First Name"
                 type="text"
+                validate={validateName}
                 name={field.name}
                 inline={true}
                 value={field.state.value!}
@@ -141,6 +153,7 @@ const ProfilePage: React.FC = () => {
                 title="Last Name"
                 type="text"
                 name={field.name}
+                validate={validateName}
                 inline={true}
                 value={field.state.value!}
                 onChange={(e) => field.handleChange(e.target.value)}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import LoginFormInput from '@/components/form-input';
 import './index.scss';
 import GoogleSignInButton from '../components/google-sign-in-button';
@@ -10,29 +10,44 @@ import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { flushSync } from 'react-dom';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 import { IUserDetails } from 'shared-types';
+import { isEmail, isEmpty } from 'validator';
 
 const LoginPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const routeApi = getRouteApi('/_auth/login');
   const search = routeApi.useSearch();
+  const [errorOccurred, setErrorOccurred] = useState(false);
 
   const loginForm = useForm({
     defaultValues: { email: '', password: '', remember: false },
     onSubmit: async ({ value }) => {
-      const { email, password, remember } = value;
-      const tokens = await authenticationService.login(email, password);
+      try {
+        const { email, password, remember } = value;
+        const tokens = await authenticationService.login(email, password);
 
-      writeTokens(tokens, remember);
+        writeTokens(tokens, remember);
 
-      flushSync(() => {
-        const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
-        auth.setUser(payload);
-      });
+        flushSync(() => {
+          const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
+          auth.setUser(payload);
+        });
 
-      navigate({ to: search.redirect });
+        navigate({ to: search.redirect });
+      } catch {
+        setErrorOccurred(true);
+      }
+    },
+    validators: {
+      onSubmit({ value }) {
+        const requiredFields = ['email', 'password'] as Array<keyof typeof value>;
+        if (validateEmail(value.email) || requiredFields.some((field) => isEmpty(value[field].toString())))
+          return 'Missing or invalid values';
+      },
     },
   });
+
+  const validateEmail = (email: string) => !isEmpty(email) && isEmail(email);
 
   const openRegisterPage = () => {
     navigate({ to: '/register', search });
@@ -55,9 +70,11 @@ const LoginPage: React.FC = () => {
           name="email"
           children={(field) => (
             <LoginFormInput
-              title="Email Adress"
+              title="Email Address"
               type="text"
               name={field.name}
+              valid={!errorOccurred}
+              validate={validateEmail}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -70,6 +87,7 @@ const LoginPage: React.FC = () => {
               title="Password"
               type="password"
               name={field.name}
+              valid={!errorOccurred}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -104,6 +122,11 @@ const LoginPage: React.FC = () => {
               Create new one!
             </span>
           </div>
+          {errorOccurred && (
+            <div className="alert alert-danger" style={{ position: 'absolute', bottom: '3rem', left: '4rem' }}>
+              Invalid email or password
+            </div>
+          )}
         </div>
       </form>
     </loginForm.Provider>

@@ -1,14 +1,17 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { IUserFormInputProps } from '@/pages/profile';
 import * as Avatar from '@radix-ui/react-avatar';
 import './form-input.scss';
+import { isEmpty } from 'validator';
 
 interface BaseFormTextInputProps {
   title: string;
   name: string;
   type: 'text' | 'password' | 'date' | 'image';
+  valid?: boolean;
+  validate?: (value: string) => boolean;
   description?: string;
   inline?: boolean;
   disabled?: boolean;
@@ -41,9 +44,19 @@ const FormInput: React.FC<FormTextInputProps> = ({
   name,
   value,
   description,
+  validate: validateFunc,
   inline = false,
+  valid = true,
   disabled = false,
 }: FormTextInputProps) => {
+  const [isValid, setIsValid] = useState(true);
+
+  const validate = (inputValue: string) => {
+    const empty = isEmpty(inputValue);
+    const validateFuncRes = validateFunc ? validateFunc(inputValue) : true;
+    setIsValid(valid && !empty && validateFuncRes);
+  };
+
   return (
     <div className={inline ? 'd-flex flex-row justify-content-between' : ''} style={inline ? { maxHeight: '2em' } : {}}>
       <label htmlFor={name} className="form-label fw-bold tgmu-form-label">
@@ -89,9 +102,10 @@ const FormInput: React.FC<FormTextInputProps> = ({
         // Text input
         <input
           type={type}
+          onBlur={(e) => validate(e.target.value)}
           id={title}
           name={name}
-          className="form-control form-control-md form-input tgmu-form-input"
+          className={`${!isValid ? 'is-invalid' : ''} form-control form-control-md form-input tgmu-form-input`}
           disabled={disabled}
           value={value ?? ''}
           onChange={onChange}
