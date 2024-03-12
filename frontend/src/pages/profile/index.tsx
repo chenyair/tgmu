@@ -34,7 +34,7 @@ export interface IUserFormInputProps extends Omit<IUserDetails, '_id'> {
 const ProfilePage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setLoadingStatus] = useState<boolean>(false);
+  const [isLoading, setLoadingStatus] = useState<boolean>(true);
   const [updateStatus, setUpdatedStatus] = useState<boolean | undefined>(undefined);
 
   const user = auth.user!;
@@ -217,7 +217,7 @@ const ProfilePage: React.FC = () => {
               </button>
             </div>
             <div style={{ paddingLeft: '2rem', alignSelf: 'center', paddingTop: '0.8em' }}>
-              <Loader color="#fff" visible={isLoading} height="2rem" width="2rem" />
+              <Loader color="#fffcf2" visible={isLoading} height="2rem" width="2rem" />
               {(() => {
                 if (updateStatus === undefined) return '';
                 if (updateStatus) return 'Profile Updated Successully';
