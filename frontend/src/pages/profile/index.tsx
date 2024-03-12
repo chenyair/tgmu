@@ -11,6 +11,7 @@ import { IUserDetails } from 'shared-types';
 import { useState } from 'react';
 import { authenticationService } from '@/services/auth-service';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { isEmpty } from 'validator';
 
 const Divider: React.FC = () => {
   return (
@@ -36,6 +37,8 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, setLoadingStatus] = useState<boolean>(false);
   const [updateStatus, setUpdatedStatus] = useState<boolean | undefined>(undefined);
+  const [isFirstNameValid, setFirstNameValid] = useState(true);
+  const [isLastNameValid, setLastNameValid] = useState(true);
 
   const user = auth.user!;
 
@@ -76,11 +79,22 @@ const ProfilePage: React.FC = () => {
         setLoadingStatus(false);
       }
     },
+    validators: {
+      onSubmit() {
+        if (!isFirstNameValid || !isLastNameValid) return 'invalid values';
+      },
+    },
   });
 
   const logout = () => {
     clearTokens();
     navigate({ to: '/login', search: { redirect: '/' } });
+  };
+
+  const validateName = (validSetFunc: typeof setFirstNameValid) => (name: string) => {
+    const valid = !isEmpty(name) && /^[a-zA-Z]+$/.test(name);
+    validSetFunc(valid);
+    return valid;
   };
 
   return (
@@ -126,6 +140,7 @@ const ProfilePage: React.FC = () => {
               <FormInput
                 title="First Name"
                 type="text"
+                validate={validateName(setFirstNameValid)}
                 name={field.name}
                 inline={true}
                 value={field.state.value!}
@@ -141,6 +156,7 @@ const ProfilePage: React.FC = () => {
                 title="Last Name"
                 type="text"
                 name={field.name}
+                validate={validateName(setLastNameValid)}
                 inline={true}
                 value={field.state.value!}
                 onChange={(e) => field.handleChange(e.target.value)}
