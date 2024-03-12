@@ -30,9 +30,9 @@ const initApp = async (): Promise<Express> => {
 
   app.use('/auth', authRoute);
 
-  app.use(authMiddleware);
-  app.use('/users', userRoute);
-  app.use('/movies', movieRoute);
+  app.use('/users', authMiddleware, userRoute);
+  app.use('/movies', authMiddleware, movieRoute);
+  app.use('/public', express.static('public'));
 
   logger.debug('calling init DB');
   await initDB();
