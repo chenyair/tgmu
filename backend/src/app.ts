@@ -6,7 +6,9 @@ import cors from 'cors';
 import authRoute from 'routes/auth.route';
 import userRoute from 'routes/user.route';
 import movieRoute from 'routes/movie.route';
+import experienceRoute from 'routes/experience.route';
 import authMiddleware from 'common/auth.middleware';
+import cors from 'cors';
 
 const logger = createLogger('Express');
 
@@ -33,6 +35,7 @@ const initApp = async (): Promise<Express> => {
 
   app.use('/users', authMiddleware, userRoute);
   app.use('/movies', authMiddleware, movieRoute);
+  app.use('/experiences', authMiddleware, experienceRoute);
   app.use('/public', express.static('public'));
 
   logger.debug('calling init DB');
