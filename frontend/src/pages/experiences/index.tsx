@@ -4,6 +4,7 @@ import ExperiencesList from './components/experiences-list';
 import { debounce } from 'lodash';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ThreeDots } from 'react-loader-spinner';
+import { Outlet } from '@tanstack/react-router';
 
 const ExperiencesPage: React.FC = () => {
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useInfiniteQuery({
@@ -51,6 +52,7 @@ const ExperiencesPage: React.FC = () => {
           <ThreeDots color="#fffcf2" height={'5em'} width={'5em'} />
         </div>
       )}
+      <Outlet />
     </div>
   );
 };
