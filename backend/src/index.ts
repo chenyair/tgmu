@@ -6,12 +6,16 @@ import https from 'https';
 import fs from 'fs';
 
 const logger = createLogger('Express');
-const ENV = process.env.NODE_ENV!;
+const { NODE_ENV: ENV, LISTEN_ADDRESS, PORT } = process.env as Record<string, string>;
+
+const SERVER_PROTOCOL = ENV === 'production' ? 'https' : 'http';
+
+export const SERVER_URL = `${SERVER_PROTOCOL}://${LISTEN_ADDRESS}:${PORT}`;
 
 initApp().then((app: Express) => {
   logger.debug(`Running in ${ENV}`);
 
-  const port = process.env.PORT || 8000;
+  const port = PORT || 8000;
   if (ENV !== 'production') {
     http.createServer(app).listen(port);
   } else {

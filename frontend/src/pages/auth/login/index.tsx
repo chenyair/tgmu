@@ -1,5 +1,5 @@
 import React from 'react';
-import LoginFormInput from '../components/auth-form-input';
+import LoginFormInput from '@/components/form-input';
 import './index.scss';
 import GoogleSignInButton from '../components/google-sign-in-button';
 import { useForm } from '@tanstack/react-form';

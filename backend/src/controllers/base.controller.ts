@@ -10,7 +10,7 @@ export class BaseController<ModelType> {
   private loggerPrefix: string;
 
   constructor(public model: Model<ModelType>) {
-    this.loggerPrefix = `${model.name} (${model.db.name}.${model.collection.name}):`; // Ex. User (tgmu.users): ...
+    this.loggerPrefix = `model ${model.collection.name}:`;
   }
 
   private debug(...msg: string[]) {
@@ -29,36 +29,43 @@ export class BaseController<ModelType> {
     const query = this.sanitizeObject(req.query);
     this.debug(`Get`);
     const docs = await this.model.find(query);
-    res.status(httpStatus.OK).send(docs);
+    return res.status(httpStatus.OK).send(docs);
   }
 
   async getById(req: Request, res: Response) {
     const { id } = req.params;
     this.debug(`Get by id ${id}`);
     const docs = await this.model.findById(id);
-    res.status(httpStatus.OK).send(docs);
+    return res.status(httpStatus.OK).send(docs);
   }
 
   async post(req: Request, res: Response) {
     this.debug(`Creating`); // Not logging body for security (passwords, private information etc...)
     const obj = await this.model.create(this.sanitizeObject(req.body));
     this.debug(`Created ${obj._id}`);
-    res.status(httpStatus.CREATED).send(obj);
+    return res.status(httpStatus.CREATED).send(obj);
   }
 
   async putById(req: Request, res: Response) {
     const { id } = req.params;
     this.debug(`Updating ${id}`);
-    const updatePayload = this.sanitizeObject(req.body, '_id');
-    const doc = await this.model.findByIdAndUpdate(id, updatePayload, { new: true }); // Update and return new object
-    res.status(httpStatus.CREATED).send(doc);
+    const updatePayload: Partial<ModelType> = this.sanitizeObject(req.body, '_id');
+    const doc = await this.model.findById(id);
+
+    // Set the new values with this syntax to use `save` (for pre-save middleware)
+    Object.keys(updatePayload).forEach((key) => {
+      doc?.set(key, updatePayload[key as keyof ModelType]);
+    });
+
+    await doc?.save();
+    return res.status(httpStatus.CREATED).send(doc);
   }
 
   async deleteById(req: Request, res: Response) {
     const { id } = req.params;
     this.debug(`Delete by id ${id}`);
     const doc = await this.model.findByIdAndDelete(id);
-    res.status(httpStatus.CREATED).send(doc);
+    return res.status(httpStatus.CREATED).send(doc);
   }
 }
 
