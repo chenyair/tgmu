@@ -1,11 +1,12 @@
 import { Express } from 'express';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
-import createLogger from './utils/logger';
+import createLogger from 'utils/logger';
 import initApp from 'app';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
+import errorMiddleware from 'common/error.middleware';
 
 const logger = createLogger('Express');
 const ENV = process.env.NODE_ENV!;
@@ -39,6 +40,8 @@ initApp().then((app: Express) => {
   const specs = swaggerJsDoc(swaggerOptions);
   app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
   logger.debug('Successfully Initialized Swagger at /docs');
+
+  app.use(errorMiddleware);
 
   const port = process.env.PORT || 8000;
   logger.debug(`The Ger Movie Universe API is running on port ${port}`);
