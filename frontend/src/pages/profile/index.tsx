@@ -34,7 +34,7 @@ export interface IUserFormInputProps extends Omit<IUserDetails, '_id'> {
 const ProfilePage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setLoadingStatus] = useState<boolean>(true);
+  const [isLoading, setLoadingStatus] = useState<boolean>(false);
   const [updateStatus, setUpdatedStatus] = useState<boolean | undefined>(undefined);
 
   const user = auth.user!;
