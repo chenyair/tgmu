@@ -6,7 +6,7 @@ import './index.scss';
 import { flushSync } from 'react-dom';
 import { clearTokens } from '@/utils/local-storage';
 import { useNavigate } from '@tanstack/react-router';
-import { IUserUpdatePayload } from 'shared-types';
+import { IUserDetails } from 'shared-types';
 import { useState } from 'react';
 
 const Divider: React.FC = () => {
@@ -17,6 +17,17 @@ const Divider: React.FC = () => {
   );
 };
 
+export interface IUserFormInputProps extends Omit<IUserDetails, '_id'> {
+  image: {
+    file: File | null;
+    currImgUrl: string | undefined;
+  };
+  changePassword: {
+    currentPassword: string;
+    newPassword: string;
+  };
+}
+
 const ProfilePage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
@@ -24,7 +35,7 @@ const ProfilePage: React.FC = () => {
 
   const user = auth.user!;
 
-  const userDetailsForm = useForm<IUserUpdatePayload>({
+  const userDetailsForm = useForm<IUserFormInputProps>({
     defaultValues: {
       ...user,
       image: {

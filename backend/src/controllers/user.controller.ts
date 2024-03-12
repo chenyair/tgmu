@@ -5,6 +5,7 @@ import { BaseController } from './base.controller';
 import { Response } from 'express';
 import { AuthRequest } from 'common/auth.middleware';
 import httpStatus from 'http-status';
+import { SERVER_URL } from 'index';
 
 class UserController extends BaseController<IUser> {
   constructor() {
@@ -18,24 +19,24 @@ class UserController extends BaseController<IUser> {
     const body = req.body as IUserUpdatePayload;
 
     // Check for password change
-    if (body.changePassword?.currentPassword && body.changePassword?.newPassword) {
+    if (body.currentPassword && body.newPassword) {
       const userDB = await UserModel.findById(req.user._id).select('+password');
       if (userDB === null) {
         return res.status(httpStatus.UNAUTHORIZED).send('invalid credentials');
       }
 
-      const match = await bcrypt.compare(body.changePassword.currentPassword, userDB!.password || '');
+      const match = await bcrypt.compare(body.currentPassword, userDB!.password || '');
       if (!match) {
         return res.status(httpStatus.UNAUTHORIZED).send('invalid credentials');
       }
 
-      req.body.password = body.changePassword.newPassword;
+      req.body.password = body.newPassword;
     }
 
-    if (body.image?.file) {
-      // TODO: Save image to disk. add express static file serving
-      // TODO: set imageUrl to the static file path
+    if (req.file?.path) {
+      req.body.imgUrl = `${SERVER_URL}/${req.file.path}`;
     }
+
     return super.putById(req, res);
   }
 

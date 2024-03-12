@@ -1,10 +1,9 @@
 import React, { ChangeEvent } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { IUserFormInputProps } from '@/pages/profile';
 import * as Avatar from '@radix-ui/react-avatar';
-
 import './form-input.scss';
-import { IUserUpdatePayload } from 'shared-types';
 
 interface BaseFormTextInputProps {
   title: string;
@@ -29,7 +28,7 @@ interface StringValueProps {
 
 interface ImageValueProps {
   type: 'image';
-  value: IUserUpdatePayload['image'];
+  value: IUserFormInputProps['image'];
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -81,6 +80,7 @@ const FormInput: React.FC<FormTextInputProps> = ({
             style={{ marginLeft: '8%' }}
             type="file"
             id="formFile"
+            onChange={onChange}
           ></input>
         </div>
       ) : (

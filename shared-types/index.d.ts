@@ -34,14 +34,9 @@ declare namespace sharedTypes {
   export type IUserDetails = Pick<IUser, '_id' | 'birthdate' | 'email' | 'firstName' | 'lastName' | 'imgUrl'>;
 
   export interface IUserUpdatePayload extends Partial<Omit<IUserDetails, 'imgUrl' | '_id'>> {
-    image: {
-      file: File | null;
-      currImgUrl?: string;
-    };
-    changePassword?: {
-      currentPassword: string;
-      newPassword: string;
-    };
+    imageFile: File | null;
+    currentPassword: string;
+    newPassword: string;
   }
 }
 

@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import UserController from '../controllers/user.controller';
+import saveFileMiddleware from 'common/file.middleware';
 
 /** [Swagger Tag]
  * @swagger
@@ -19,7 +20,7 @@ import UserController from '../controllers/user.controller';
  *         - email
  *         - firstName
  *         - lastName
- *         - age
+ *         - birthdate
  *         - imgUrl
  *       properties:
  *         email:
@@ -42,7 +43,7 @@ import UserController from '../controllers/user.controller';
  *         email: 'bob@gmail.com'
  *         firstName: 'bob'
  *         lastName: 'thebuilder'
- *         age: 80
+ *         birthdate: 2022-01-01
  *         imgUrl: 'www.images.com/bob/the/builder.png'
  */
 
@@ -122,47 +123,26 @@ router.get('/:id', UserController.getById.bind(UserController));
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 description: The user's email
- *               firstName:
- *                 type: string
- *                 description: The user's first name
- *               lastName:
- *                 type: string
- *                 description: The user's last name
- *               birthdate:
- *                 type: date
- *                 description: The user's age
- *                 min: 0
- *               changePassword:
- *                 type: object
+ *             allOf:
+ *               - $ref: '#/components/schemas/UserDetails'
+ *               - type: object
  *                 properties:
  *                   currentPassword:
  *                     type: string
  *                   newPassword:
  *                     type: string
- *               image:
- *                 type: object
- *                 properties:
- *                   file:
+ *                   imageFile:
  *                     type: file
  *                     description: The user's image file
- *                   currImgUrl:
- *                     type: string
- *             example:
- *               email: 'bob@gmail.com'
- *               firstName: 'bob'
- *               lastName: 'thebuilder'
- *               age: 80
- *               image:
- *                 file: <FileData>
- *                 currImgUrl: 'www.images.com/bob/the/builder.png'
- *               changePassword:
- *                 currentPassword: '123'
- *                 newPassword: '456'
+ *                 example:
+ *                   email: 'bob@gmail.com'
+ *                   firstName: 'bob'
+ *                   lastName: 'thebuilder'
+ *                   birthdate: 2022-01-0180
+ *                   imageFile: <FileData>
+ *                   imgUrl: 'www.images.com/bob/the/builder.png'
+ *                   currentPassword: '123'
+ *                   newPassword: '456'
  *     responses:
  *       OK:
  *         description: Updated user successfully. returns updated user
@@ -175,7 +155,7 @@ router.get('/:id', UserController.getById.bind(UserController));
  *       INTERNAL_SERVER_ERROR:
  *         description: Internal server error
  */
-router.put('/:id', UserController.putById.bind(UserController));
+router.put('/:id', saveFileMiddleware.single('imageFile'), UserController.putById.bind(UserController));
 
 /** [DELETE USER]
  * @swagger
