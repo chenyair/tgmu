@@ -8,13 +8,15 @@ import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { IUserDetails } from 'shared-types';
 import FormInput from '@/components/form-input';
-import { isEmpty } from 'validator';
+import { isEmail, isEmpty } from 'validator';
 
 const RegisterPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
+  const [isPasswordsMatch, setPasswordsMatch] = useState(true);
+  const [isFirstNameValid, setFirstNameValid] = useState(true);
+  const [isLastNameValid, setLastNameValid] = useState(true);
   const [errorOccurred, setErrorOccurred] = useState(false);
 
   const registerForm = useForm({
@@ -28,39 +30,74 @@ const RegisterPage: React.FC = () => {
       imgUrl: '',
     },
     onSubmit: async ({ value }) => {
-      const { email, password, birthdate, firstName, lastName, imgUrl } = value;
-      const tokens = await authenticationService.register({ firstName, lastName, email, password, birthdate, imgUrl });
-      writeTokens(tokens, false);
+      try {
+        setErrorOccurred(false);
+        const { email, password, birthdate, firstName, lastName, imgUrl } = value;
+        const tokens = await authenticationService.register({
+          firstName,
+          lastName,
+          email,
+          password,
+          birthdate,
+          imgUrl,
+        });
+        writeTokens(tokens, false);
 
-      flushSync(() => {
-        const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
-        auth.setUser(payload);
-      });
+        flushSync(() => {
+          const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
+          auth.setUser(payload);
+        });
 
-      navigate({ to: '/' });
+        navigate({ to: '/' });
+      } catch {
+        setErrorOccurred(true);
+      }
     },
     validators: {
       onSubmit({ value }) {
-        const email = isEmpty(value.email);
-        const password = isEmpty(value.password);
-        setEmailError(email);
-        setPasswordError(password);
-        if (email || password) return 'Email and password are required';
+        // All fields are required besides imgUrl
+        const requiredFields = Object.keys(value).filter((key) => key !== 'imgUrl') as Array<keyof typeof value>;
+        if (
+          emailError ||
+          !isPasswordsMatch ||
+          !isFirstNameValid ||
+          !isLastNameValid ||
+          requiredFields.some((field) => isEmpty(value[field].toString()))
+        )
+          return 'Missing or invalid values';
       },
     },
   });
+
+  const validateEmail = (email: string) => {
+    const emailValid = !isEmpty(email) && isEmail(email);
+    setEmailError(!emailValid);
+    return emailValid;
+  };
+
+  const validatePasswordsMatch = (retypePassword: string) => {
+    const password = registerForm.getFieldValue('password');
+    if (retypePassword.length > 0) {
+      setPasswordsMatch(retypePassword === retypePassword);
+      return password === retypePassword;
+    }
+    return true;
+  };
+
+  const validateName = (validSetFunc: typeof setFirstNameValid) => (name: string) => {
+    const valid = !isEmpty(name) && /^[a-zA-Z]+$/.test(name);
+    validSetFunc(valid);
+    return valid;
+  };
 
   const openLoginPage = () => {
     navigate({ to: '/login', search: { redirect: '/' } });
   };
 
-  const validateForm = () => {};
-
   return (
     <registerForm.Provider>
       <form
         className="d-flex gap-1 h-100 justify-content-center flex-column flex-wrap"
-        onBlur={validateForm}
         style={{ width: '85%' }}
         onSubmit={(e) => {
           e.preventDefault();
@@ -72,8 +109,10 @@ const RegisterPage: React.FC = () => {
           name="email"
           children={(field) => (
             <FormInput
-              title="Email Adress"
+              title="Email Address"
+              validate={validateEmail}
               type="text"
+              valid={!errorOccurred && !emailError}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -86,6 +125,7 @@ const RegisterPage: React.FC = () => {
             <FormInput
               title="Password"
               type="password"
+              valid={!errorOccurred}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -98,6 +138,8 @@ const RegisterPage: React.FC = () => {
             <FormInput
               title="Retype Password"
               type="password"
+              validate={validatePasswordsMatch}
+              valid={!errorOccurred && isPasswordsMatch}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -110,6 +152,7 @@ const RegisterPage: React.FC = () => {
             <FormInput
               title="First Name"
               type="text"
+              validate={validateName(setFirstNameValid)}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -123,6 +166,7 @@ const RegisterPage: React.FC = () => {
               title="Last Name"
               type="text"
               name={field.name}
+              validate={validateName(setLastNameValid)}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
@@ -150,6 +194,14 @@ const RegisterPage: React.FC = () => {
               Click here to login!
             </span>
           </div>
+        </div>
+        <div>
+          {errorOccurred && (
+            <div className="alert alert-danger text-center" style={{ position: 'absolute' }}>
+              <div>Invalid information</div>
+              <div>Please try again with a different email</div>
+            </div>
+          )}
         </div>
       </form>
     </registerForm.Provider>

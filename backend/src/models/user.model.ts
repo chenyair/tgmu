@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import mongoose, { CallbackError } from 'mongoose';
 import { validateAlphabet } from 'utils/validator';
 import { IUser, IUserDetails } from 'shared-types';
+import { isEmail } from 'validator';
 
 export const getUserDetails = ({ _id, email, firstName, lastName, birthdate, imgUrl }: IUser): IUserDetails => ({
   _id,
@@ -16,6 +17,7 @@ const userSchema = new mongoose.Schema<IUser>({
   email: {
     type: String,
     required: false,
+    validate: isEmail,
   },
   password: {
     type: String,
