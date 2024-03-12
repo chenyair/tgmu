@@ -48,6 +48,12 @@ declare namespace sharedTypes {
     updatedAt: Date;
   }
 
+  interface ExperienceGetAllResponse {
+    experiences: IExperience[];
+    currentPage: number;
+    totalPages: number;
+  }
+
   type NewExperience = Pick<IExperience, 'userId' | 'title' | 'description'> & {'imgUrl': File};
 
   interface IComment {
