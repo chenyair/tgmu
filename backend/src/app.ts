@@ -10,8 +10,8 @@ import authRoute from 'routes/auth.route';
 import userRoute from 'routes/user.route';
 import movieRoute from 'routes/movie.route';
 import authMiddleware from 'common/auth.middleware';
-import 'express-async-errors';
 import errorMiddleware from 'common/error.middleware';
+import 'express-async-errors';
 
 const logger = createLogger('Express');
 
