@@ -18,7 +18,6 @@ const LoginPage: React.FC = () => {
   const routeApi = getRouteApi('/_auth/login');
   const search = routeApi.useSearch();
   const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
   const [errorOccurred, setErrorOccurred] = useState(false);
 
   const loginForm = useForm({
@@ -42,22 +41,17 @@ const LoginPage: React.FC = () => {
     },
     validators: {
       onSubmit({ value }) {
-        const emailErr = isEmpty(value.email);
-        const passwordErr = isEmpty(value.password);
-        setEmailError(emailErr);
-        setPasswordError(passwordErr);
-        if (emailErr || passwordErr) return 'Email and password are required';
+        const requiredFields = ['email', 'password'] as Array<keyof typeof value>;
+        if (emailError || requiredFields.some((field) => isEmpty(value[field].toString())))
+          return 'Missing or invalid values';
       },
     },
   });
 
   const validateEmail = () => {
     const email = loginForm.getFieldValue('email');
-    if (!isEmpty(email) && !isEmail(email)) {
-      setEmailError(true);
-      return 'Invalid email';
-    }
-    setEmailError(false);
+    const emailValid = !isEmpty(email) && isEmail(email);
+    setEmailError(!emailValid);
   };
 
   const openRegisterPage = () => {
@@ -70,7 +64,6 @@ const LoginPage: React.FC = () => {
         className="d-flex gap-3 h-100 justify-content-center flex-column flex-wrap"
         style={{ width: '85%' }}
         onBlur={(e) => {
-          console.log(e);
           e.preventDefault();
           e.stopPropagation();
           void validateEmail();
@@ -103,7 +96,7 @@ const LoginPage: React.FC = () => {
               title="Password"
               type="password"
               name={field.name}
-              valid={!errorOccurred && !passwordError}
+              valid={!errorOccurred}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
