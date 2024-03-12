@@ -4,14 +4,18 @@ import { writeTokens } from '@/utils/local-storage';
 import { useForm } from '@tanstack/react-form';
 import { useNavigate } from '@tanstack/react-router';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
-import React from 'react';
+import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { IUserDetails } from 'shared-types';
 import FormInput from '@/components/form-input';
+import { isEmpty } from 'validator';
 
 const RegisterPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [errorOccurred, setErrorOccurred] = useState(false);
 
   const registerForm = useForm({
     defaultValues: {
@@ -35,16 +39,28 @@ const RegisterPage: React.FC = () => {
 
       navigate({ to: '/' });
     },
+    validators: {
+      onSubmit({ value }) {
+        const email = isEmpty(value.email);
+        const password = isEmpty(value.password);
+        setEmailError(email);
+        setPasswordError(password);
+        if (email || password) return 'Email and password are required';
+      },
+    },
   });
 
   const openLoginPage = () => {
     navigate({ to: '/login', search: { redirect: '/' } });
   };
 
+  const validateForm = () => {};
+
   return (
     <registerForm.Provider>
       <form
         className="d-flex gap-1 h-100 justify-content-center flex-column flex-wrap"
+        onBlur={validateForm}
         style={{ width: '85%' }}
         onSubmit={(e) => {
           e.preventDefault();

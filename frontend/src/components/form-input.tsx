@@ -9,6 +9,7 @@ interface BaseFormTextInputProps {
   title: string;
   name: string;
   type: 'text' | 'password' | 'date' | 'image';
+  valid?: boolean;
   description?: string;
   inline?: boolean;
   disabled?: boolean;
@@ -41,6 +42,7 @@ const FormInput: React.FC<FormTextInputProps> = ({
   name,
   value,
   description,
+  valid = true,
   inline = false,
   disabled = false,
 }: FormTextInputProps) => {
@@ -91,7 +93,7 @@ const FormInput: React.FC<FormTextInputProps> = ({
           type={type}
           id={title}
           name={name}
-          className="form-control form-control-md form-input tgmu-form-input"
+          className={`${valid ? '' : 'is-invalid'} form-control form-control-md form-input tgmu-form-input`}
           disabled={disabled}
           value={value ?? ''}
           onChange={onChange}
