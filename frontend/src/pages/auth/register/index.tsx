@@ -54,7 +54,7 @@ const RegisterPage: React.FC = () => {
         // All fields are required besides imgUrl
         const requiredFields = Object.keys(value).filter((key) => key !== 'imgUrl') as Array<keyof typeof value>;
         if (
-          validateEmail(value.email) ||
+          !validateEmail(value.email) ||
           !validatePasswordsMatch(value.retypePassword) ||
           !validateName(value.firstName) ||
           !validateName(value.lastName) ||

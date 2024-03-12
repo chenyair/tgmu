@@ -41,7 +41,7 @@ const LoginPage: React.FC = () => {
     validators: {
       onSubmit({ value }) {
         const requiredFields = ['email', 'password'] as Array<keyof typeof value>;
-        if (validateEmail(value.email) || requiredFields.some((field) => isEmpty(value[field].toString())))
+        if (!validateEmail(value.email) || requiredFields.some((field) => isEmpty(value[field].toString())))
           return 'Missing or invalid values';
       },
     },
