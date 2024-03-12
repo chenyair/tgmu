@@ -69,13 +69,15 @@ const FormInput: React.FC<FormTextInputProps> = ({
             <Avatar.Image
               className="AvatarImage"
               src={
-                value.currImgUrl ||
-                'https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80'
+                value.file
+                  ? URL.createObjectURL(value.file)
+                  : value.currImgUrl ||
+                    'https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80'
               }
             />
           </Avatar.Root>
           <input
-            accept=".png,.jpg,.jpeg"
+            accept=".png,.jpg,.jpeg,.webp"
             className="form-control flex-row w-50"
             style={{ marginLeft: '8%' }}
             type="file"

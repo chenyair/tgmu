@@ -1,13 +1,16 @@
 import { useAuth } from '@/helpers/auth.context';
 import { usersService } from '@/services/user-service';
 import { useForm } from '@tanstack/react-form';
+import { TailSpin as Loader } from 'react-loader-spinner';
 import FormInput from '@/components/form-input';
 import './index.scss';
 import { flushSync } from 'react-dom';
-import { clearTokens } from '@/utils/local-storage';
+import { clearTokens, writeTokens } from '@/utils/local-storage';
 import { useNavigate } from '@tanstack/react-router';
 import { IUserDetails } from 'shared-types';
 import { useState } from 'react';
+import { authenticationService } from '@/services/auth-service';
+import { JwtPayload, jwtDecode } from 'jwt-decode';
 
 const Divider: React.FC = () => {
   return (
@@ -31,6 +34,7 @@ export interface IUserFormInputProps extends Omit<IUserDetails, '_id'> {
 const ProfilePage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [isLoading, setLoadingStatus] = useState<boolean>(false);
   const [updateStatus, setUpdatedStatus] = useState<boolean | undefined>(undefined);
 
   const user = auth.user!;
@@ -50,15 +54,26 @@ const ProfilePage: React.FC = () => {
 
     onSubmit: async ({ value }) => {
       try {
-        const updatedUser = await usersService.updateById(user._id!, value);
+        setUpdatedStatus(undefined);
+        setLoadingStatus(true);
+        await usersService.updateById(user._id!, value);
+        const refreshToken = sessionStorage.getItem('refreshToken')!;
+        const tokens = await authenticationService.refreshAccessToken(refreshToken);
         setUpdatedStatus(true);
 
+        // Check if theres a refresh token in local storage which means the user wants to be remembered
+        const remember = !!localStorage.getItem('refreshToken');
+        writeTokens(tokens, remember);
+
         flushSync(() => {
-          auth.setUser(updatedUser);
+          const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken);
+          auth.setUser(payload);
         });
       } catch (err) {
         setUpdatedStatus(false);
         console.error(err);
+      } finally {
+        setLoadingStatus(false);
       }
     },
   });
@@ -190,7 +205,7 @@ const ProfilePage: React.FC = () => {
             )}
           />
           <Divider />
-          <div className="d-flex">
+          <div className="d-flex align-items-center">
             <div>
               <button type="submit" className="btn btn-success w-10">
                 Update profile
@@ -201,8 +216,22 @@ const ProfilePage: React.FC = () => {
                 Logout
               </button>
             </div>
+            <div style={{ paddingLeft: '2rem', alignSelf: 'center', paddingTop: '0.8em' }}>
+              <Loader color="#fff" visible={isLoading} height="2rem" width="2rem" />
+              {(() => {
+                if (updateStatus === undefined) return '';
+                if (updateStatus) return 'Profile Updated Successully';
+
+                const isUpdatingPassword =
+                  userDetailsForm.getFieldValue('changePassword.currentPassword') &&
+                  userDetailsForm.getFieldValue('changePassword.newPassword');
+
+                if (isUpdatingPassword) return 'Failed to update, Please validate the password you entered';
+
+                return 'Failed To Update Profile, Please try again later';
+              })()}
+            </div>
           </div>
-          <div>{updateStatus ?? 'none'}</div>
         </form>
       </userDetailsForm.Provider>
     </div>
