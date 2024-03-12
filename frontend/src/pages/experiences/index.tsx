@@ -19,7 +19,6 @@ const ExperiencesPage: React.FC = () => {
   });
 
   const handleNextPage = () => {
-    console.log('fetching');
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
