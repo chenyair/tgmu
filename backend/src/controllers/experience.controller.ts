@@ -1,4 +1,4 @@
-import { IExperience } from 'shared-types';
+import { ExperienceGetAllResponse, IExperience } from 'shared-types';
 import { BaseController } from './base.controller';
 import ExperienceModel from '../models/experience.model';
 import { Request, Response } from 'express';
@@ -9,13 +9,26 @@ class ExperienceController extends BaseController<IExperience> {
   }
 
   async getAll(
-    req: Request<Record<string, never>, Record<string, never>, Record<string, never>, { page: number; limit: number }>,
+    req: Request<
+      Record<string, never>,
+      ExperienceGetAllResponse,
+      Record<string, never>,
+      { page: string; limit: string }
+    >,
     res: Response
   ) {
-    const { page = 1, limit = 10 } = req.query;
-    const skip = (page - 1) * limit;
-    const docs = await this.model.find().sort().skip(skip).limit(limit);
-    res.status(200).send(docs);
+    const { page = '1', limit = '10' } = req.query;
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+
+    const skip = (pageNumber - 1) * limitNumber;
+    const totalDocsCount = await this.model.countDocuments();
+    const currentPageDocs = await this.model.find().sort({ createdAt: -1 }).skip(skip).limit(limitNumber);
+    res.status(200).send({
+      experiences: currentPageDocs,
+      totalPages: Math.ceil(totalDocsCount / limitNumber),
+      currentPage: pageNumber,
+    });
   }
 }
 

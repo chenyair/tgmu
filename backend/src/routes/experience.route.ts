@@ -110,7 +110,13 @@ const router = express.Router();
  *         schema:
  *           type: integer
  *           default: 1
- *         description: Page number to retrieve experiences. Each page contains 10 experiences.
+ *         description: Page number to retrieve experiences. Each page contains 10 experiences by default.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The amount of experiences per page
  *     responses:
  *       200:
  *         description: Success
