@@ -7,7 +7,7 @@ import { JwtPayload, jwtDecode } from 'jwt-decode';
 import React from 'react';
 import { flushSync } from 'react-dom';
 import { IUserDetails } from 'shared-types';
-import AuthFormInput from '../components/auth-form-input';
+import FormInput from '@/components/form-input';
 
 const RegisterPage: React.FC = () => {
   const auth = useAuth();
@@ -55,7 +55,7 @@ const RegisterPage: React.FC = () => {
         <registerForm.Field
           name="email"
           children={(field) => (
-            <AuthFormInput
+            <FormInput
               title="Email Adress"
               type="text"
               name={field.name}
@@ -67,7 +67,7 @@ const RegisterPage: React.FC = () => {
         <registerForm.Field
           name="password"
           children={(field) => (
-            <AuthFormInput
+            <FormInput
               title="Password"
               type="password"
               name={field.name}
@@ -79,7 +79,7 @@ const RegisterPage: React.FC = () => {
         <registerForm.Field
           name="retypePassword"
           children={(field) => (
-            <AuthFormInput
+            <FormInput
               title="Retype Password"
               type="password"
               name={field.name}
@@ -91,7 +91,7 @@ const RegisterPage: React.FC = () => {
         <registerForm.Field
           name="firstName"
           children={(field) => (
-            <AuthFormInput
+            <FormInput
               title="First Name"
               type="text"
               name={field.name}
@@ -103,7 +103,7 @@ const RegisterPage: React.FC = () => {
         <registerForm.Field
           name="lastName"
           children={(field) => (
-            <AuthFormInput
+            <FormInput
               title="Last Name"
               type="text"
               name={field.name}
@@ -115,7 +115,7 @@ const RegisterPage: React.FC = () => {
         <registerForm.Field
           name="birthdate"
           children={(field) => (
-            <AuthFormInput
+            <FormInput
               title="Birthdate"
               type="date"
               name={field.name}

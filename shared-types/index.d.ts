@@ -60,6 +60,12 @@ declare namespace sharedTypes {
     userId: string;
     text: string;
   }
+
+  export interface IUserUpdatePayload extends Partial<Omit<IUserDetails, 'imgUrl' | '_id'>> {
+    imageFile: File | null;
+    currentPassword: string;
+    newPassword: string;
+  }
 }
 
 export = sharedTypes;
