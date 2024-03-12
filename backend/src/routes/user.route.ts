@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import UserController from '../controllers/user.controller';
+import UserController from 'controllers/user.controller';
 
 /** [Swagger Tag]
  * @swagger

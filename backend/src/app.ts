@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
 import express, { Request, Response, Express } from 'express';
 import dotenv from 'dotenv';
-import createLogger from './utils/logger';
+import createLogger from 'utils/logger';
 import initDB from 'db';
 import authRoute from 'routes/auth.route';
 import userRoute from 'routes/user.route';
