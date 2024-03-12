@@ -37,8 +37,6 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, setLoadingStatus] = useState<boolean>(false);
   const [updateStatus, setUpdatedStatus] = useState<boolean | undefined>(undefined);
-  const [isFirstNameValid, setFirstNameValid] = useState(true);
-  const [isLastNameValid, setLastNameValid] = useState(true);
 
   const user = auth.user!;
 
@@ -80,8 +78,8 @@ const ProfilePage: React.FC = () => {
       }
     },
     validators: {
-      onSubmit() {
-        if (!isFirstNameValid || !isLastNameValid) return 'invalid values';
+      onSubmit({ value }) {
+        if (!validateName(value.firstName) || !validateName(value.lastName)) return 'invalid values';
       },
     },
   });
@@ -91,9 +89,8 @@ const ProfilePage: React.FC = () => {
     navigate({ to: '/login', search: { redirect: '/' } });
   };
 
-  const validateName = (validSetFunc: typeof setFirstNameValid) => (name: string) => {
+  const validateName = (name: string) => {
     const valid = !isEmpty(name) && /^[a-zA-Z]+$/.test(name);
-    validSetFunc(valid);
     return valid;
   };
 
@@ -140,7 +137,7 @@ const ProfilePage: React.FC = () => {
               <FormInput
                 title="First Name"
                 type="text"
-                validate={validateName(setFirstNameValid)}
+                validate={validateName}
                 name={field.name}
                 inline={true}
                 value={field.state.value!}
@@ -156,7 +153,7 @@ const ProfilePage: React.FC = () => {
                 title="Last Name"
                 type="text"
                 name={field.name}
-                validate={validateName(setLastNameValid)}
+                validate={validateName}
                 inline={true}
                 value={field.state.value!}
                 onChange={(e) => field.handleChange(e.target.value)}

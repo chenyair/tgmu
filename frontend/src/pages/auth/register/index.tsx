@@ -13,10 +13,6 @@ import { isEmail, isEmpty } from 'validator';
 const RegisterPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
-  const [emailError, setEmailError] = useState(false);
-  const [isPasswordsMatch, setPasswordsMatch] = useState(true);
-  const [isFirstNameValid, setFirstNameValid] = useState(true);
-  const [isLastNameValid, setLastNameValid] = useState(true);
   const [errorOccurred, setErrorOccurred] = useState(false);
 
   const registerForm = useForm({
@@ -58,10 +54,10 @@ const RegisterPage: React.FC = () => {
         // All fields are required besides imgUrl
         const requiredFields = Object.keys(value).filter((key) => key !== 'imgUrl') as Array<keyof typeof value>;
         if (
-          emailError ||
-          !isPasswordsMatch ||
-          !isFirstNameValid ||
-          !isLastNameValid ||
+          validateEmail(value.email) ||
+          !validatePasswordsMatch(value.retypePassword) ||
+          !validateName(value.firstName) ||
+          !validateName(value.lastName) ||
           requiredFields.some((field) => isEmpty(value[field].toString()))
         )
           return 'Missing or invalid values';
@@ -69,26 +65,17 @@ const RegisterPage: React.FC = () => {
     },
   });
 
-  const validateEmail = (email: string) => {
-    const emailValid = !isEmpty(email) && isEmail(email);
-    setEmailError(!emailValid);
-    return emailValid;
-  };
+  const validateEmail = (email: string) => !isEmpty(email) && isEmail(email);
 
   const validatePasswordsMatch = (retypePassword: string) => {
     const password = registerForm.getFieldValue('password');
     if (retypePassword.length > 0) {
-      setPasswordsMatch(retypePassword === retypePassword);
       return password === retypePassword;
     }
     return true;
   };
 
-  const validateName = (validSetFunc: typeof setFirstNameValid) => (name: string) => {
-    const valid = !isEmpty(name) && /^[a-zA-Z]+$/.test(name);
-    validSetFunc(valid);
-    return valid;
-  };
+  const validateName = (name: string) => !isEmpty(name) && /^[a-zA-Z]+$/.test(name);
 
   const openLoginPage = () => {
     navigate({ to: '/login', search: { redirect: '/' } });
@@ -112,7 +99,7 @@ const RegisterPage: React.FC = () => {
               title="Email Address"
               validate={validateEmail}
               type="text"
-              valid={!errorOccurred && !emailError}
+              valid={!errorOccurred}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -139,7 +126,7 @@ const RegisterPage: React.FC = () => {
               title="Retype Password"
               type="password"
               validate={validatePasswordsMatch}
-              valid={!errorOccurred && isPasswordsMatch}
+              valid={!errorOccurred}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -152,7 +139,7 @@ const RegisterPage: React.FC = () => {
             <FormInput
               title="First Name"
               type="text"
-              validate={validateName(setFirstNameValid)}
+              validate={validateName}
               name={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -166,7 +153,7 @@ const RegisterPage: React.FC = () => {
               title="Last Name"
               type="text"
               name={field.name}
-              validate={validateName(setLastNameValid)}
+              validate={validateName}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />

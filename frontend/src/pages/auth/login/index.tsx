@@ -17,7 +17,6 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const routeApi = getRouteApi('/_auth/login');
   const search = routeApi.useSearch();
-  const [emailError, setEmailError] = useState(false);
   const [errorOccurred, setErrorOccurred] = useState(false);
 
   const loginForm = useForm({
@@ -42,17 +41,13 @@ const LoginPage: React.FC = () => {
     validators: {
       onSubmit({ value }) {
         const requiredFields = ['email', 'password'] as Array<keyof typeof value>;
-        if (emailError || requiredFields.some((field) => isEmpty(value[field].toString())))
+        if (validateEmail(value.email) || requiredFields.some((field) => isEmpty(value[field].toString())))
           return 'Missing or invalid values';
       },
     },
   });
 
-  const validateEmail = () => {
-    const email = loginForm.getFieldValue('email');
-    const emailValid = !isEmpty(email) && isEmail(email);
-    setEmailError(!emailValid);
-  };
+  const validateEmail = (email: string) => !isEmpty(email) && isEmail(email);
 
   const openRegisterPage = () => {
     navigate({ to: '/register', search });
@@ -63,11 +58,6 @@ const LoginPage: React.FC = () => {
       <form
         className="d-flex gap-3 h-100 justify-content-center flex-column flex-wrap"
         style={{ width: '85%' }}
-        onBlur={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          void validateEmail();
-        }}
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -80,10 +70,11 @@ const LoginPage: React.FC = () => {
           name="email"
           children={(field) => (
             <LoginFormInput
-              title="Email Adress"
+              title="Email Address"
               type="text"
               name={field.name}
-              valid={!errorOccurred && !emailError}
+              valid={!errorOccurred}
+              validate={validateEmail}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
             />
