@@ -10,6 +10,7 @@ interface BaseFormTextInputProps {
   title: string;
   name: string;
   type: 'text' | 'password' | 'date' | 'image';
+  valid?: boolean;
   validate?: (value: string) => boolean;
   description?: string;
   inline?: boolean;
@@ -45,14 +46,15 @@ const FormInput: React.FC<FormTextInputProps> = ({
   description,
   validate: validateFunc,
   inline = false,
+  valid = true,
   disabled = false,
 }: FormTextInputProps) => {
-  const [valid, setValid] = useState(true);
+  const [isValid, setIsValid] = useState(true);
 
   const validate = (inputValue: string) => {
     const empty = isEmpty(inputValue);
     const validateFuncRes = validateFunc ? validateFunc(inputValue) : true;
-    setValid(!empty && validateFuncRes);
+    setIsValid(valid && !empty && validateFuncRes);
   };
 
   return (
@@ -103,7 +105,7 @@ const FormInput: React.FC<FormTextInputProps> = ({
           onBlur={(e) => validate(e.target.value)}
           id={title}
           name={name}
-          className={`${!valid ? 'is-invalid' : ''} form-control form-control-md form-input tgmu-form-input`}
+          className={`${!isValid ? 'is-invalid' : ''} form-control form-control-md form-input tgmu-form-input`}
           disabled={disabled}
           value={value ?? ''}
           onChange={onChange}
