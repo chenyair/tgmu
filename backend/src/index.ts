@@ -8,7 +8,11 @@ import https from 'https';
 import fs from 'fs';
 
 const logger = createLogger('Express');
-const ENV = process.env.NODE_ENV!;
+const { NODE_ENV: ENV, LISTEN_ADDRESS, PORT } = process.env as Record<string, string>;
+
+const SERVER_PROTOCOL = ENV === 'production' ? 'https' : 'http';
+
+export const SERVER_URL = `${SERVER_PROTOCOL}://${LISTEN_ADDRESS}:${PORT}`;
 
 initApp().then((app: Express) => {
   logger.debug(`Running in ${ENV}`);
@@ -21,7 +25,7 @@ initApp().then((app: Express) => {
         version: '1.0.0',
         description: 'TGMU REST API for serving any app related requests including JWT authentication',
       },
-      servers: [{ url: 'http://localhost:8000' }],
+      servers: [{ url: SERVER_URL }],
       components: {
         securitySchemes: {
           bearerAuth: {
@@ -40,8 +44,8 @@ initApp().then((app: Express) => {
   app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
   logger.debug('Successfully Initialized Swagger at /docs');
 
-  const port = process.env.PORT || 8000;
-  logger.debug(`The Ger Movie Universe API is running on port ${port}`);
+  const port = PORT || 8000;
+  logger.debug(`The Ger Movie Universe API is running on ${SERVER_URL}`);
   if (ENV !== 'production') {
     http.createServer(app).listen(port);
   } else {

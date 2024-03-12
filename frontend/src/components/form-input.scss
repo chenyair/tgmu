@@ -1,0 +1,26 @@
+@import 'bootstrap/scss/bootstrap';
+@import '@/utils/app-colors';
+
+.react-datepicker-wrapper {
+  width: 100%;
+  input {
+    @extend .form-control;
+    @extend .form-control-lg;
+    background-color: $app-light;
+  }
+}
+
+.form-input {
+  background-color: $app-light;
+}
+.tgmu-form-input:disabled {
+  background-color: rgb(135, 135, 135);
+  border-color: rgb(135, 135, 135);
+}
+.tgmu-form-input:disabled:hover {
+  cursor: not-allowed;
+}
+.tgmu-form-text {
+  font-size: 0.9rem;
+  font-weight: normal;
+}
