@@ -1,5 +1,6 @@
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import express, { Request, Response, Express } from 'express';
 import dotenv from 'dotenv';
@@ -10,6 +11,7 @@ import userRoute from 'routes/user.route';
 import movieRoute from 'routes/movie.route';
 import authMiddleware from 'common/auth.middleware';
 import 'express-async-errors';
+import errorMiddleware from 'common/error.middleware';
 
 const logger = createLogger('Express');
 
@@ -17,6 +19,7 @@ dotenv.config();
 
 const initApp = async (): Promise<Express> => {
   const app: Express = express();
+  app.use(cors());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use((req, res, next) => {
@@ -64,6 +67,8 @@ const initApp = async (): Promise<Express> => {
   app.use(authMiddleware);
   app.use('/users', userRoute);
   app.use('/movies', movieRoute);
+
+  app.use(errorMiddleware);
 
   logger.debug('calling init DB');
   await initDB();
