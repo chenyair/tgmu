@@ -14,8 +14,4 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// This is a function that receives a path in the "req.body" object,
-// writes it to disk and saves the path in the "req.file" object
-const saveFileMiddleware = upload.single;
-
-export default saveFileMiddleware;
+export default upload;
