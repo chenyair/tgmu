@@ -4,17 +4,8 @@ import mongoose from 'mongoose';
 import { Express } from 'express';
 import fs from 'fs';
 import httpStatus from 'http-status';
-import { IUser } from 'shared-types';
 
 let app: Express;
-const user: Partial<IUser> = {
-  email: 'testUser@test.com',
-  password: '1234567890',
-  firstName: 'bob',
-  lastName: 'thebuilder',
-  birthdate: new Date('2000-09-19'),
-  imgUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Bob_the_builder.jpg/220px-Bob_the_builder.jpg',
-};
 
 beforeAll(async () => {
   app = await initApp();
