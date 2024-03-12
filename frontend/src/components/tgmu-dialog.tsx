@@ -1,6 +1,7 @@
 import React from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import './tgmu-dialog.scss';
+import { IoMdClose } from 'react-icons/io';
 
 interface TgmuDialogProps {
   open: boolean;
@@ -16,6 +17,11 @@ const TgmuDialog: React.FC<TgmuDialogProps> = ({ open, onOpenChange, children, s
         <Dialog.Overlay className="DialogOverlay" />
         <Dialog.Content className="DialogContent" style={style}>
           {children}
+          <Dialog.Close>
+            <button className="IconButton" aria-label="Close">
+              <IoMdClose />
+            </button>
+          </Dialog.Close>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
