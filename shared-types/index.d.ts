@@ -1,3 +1,5 @@
+import {Types} from 'mongoose';
+
 declare namespace sharedTypes {
   interface UserTokens {
     accessToken: string;
@@ -36,13 +38,17 @@ declare namespace sharedTypes {
 
   interface IExperience {
     _id?: string;
+    userId: Types.ObjectId;
     title: string;
     description: string;
     comments: IComment[];
     likedUsers: string[];
     imgUrl: string;
     createdAt: Date;
+    updatedAt: Date;
   }
+
+  type NewExperience = Pick<IExperience, 'userId' | 'title' | 'description'> & {'imgUrl': File};
 
   interface IComment {
     userId: string;

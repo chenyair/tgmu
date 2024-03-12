@@ -9,11 +9,10 @@ class ExperienceController extends BaseController<IExperience> {
   }
 
   async getAll(
-    req: Request<Record<string, never>, Record<string, never>, Record<string, never>, { page: number }>,
+    req: Request<Record<string, never>, Record<string, never>, Record<string, never>, { page: number; limit: number }>,
     res: Response
   ) {
-    const { page = 1 } = req.query;
-    const limit = 10;
+    const { page = 1, limit = 10 } = req.query;
     const skip = (page - 1) * limit;
     const docs = await this.model.find().sort().skip(skip).limit(limit);
     res.status(200).send(docs);

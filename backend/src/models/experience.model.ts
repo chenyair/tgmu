@@ -14,6 +14,10 @@ const CommentSchema = new mongoose.Schema<IComment>({
 
 const ExperienceSchema = new mongoose.Schema<IExperience>(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
     title: {
       type: String,
       required: true,
