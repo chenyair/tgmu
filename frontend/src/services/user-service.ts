@@ -13,7 +13,7 @@ export class UsersService {
   async updateById(id: string, updatePayload: IUserFormInputProps, signal?: AbortSignal) {
     const formData = new FormData();
 
-    // parse nester updatePayload to a flat formData
+    // parse nested updatePayload to a flat formData
     for (const _key in updatePayload) {
       const typedKey = _key as keyof IUserFormInputProps;
       if (typedKey === 'image') {

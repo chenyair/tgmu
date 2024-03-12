@@ -27,14 +27,14 @@ class UserController extends BaseController<IUser> {
 
       const match = await bcrypt.compare(body.currentPassword, userDB!.password || '');
       if (!match) {
-        return res.status(httpStatus.UNAUTHORIZED).send('invalid credentials');
+        return res.status(httpStatus.BAD_REQUEST).send('passwords does not match');
       }
 
       req.body.password = body.newPassword;
     }
 
     if (req.file?.path) {
-      req.body.imgUrl = `${SERVER_URL}/${req.file.path}`;
+      req.body.imgUrl = req.file.path;
     }
 
     return super.putById(req, res);

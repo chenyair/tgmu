@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
-import { movieController } from '../controllers/movie.controller';
+import { movieController } from 'controllers/movie.controller';
+import 'express-async-errors';
 
 /** [Swagger Tag]
  * @swagger

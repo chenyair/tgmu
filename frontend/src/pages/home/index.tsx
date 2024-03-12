@@ -7,6 +7,7 @@ const HomePage: React.FC = () => {
   const { data, error, status } = useQuery({
     queryKey: ['popularMovies'],
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
     queryFn: ({ signal }) => movieService.getPopular(signal),
   });
 

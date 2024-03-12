@@ -1,7 +1,8 @@
 import express from 'express';
 const router = express.Router();
-import UserController from '../controllers/user.controller';
+import UserController from 'controllers/user.controller';
 import saveFileMiddleware from 'common/file.middleware';
+import 'express-async-errors';
 
 /** [Swagger Tag]
  * @swagger

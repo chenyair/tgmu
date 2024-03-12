@@ -3,7 +3,7 @@
       "module": "node16",
       "lib": [
           "es6",
-          "dom"
+          "DOM"
       ],
       "noImplicitAny": true,
       "noImplicitThis": true,
