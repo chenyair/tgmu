@@ -55,15 +55,3 @@ const TgmuScrollArea: React.FC<TgmuScrollAreaProps> = ({
 };
 
 export default TgmuScrollArea;
-// <div
-//   className="d-grid gap-3"
-//   style={{ alignItems: 'center', gridTemplateColumns: 'repeat(auto-fill, minmax(154px, 1fr))', width: '95%' }}
-// >
-//   {movies.map((movie) => (
-//     <MovieCard
-//       key={movie.id}
-//       posterImageUrl={`https://image.tmdb.org/t/p/w154${movie.poster_path}`}
-//       title={movie.title}
-//     />
-//   ))}
-// </div>
