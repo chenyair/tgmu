@@ -1,12 +1,6 @@
 @import '@radix-ui/colors/black-alpha.css';
 @import '@radix-ui/colors/mauve.css';
 @import '@/utils/app-colors.scss';
-/* reset */
-button,
-fieldset,
-input {
-  all: unset;
-}
 
 .DialogOverlay {
   background-color: var(--black-a9);
