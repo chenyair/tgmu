@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import LoginFormInput from '@/components/form-input';
 import './index.scss';
 import { useForm } from '@tanstack/react-form';
+import { Puff as Loader } from 'react-loader-spinner';
 import { authenticationService } from '@/services/auth-service';
 import { writeTokens } from '@/utils/local-storage';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/helpers/auth.context';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { flushSync } from 'react-dom';
@@ -17,12 +18,16 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const routeApi = getRouteApi('/_auth/login');
   const search = routeApi.useSearch();
+
   const [errorOccurred, setErrorOccurred] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loginForm = useForm({
     defaultValues: { email: '', password: '', remember: false },
     onSubmit: async ({ value }) => {
       try {
+        setErrorOccurred(false);
+        setIsLoading(true);
         const { email, password, remember } = value;
         const tokens = await authenticationService.login(email, password);
 
@@ -36,6 +41,8 @@ const LoginPage: React.FC = () => {
         navigate({ to: search.redirect });
       } catch {
         setErrorOccurred(true);
+      } finally {
+        setIsLoading(false);
       }
     },
     validators: {
@@ -145,6 +152,9 @@ const LoginPage: React.FC = () => {
             <span className="no-account-text create-new-account-text" onClick={openRegisterPage}>
               Create new one!
             </span>
+          </div>
+          <div style={{ position: 'absolute', bottom: '3em', left: '8em' }}>
+            <Loader visible={isLoading} width="6rem" height="6rem"></Loader>
           </div>
           {errorOccurred && (
             <div className="alert alert-danger" style={{ position: 'absolute', bottom: '3rem', left: '4rem' }}>
