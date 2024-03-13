@@ -3,11 +3,18 @@ import { useNavigate } from '@tanstack/react-router';
 import TgmuDialog from '@/components/tgmu-dialog';
 import { useForm } from '@tanstack/react-form';
 import ImageEditor from './components/image-editor';
+import { Movie } from 'shared-types';
+import MoviePicker from './movie-picker';
 
 const NewExperienceDialog: React.FC = () => {
   const navigate = useNavigate();
-  const experienceForm = useForm<{ title: string; description: string; experienceImage: File | undefined }>({
-    defaultValues: { title: '', description: '', experienceImage: undefined },
+  const experienceForm = useForm<{
+    title: string;
+    description: string;
+    experienceImage: File | undefined;
+    movie: Movie | undefined;
+  }>({
+    defaultValues: { title: '', description: '', experienceImage: undefined, movie: undefined },
     onSubmit: async ({ value }) => {},
     validators: {
       onSubmit({ value }) {
@@ -38,6 +45,8 @@ const NewExperienceDialog: React.FC = () => {
               <ImageEditor className="w-50" value={field.state.value} onChange={(file) => field.handleChange(file)} />
             )}
           />
+          // TODO: Implement field
+          <experienceForm.Field name="movie" children={(field) => <MoviePicker />} />
         </form>
       </experienceForm.Provider>
     </TgmuDialog>
