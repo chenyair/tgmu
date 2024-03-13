@@ -7,6 +7,7 @@ import { routeTree } from './routeTree.gen.ts';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { AuthProvider, useAuth } from './helpers/auth.context.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const queryClient = new QueryClient();
 
@@ -37,10 +38,12 @@ const App: React.FC = () => {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    </AuthProvider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <AuthProvider>
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   </QueryClientProvider>
 );
