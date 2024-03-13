@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import LoginFormInput from '@/components/form-input';
 import './index.scss';
-import GoogleSignInButton from '../components/google-sign-in-button';
 import { useForm } from '@tanstack/react-form';
 import { authenticationService } from '@/services/auth-service';
 import { writeTokens } from '@/utils/local-storage';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useAuth } from '@/helpers/auth.context';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { flushSync } from 'react-dom';
@@ -49,6 +49,23 @@ const LoginPage: React.FC = () => {
 
   const validateEmail = (email: string) => !isEmpty(email) && isEmail(email);
 
+  const handleGoogleSuccess = async (credential: string) => {
+    const tokens = await authenticationService.googleSignIn(credential);
+    writeTokens(tokens, loginForm.getFieldValue('remember'));
+
+    flushSync(() => {
+      const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
+      auth.setUser(payload);
+    });
+
+    navigate({ to: search.redirect });
+  };
+
+  const handleGoogleError = () => {
+    console.error('google login failed');
+    setErrorOccurred(true);
+  };
+
   const openRegisterPage = () => {
     navigate({ to: '/register', search });
   };
@@ -64,7 +81,14 @@ const LoginPage: React.FC = () => {
           void loginForm.handleSubmit();
         }}
       >
-        <GoogleSignInButton />
+        <div className="align-self-center">
+          <GoogleLogin
+            onSuccess={({ credential }) => handleGoogleSuccess(credential!)}
+            onError={handleGoogleError}
+            shape="circle"
+            useOneTap={true}
+          />
+        </div>
         <div className="align-self-center fw-semibold">- OR -</div>
         <loginForm.Field
           name="email"
