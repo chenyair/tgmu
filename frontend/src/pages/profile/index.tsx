@@ -85,6 +85,8 @@ const ProfilePage: React.FC = () => {
   });
 
   const logout = () => {
+    const refreshToken = sessionStorage.getItem('refreshToken')!;
+    authenticationService.logout(refreshToken);
     clearTokens();
     navigate({ to: '/login', search: { redirect: '/' } });
   };
