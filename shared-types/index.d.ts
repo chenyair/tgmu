@@ -27,7 +27,7 @@ declare namespace sharedTypes {
     overview: string;
     popularity: number;
     poster_path: string;
-    realease_date: string;
+    release_date: string;
     title: string;
     video: boolean;
     vote_average: number;

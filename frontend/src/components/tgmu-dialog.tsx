@@ -17,11 +17,9 @@ const TgmuDialog: React.FC<TgmuDialogProps> = ({ open, onOpenChange, children, s
         <Dialog.Overlay className="DialogOverlay" />
         <Dialog.Content className="DialogContent" style={style}>
           {children}
-          <Dialog.Close>
-            <button className="IconButton" aria-label="Close">
-              <IoMdClose />
-            </button>
-          </Dialog.Close>
+          <button className="IconButton" aria-label="Close" onClick={onOpenChange}>
+            <IoMdClose />
+          </button>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

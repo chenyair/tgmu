@@ -2,6 +2,7 @@ import TgmuScrollArea from '@/components/tgmu-scroll-area';
 import { IExperience } from 'shared-types';
 import ExperienceCard from './experience-card';
 import { useAuth } from '@/helpers/auth.context';
+import { useNavigate } from '@tanstack/react-router';
 
 interface ExperiencesListProps {
   experiences: IExperience[];
@@ -10,9 +11,12 @@ interface ExperiencesListProps {
 
 const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScrollBottom }: ExperiencesListProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // TODO: Implement functions
-  const handleLikeClicked = (experience: IExperience) => {};
+  const handleLikeClicked = (experience: IExperience) => {
+    navigate({ to: '/experiences/new' });
+  };
   const handleCommentClicked = (experience: IExperience) => {};
 
   return (

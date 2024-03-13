@@ -4,7 +4,7 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  color: var(--violet-11);
+  color: var(--violet-9);
 }
 
 .image-editor-image {
@@ -12,5 +12,12 @@
   height: 100%;
   object-fit: cover;
   border-radius: 10px;
-  border: 2px solid var(--violet-11);
+  border: 2px solid var(--violet-9);
+  cursor: pointer;
+  background-color: var(--violet-1);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  color: var(--violet-9);
 }

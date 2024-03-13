@@ -4,7 +4,8 @@ import TgmuDialog from '@/components/tgmu-dialog';
 import { useForm } from '@tanstack/react-form';
 import ImageEditor from './components/image-editor';
 import { Movie } from 'shared-types';
-import MoviePicker from './movie-picker';
+import MoviePicker from './components/movie-picker';
+import './index.scss';
 
 const NewExperienceDialog: React.FC = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const NewExperienceDialog: React.FC = () => {
   };
 
   return (
-    <TgmuDialog open={true} onOpenChange={handleClose} style={{ height: '50%', width: '70%' }}>
+    <TgmuDialog open={true} onOpenChange={handleClose} style={{ height: '60%', width: '70%' }}>
       <experienceForm.Provider>
         <form
           className="d-flex gap-3 h-100 flex-wrap"
@@ -42,11 +43,53 @@ const NewExperienceDialog: React.FC = () => {
           <experienceForm.Field
             name="experienceImage"
             children={(field) => (
-              <ImageEditor className="w-50" value={field.state.value} onChange={(file) => field.handleChange(file)} />
+              <ImageEditor
+                style={{ width: '40%' }}
+                value={field.state.value}
+                onChange={(file) => field.handleChange(file)}
+              />
             )}
           />
-          // TODO: Implement field
-          <experienceForm.Field name="movie" children={(field) => <MoviePicker />} />
+          <experienceForm.Field
+            name="movie"
+            children={(field) => (
+              <MoviePicker
+                onSelect={(movie) => {
+                  field.handleChange(movie);
+                }}
+                posterWidth="185px"
+                posterHeight="278px"
+                value={field.state.value}
+                style={{ width: '30%' }}
+              />
+            )}
+          />
+          <div className="d-flex flex-column h-100 gap-2">
+            <experienceForm.Field
+              name="title"
+              children={(field) => (
+                <input
+                  type="text"
+                  className="dialog-input"
+                  value={field.state.value}
+                  style={{ width: '100%' }}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              )}
+            />
+
+            <experienceForm.Field
+              name="description"
+              children={(field) => (
+                <textarea
+                  value={field.state.value}
+                  className="dialog-input"
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  style={{ height: '100%', width: '100%' }}
+                />
+              )}
+            />
+          </div>
         </form>
       </experienceForm.Provider>
     </TgmuDialog>
