@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './main.scss';
 import 'bootstrap/dist/css/bootstrap.css';
 
-import { RotatingLines } from 'react-loader-spinner';
+import { Grid as Loader } from 'react-loader-spinner';
 import { routeTree } from './routeTree.gen.ts';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { AuthProvider, useAuth } from './helpers/auth.context.tsx';
@@ -30,12 +30,12 @@ declare module '@tanstack/react-router' {
 
 const App: React.FC = () => {
   const auth = useAuth();
-  return auth.refreshTokenStatus === 'pending' ? (
+  return true || auth.refreshTokenStatus === 'pending' ? (
     <div
       style={{ backgroundColor: '#242424', height: '100vh' }}
-      className="d-flex justify-content-center align-content-center"
+      className="d-flex justify-content-center align-items-center"
     >
-      <RotatingLines />
+      <Loader />
     </div>
   ) : (
     <RouterProvider router={router} context={{ auth }} />
