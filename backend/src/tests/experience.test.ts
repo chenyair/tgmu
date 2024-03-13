@@ -3,7 +3,7 @@ import initApp from 'app';
 import User from 'models/user.model';
 import { Express } from 'express';
 import httpStatus from 'http-status';
-import { IExperience, IUser, NewExperience } from 'shared-types';
+import { IExperience, IUser, MovieDetails, NewExperience } from 'shared-types';
 import request from 'supertest';
 import {Types} from 'mongoose'
 import path from 'path';
@@ -17,6 +17,12 @@ const user: Partial<IUser> = {
   lastName: 'test',
   birthdate: new Date('2000-09-19'),
   imgUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Bob_the_builder.jpg/220px-Bob_the_builder.jpg',
+};
+
+const movieDetails: MovieDetails = {
+  id: 1,
+  title: 'test movie',
+  poster_path: 'test path',
 };
 
 const firstNewExperience: Partial<NewExperience> & {description: string, title: string} = {
@@ -56,14 +62,17 @@ afterAll(async () => {
 
 describe('Experience tests', () => {
   test('Create new experience', async () => {
-    firstNewExperience.userId = userId;
+    firstNewExperience.userId = userId.toString();
     const response = await request(app)
       .post('/experiences')
       .set('Authorization', `Bearer ${accessToken}`)
       .attach('experienceImage', path.resolve(__dirname, 'test.png'))
       .field('title', firstNewExperience.title)
       .field('description', firstNewExperience.description)
-      .field('userId', firstNewExperience.userId.toString());
+      .field('userId', firstNewExperience.userId)
+      .field('movieId', movieDetails.id)
+      .field('moviePosterPath', movieDetails.poster_path)
+      .field('movieTitle', movieDetails.title);
 
     expect(response.statusCode).toBe(httpStatus.CREATED);
     expect(response.body).toBeDefined();
@@ -76,6 +85,7 @@ describe('Experience tests', () => {
     expect(firstExperiece.imgUrl).toBeDefined();
     createdFiles = [...createdFiles, firstExperiece.imgUrl]
     expect(firstExperiece.userId).toBe(userId.toString());
+    expect(firstExperiece.movieDetails).toMatchObject(movieDetails);
   });
 
   test('Get all experiences first page', async () => {
@@ -92,14 +102,17 @@ describe('Experience tests', () => {
 
   test('Get all experiences second page', async () => {
     // Enter second experience to db
-    secondNewExperience.userId = userId;
+    secondNewExperience.userId = userId.toString();
     const secondExperienceResponse = await request(app)
       .post('/experiences')
       .set('Authorization', `Bearer ${accessToken}`)
       .attach('experienceImage', path.resolve(__dirname, 'test.png'))
       .field('title', secondNewExperience.title)
       .field('description', secondNewExperience.description)
-      .field('userId', secondNewExperience.userId.toString());
+      .field('userId', secondNewExperience.userId.toString())
+      .field('movieId', movieDetails.id)
+      .field('moviePosterPath', movieDetails.poster_path)
+      .field('movieTitle', movieDetails.title);
 
     const secondExperience = secondExperienceResponse.body;
     createdFiles = [...createdFiles, secondExperience.imgUrl]

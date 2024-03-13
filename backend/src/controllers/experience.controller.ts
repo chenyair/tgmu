@@ -7,11 +7,21 @@ class ExperienceController extends BaseController<IExperience> {
   constructor() {
     super(ExperienceModel);
   }
+  
   async post(req: Request, res: Response) {
-    const body = req.body as IExperience;
+    const newBody = req.body as IExperience;
     if (req.file?.path) {
-      body.imgUrl = req.file.path;
+      newBody.imgUrl = req.file.path;
     }
+    
+    const { movieId, moviePosterPath, movieTitle } = req.body;
+    newBody.movieDetails = {
+      id: movieId,
+      poster_path: moviePosterPath,
+      title: movieTitle,
+    };
+
+    req.body = newBody;
     return super.post(req, res);
   }
 

@@ -1,4 +1,4 @@
-import {Types} from 'mongoose';
+import { Types } from 'mongoose';
 
 declare namespace sharedTypes {
   interface UserTokens {
@@ -36,6 +36,8 @@ declare namespace sharedTypes {
 
   export type IUserDetails = Pick<IUser, '_id' | 'birthdate' | 'email' | 'firstName' | 'lastName' | 'imgUrl'>;
 
+  type MovieDetails = Pick<Movie, 'id' | 'title' | 'poster_path'>
+
   interface IExperience {
     _id?: string;
     userId: Types.ObjectId;
@@ -44,9 +46,9 @@ declare namespace sharedTypes {
     comments: IComment[];
     likedUsers: string[];
     imgUrl: string;
-    movieId: number;
     createdAt: Date;
     updatedAt: Date;
+    movieDetails: MovieDetails;
   }
 
   interface ExperienceGetAllResponse {
@@ -55,7 +57,7 @@ declare namespace sharedTypes {
     totalPages: number;
   }
 
-  type NewExperience = Pick<IExperience, 'userId' | 'title' | 'description'> & {'experienceImage': File};
+  type NewExperience = Pick<IExperience, 'title' | 'description' | 'movieDetails'> & { experienceImage: File; userId: string };
 
   interface IComment {
     userId: string;
