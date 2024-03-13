@@ -13,7 +13,7 @@ import authMiddleware from 'common/auth.middleware';
 import errorMiddleware from 'common/error.middleware';
 import 'express-async-errors';
 
-const logger = createLogger('Express');
+const logger = createLogger('app');
 
 dotenv.config();
 
