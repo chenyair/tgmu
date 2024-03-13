@@ -18,6 +18,7 @@ import { Route as AuthenticatedProfileImport } from './routes/_authenticated/pro
 import { Route as AuthenticatedExperiencesImport } from './routes/_authenticated/experiences'
 import { Route as AuthRegisterImport } from './routes/_auth/register'
 import { Route as AuthLoginImport } from './routes/_auth/login'
+import { Route as AuthenticatedExperiencesNewImport } from './routes/_authenticated/experiences/new'
 
 // Create/Update Routes
 
@@ -56,6 +57,12 @@ const AuthLoginRoute = AuthLoginImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
+const AuthenticatedExperiencesNewRoute =
+  AuthenticatedExperiencesNewImport.update({
+    path: '/new',
+    getParentRoute: () => AuthenticatedExperiencesRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -88,6 +95,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/experiences/new': {
+      preLoaderRoute: typeof AuthenticatedExperiencesNewImport
+      parentRoute: typeof AuthenticatedExperiencesImport
+    }
   }
 }
 
@@ -96,7 +107,9 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   AuthRoute.addChildren([AuthLoginRoute, AuthRegisterRoute]),
   AuthenticatedRoute.addChildren([
-    AuthenticatedExperiencesRoute,
+    AuthenticatedExperiencesRoute.addChildren([
+      AuthenticatedExperiencesNewRoute,
+    ]),
     AuthenticatedProfileRoute,
     AuthenticatedIndexRoute,
   ]),
