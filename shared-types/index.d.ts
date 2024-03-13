@@ -44,6 +44,7 @@ declare namespace sharedTypes {
     comments: IComment[];
     likedUsers: string[];
     imgUrl: string;
+    movieId: number;
     createdAt: Date;
     updatedAt: Date;
   }
