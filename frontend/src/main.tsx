@@ -30,7 +30,7 @@ declare module '@tanstack/react-router' {
 
 const App: React.FC = () => {
   const auth = useAuth();
-  return true || auth.refreshTokenStatus === 'pending' ? (
+  return auth.refreshTokenStatus === 'pending' ? (
     <div
       style={{ backgroundColor: '#242424', height: '100vh' }}
       className="d-flex justify-content-center align-items-center"
