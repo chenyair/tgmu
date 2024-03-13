@@ -37,6 +37,18 @@ export class AuthenticationService {
       })
     ).data;
   }
+
+  async googleSignIn(credential: string): Promise<UserTokens> {
+    return (
+      await this.apiClient.post<UserTokens>(
+        '/google',
+        { credential: credential },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
+    ).data;
+  }
 }
 
 export const authenticationService = new AuthenticationService();
