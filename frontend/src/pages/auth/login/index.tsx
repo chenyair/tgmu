@@ -57,15 +57,23 @@ const LoginPage: React.FC = () => {
   const validateEmail = (email: string) => !isEmpty(email) && isEmail(email);
 
   const handleGoogleSuccess = async (credential: string) => {
-    const tokens = await authenticationService.googleSignIn(credential);
-    writeTokens(tokens, loginForm.getFieldValue('remember'));
+    try {
+      setErrorOccurred(false);
+      setIsLoading(true);
+      const tokens = await authenticationService.googleSignIn(credential);
+      writeTokens(tokens, loginForm.getFieldValue('remember'));
 
-    flushSync(() => {
-      const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
-      auth.setUser(payload);
-    });
+      flushSync(() => {
+        const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
+        auth.setUser(payload);
+      });
 
-    navigate({ to: search.redirect });
+      navigate({ to: search.redirect });
+    } catch {
+      setErrorOccurred(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleError = () => {
@@ -144,17 +152,20 @@ const LoginPage: React.FC = () => {
           )}
         />
         <div>
-          <button type="submit" className="btn btn-success w-100">
-            Log In
+          <button type="submit" className="btn btn-success w-100" style={{ minHeight: '2.2rem' }}>
+            {isLoading ? (
+              <div className="d-flex justify-content-center">
+                <Loader width="1.5rem" height="1.5rem"></Loader>
+              </div>
+            ) : (
+              'Log In'
+            )}
           </button>
           <div>
             <span className="no-account-text">Don't have an account? </span>
             <span className="no-account-text create-new-account-text" onClick={openRegisterPage}>
               Create new one!
             </span>
-          </div>
-          <div style={{ position: 'absolute', bottom: '3em', left: '8em' }}>
-            <Loader visible={isLoading} width="6rem" height="6rem"></Loader>
           </div>
           {errorOccurred && (
             <div className="alert alert-danger" style={{ position: 'absolute', bottom: '3rem', left: '4rem' }}>
