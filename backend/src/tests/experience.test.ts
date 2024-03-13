@@ -3,11 +3,11 @@ import initApp from 'app';
 import User from 'models/user.model';
 import { Express } from 'express';
 import httpStatus from 'http-status';
-import { IExperience, IUser, NewExperience } from 'shared-types';
+import { IComment, IExperience, IUser, NewExperience, PopulatedComment } from 'shared-types';
 import request from 'supertest';
-import {Types} from 'mongoose'
+import { Types } from 'mongoose';
 import path from 'path';
-import fs from 'fs'
+import fs from 'fs';
 
 let app: Express;
 const user: Partial<IUser> = {
@@ -19,21 +19,22 @@ const user: Partial<IUser> = {
   imgUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Bob_the_builder.jpg/220px-Bob_the_builder.jpg',
 };
 
-const firstNewExperience: Partial<NewExperience> & {description: string, title: string} = {
+const firstNewExperience: Partial<NewExperience> & { description: string; title: string } = {
   description: 'This is the first test experience',
   title: 'Test experience',
 };
 
-const secondNewExperience: Partial<NewExperience> & {description: string, title: string} = {
+const secondNewExperience: Partial<NewExperience> & { description: string; title: string } = {
   description: 'This is the second test experience',
   title: 'Test experience',
 };
+
+const commentText = `This is a unique test comment ${new Date().getTime()}`;
 
 let userId: Types.ObjectId;
 let accessToken: string;
 let firstExperiece: IExperience;
 let createdFiles: string[] = [];
-
 
 beforeAll(async () => {
   app = await initApp();
@@ -47,11 +48,13 @@ afterAll(async () => {
   await ExperienceModel.deleteMany({ userId });
 
   // Delete all created files
-  createdFiles.map((file) => path.resolve(__dirname, '../../', file)).forEach((filePath) => {
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-  });
+  createdFiles
+    .map((file) => path.resolve(__dirname, '../../', file))
+    .forEach((filePath) => {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    });
 }, 20000);
 
 describe('Experience tests', () => {
@@ -67,19 +70,21 @@ describe('Experience tests', () => {
 
     expect(response.statusCode).toBe(httpStatus.CREATED);
     expect(response.body).toBeDefined();
-    
+
     firstExperiece = response.body;
 
     expect(firstExperiece._id).toBeDefined();
     expect(firstExperiece.title).toBe(firstNewExperience.title);
     expect(firstExperiece.description).toBe(firstNewExperience.description);
     expect(firstExperiece.imgUrl).toBeDefined();
-    createdFiles = [...createdFiles, firstExperiece.imgUrl]
+    createdFiles = [...createdFiles, firstExperiece.imgUrl];
     expect(firstExperiece.userId).toBe(userId.toString());
   });
 
   test('Get all experiences first page', async () => {
-    const response = await request(app).get('/experiences?page=1&limit=1').set('Authorization', `Bearer ${accessToken}`);
+    const response = await request(app)
+      .get('/experiences?page=1&limit=1')
+      .set('Authorization', `Bearer ${accessToken}`);
     expect(response.statusCode).toBe(httpStatus.OK);
     expect(response.body).toBeDefined();
 
@@ -102,9 +107,11 @@ describe('Experience tests', () => {
       .field('userId', secondNewExperience.userId.toString());
 
     const secondExperience = secondExperienceResponse.body;
-    createdFiles = [...createdFiles, secondExperience.imgUrl]
+    createdFiles = [...createdFiles, secondExperience.imgUrl];
 
-    const secondPageResponse = await request(app).get('/experiences?page=2&limit=1').set('Authorization', `Bearer ${accessToken}`);
+    const secondPageResponse = await request(app)
+      .get('/experiences?page=2&limit=1')
+      .set('Authorization', `Bearer ${accessToken}`);
     expect(secondPageResponse.statusCode).toBe(httpStatus.OK);
     expect(secondPageResponse.body).toBeDefined();
 
@@ -112,11 +119,39 @@ describe('Experience tests', () => {
     expect(secondPageGetAll.currentPage).toBe(2);
     expect(secondPageGetAll.experiences).toBeDefined();
     expect(secondPageGetAll.experiences.length).toBe(1);
-    
+
     // The new experience should be in the first page cause its the newest so the preivous
     // experience should be the first in the second page
     expect(secondPageGetAll.experiences[0]._id).not.toBe(secondExperience._id);
-    expect(secondPageGetAll.experiences[0]).toMatchObject(firstExperiece); 
+    expect(secondPageGetAll.experiences[0]).toMatchObject(firstExperiece);
+  });
 
+  test('Add comment to experience', async () => {
+    const response = await request(app)
+      .post(`/experiences/${firstExperiece._id}/comments`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ text: commentText });
+    expect(response.statusCode).toBe(httpStatus.CREATED);
+    const createdComment = response.body.comments.find((comment: IComment) => comment.text === commentText)!;
+    expect(createdComment).toBeDefined();
+    expect(createdComment!.userId).toBe(userId.toString());
+  });
+
+  test('Get experience by id', async () => {
+    const response = await request(app)
+      .get(`/experiences/${firstExperiece._id}`)
+      .set('Authorization', `Bearer ${accessToken}`);
+    expect(response.statusCode).toBe(httpStatus.OK);
+    expect(response.body).toBeDefined();
+    expect(response.body._id).toMatch(firstExperiece._id!);
+
+    const matchComment: PopulatedComment = response.body.comments.find(
+      (comment: IComment) => comment.text === commentText
+    );
+    expect(matchComment).toBeDefined();
+    expect(matchComment!.userId._id).toBe(userId.toString());
+    expect(matchComment!.userId.imgUrl).toBe(user.imgUrl);
+    expect(matchComment!.userId.firstName).toBe(user.firstName);
+    expect(matchComment!.userId.lastName).toBe(user.lastName);
   });
 });

@@ -1,4 +1,4 @@
-import {Types} from 'mongoose';
+import { Types } from 'mongoose';
 
 declare namespace sharedTypes {
   interface UserTokens {
@@ -54,11 +54,21 @@ declare namespace sharedTypes {
     totalPages: number;
   }
 
-  type NewExperience = Pick<IExperience, 'userId' | 'title' | 'description'> & {'experienceImage': File};
+  type NewExperience = Pick<IExperience, 'userId' | 'title' | 'description'> & { experienceImage: File };
 
   interface IComment {
     userId: string;
     text: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
+  interface PopulatedComment extends Omit<IComment, 'userId'> {
+    userId: Pick<IUserDetails, '_id' | 'firstName' | 'lastName' | 'imgUrl'>;
+  }
+
+  interface ExperienceGetByIdResponse extends Omit<IExperience, 'comments'> {
+    comments: PopulatedComment[];
   }
 
   export interface IUserUpdatePayload extends Partial<Omit<IUserDetails, 'imgUrl' | '_id'>> {

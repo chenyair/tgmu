@@ -1,3 +1,4 @@
+import { AuthRequest } from 'common/auth.middleware';
 import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';
@@ -6,9 +7,16 @@ import createLogger from 'utils/logger';
 
 const logger = createLogger('auth middleware');
 
-export interface AuthRequest extends Request {
-  user?: IUserDetails;
+// Add user property to express request interface
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user?: IUserDetails;
+    }
+  }
 }
+export { Request as AuthRequest };
 
 const { JWT_SECRET } = process.env as Record<string, string>;
 

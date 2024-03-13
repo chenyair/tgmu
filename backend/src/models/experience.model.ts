@@ -1,16 +1,20 @@
 import mongoose from 'mongoose';
 import { IExperience, IComment } from 'shared-types';
 
-const CommentSchema = new mongoose.Schema<IComment>({
-  text: {
-    type: String,
-    required: true,
+const CommentSchema = new mongoose.Schema<IComment>(
+  {
+    text: {
+      type: String,
+      required: true,
+    },
+    userId: {
+      type: String,
+      required: true,
+      ref: 'User',
+    },
   },
-  userId: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamps: true }
+);
 
 const ExperienceSchema = new mongoose.Schema<IExperience>(
   {
