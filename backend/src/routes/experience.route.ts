@@ -97,7 +97,9 @@ import 'express-async-errors';
  *         userId: '90101234'
  *         title: 'Bob the builder experience'
  *         description: 'That was the best movie ever'
- *         comments: [{text: 'I agree', userId: '1234'}, {text: 'I disagree', userId: '5678'}]
+ *         comments: 
+ *           - {text: 'I agree', userId: '1234', createdAt: '2021-01-02T00:00:00.000Z', updatedAt: '2021-01-02T00:00:00.000Z'} 
+ *           - {text: 'I disagree', userId: '5678', createdAt: '2021-01-03T00:00:00.000Z', updatedAt: '2021-01-03T00:00:00.000Z'}
  *         likedUsers: ['1234']
  *         imgUrl: '/bob_the_builder.png'
  *         createdAt: '2021-01-01T00:00:00.000Z'
