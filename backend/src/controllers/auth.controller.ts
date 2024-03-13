@@ -52,6 +52,9 @@ export const googleSignIn = async (req: Request, res: Response) => {
       (await User.create({
         email,
         password: '0',
+        firstName: payload?.given_name,
+        lastName: payload?.family_name,
+        birthdate: new Date(),
         imgUrl: payload?.picture,
       }));
     const tokens = await createTokensForUser(user);

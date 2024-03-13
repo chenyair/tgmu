@@ -38,7 +38,7 @@ const App: React.FC = () => {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
-    <GoogleOAuthProvider clientId="860638363058-5iqacpso2vp44fib6o8tq7opdmkk1e7q.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <AuthProvider>
         <React.StrictMode>
           <App />
