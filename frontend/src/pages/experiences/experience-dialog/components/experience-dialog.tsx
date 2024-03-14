@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import TgmuDialog from '@/components/tgmu-dialog';
 import { useForm } from '@tanstack/react-form';
@@ -41,19 +41,25 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
     enabled: mode === 'edit',
   });
 
+  useEffect(() => {
+    if (status === 'success' && experience!.userId.toString() !== user?._id) {
+      navigate({ to: '/experiences' });
+    }
+  }, [experience?._id, user?._id, status])
+
   const formDefaultValues: ExperienceFormValues = experience
     ? {
-        title: experience.title,
-        description: experience.description,
-        experienceImage: undefined,
-        movie: experience.movieDetails as Movie,
-      }
+      title: experience.title,
+      description: experience.description,
+      experienceImage: undefined,
+      movie: experience.movieDetails as Movie,
+    }
     : {
-        title: '',
-        description: '',
-        experienceImage: undefined,
-        movie: undefined,
-      };
+      title: '',
+      description: '',
+      experienceImage: undefined,
+      movie: undefined,
+    };
 
   const experienceForm = useForm<ExperienceFormValues>({
     defaultValues: formDefaultValues,
