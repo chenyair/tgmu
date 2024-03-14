@@ -1,4 +1,4 @@
-import { ExperienceGetAllResponse, ExperienceGetByIdResponse, IExperience } from 'shared-types';
+import { ExperienceGetAllResponse, ExperienceGetByIdResponse, IExperience, NewExperience } from 'shared-types';
 import { createApiClient } from './api-client';
 import { AxiosInstance } from 'axios';
 
@@ -31,6 +31,29 @@ export class ExperienceService {
 
   async postComment(experienceId: string, text: string, signal?: AbortSignal): Promise<IExperience> {
     return (await this.apiClient.post<IExperience>(`/${experienceId}/comments`, { text }, { signal })).data;
+  }
+
+  async create(experience: NewExperience): Promise<IExperience> {
+    const formData = new FormData();
+
+    // parse nested experience to a flat formData
+    for (const _key in experience) {
+      const typedKey = _key as keyof NewExperience;
+      if (typedKey === 'movieDetails') {
+        const { id, poster_path, title } = experience[typedKey];
+        formData.set('movieId', id.toString());
+        formData.set('moviePosterPath', poster_path);
+        formData.set('movieTitle', title);
+      } else {
+        formData.set(typedKey, experience[typedKey] as string);
+      }
+    }
+
+    return (
+      await this.apiClient.post<IExperience>('', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+    ).data;
   }
 }
 

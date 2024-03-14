@@ -1,0 +1,25 @@
+@import '@radix-ui/colors/violet.css';
+
+.dialog-input {
+  all: unset;
+  color: var(--violet-9);
+  background-color: var(--violet-1);
+  border: var(--violet-9) 2px solid;
+  padding: 5px;
+  border-radius: 4px;
+
+  &::placeholder {
+    color: var(--violet-9);
+    opacity: 1; /* Firefox */
+  }
+
+  &:hover {
+    border: var(--violet-1) 2px solid;
+  }
+}
+
+.experience-form-title {
+  color: var(--violet-9);
+  font-weight: 700;
+  font-size: 20px;
+}

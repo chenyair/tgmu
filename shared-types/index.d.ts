@@ -27,7 +27,7 @@ declare namespace sharedTypes {
     overview: string;
     popularity: number;
     poster_path: string;
-    realease_date: string;
+    release_date: string;
     title: string;
     video: boolean;
     vote_average: number;
@@ -35,6 +35,8 @@ declare namespace sharedTypes {
   }
 
   export type IUserDetails = Pick<IUser, '_id' | 'birthdate' | 'email' | 'firstName' | 'lastName' | 'imgUrl'>;
+
+  type MovieDetails = Pick<Movie, 'id' | 'title' | 'poster_path'>;
 
   interface IExperience {
     _id?: string;
@@ -46,6 +48,7 @@ declare namespace sharedTypes {
     imgUrl: string;
     createdAt: Date;
     updatedAt: Date;
+    movieDetails: MovieDetails;
   }
 
   interface ExperienceGetAllResponse {
@@ -54,7 +57,10 @@ declare namespace sharedTypes {
     totalPages: number;
   }
 
-  type NewExperience = Pick<IExperience, 'userId' | 'title' | 'description'> & { experienceImage: File };
+  type NewExperience = Pick<IExperience, 'title' | 'description' | 'movieDetails'> & {
+    experienceImage: File;
+    userId: string;
+  };
 
   interface IComment {
     userId: string;

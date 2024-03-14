@@ -1,5 +1,5 @@
 import { Movie } from 'shared-types';
-import MovieCard from './movie-card';
+import MovieCard from '@/components/movie-card';
 import TgmuScrollArea from '@/components/tgmu-scroll-area';
 
 interface MoviesListProps {

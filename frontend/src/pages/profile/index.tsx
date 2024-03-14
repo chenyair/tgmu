@@ -28,7 +28,7 @@ export interface IUserFormInputProps extends Omit<IUserDetails, '_id'> {
 const ProfilePage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setLoadingStatus] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [updateStatus, setUpdatedStatus] = useState<boolean | undefined>(undefined);
 
   const user = auth.user!;
@@ -49,7 +49,7 @@ const ProfilePage: React.FC = () => {
     onSubmit: async ({ value }) => {
       try {
         setUpdatedStatus(undefined);
-        setLoadingStatus(true);
+        setIsLoading(true);
         await usersService.updateById(user._id!, value);
         const refreshToken = sessionStorage.getItem('refreshToken')!;
         const tokens = await authenticationService.refreshAccessToken(refreshToken);
@@ -67,7 +67,7 @@ const ProfilePage: React.FC = () => {
         setUpdatedStatus(false);
         console.error(err);
       } finally {
-        setLoadingStatus(false);
+        setIsLoading(false);
       }
     },
     validators: {
@@ -78,6 +78,8 @@ const ProfilePage: React.FC = () => {
   });
 
   const logout = () => {
+    const refreshToken = sessionStorage.getItem('refreshToken')!;
+    authenticationService.logout(refreshToken);
     clearTokens();
     navigate({ to: '/login', search: { redirect: '/' } });
   };
@@ -212,9 +214,15 @@ const ProfilePage: React.FC = () => {
           />
           <Divider />
           <div className="d-flex align-items-center">
-            <div>
-              <button type="submit" className="btn btn-success w-10">
-                Update profile
+            <div style={{ width: '9em' }}>
+              <button type="submit" className="btn btn-success w-100" style={{ maxHeight: '2.4rem' }}>
+                {isLoading ? (
+                  <div className="d-flex justify-content-center align-content-center">
+                    <Loader color="#fffcf2" height="1.8rem" width="1.8rem" />
+                  </div>
+                ) : (
+                  'Update profile'
+                )}
               </button>
             </div>
             <div style={{ paddingLeft: '1.5rem' }}>
@@ -223,7 +231,6 @@ const ProfilePage: React.FC = () => {
               </button>
             </div>
             <div style={{ paddingLeft: '2rem', alignSelf: 'center', paddingTop: '0.8em' }}>
-              <Loader color="#fffcf2" visible={isLoading} height="2rem" width="2rem" />
               {(() => {
                 if (updateStatus === undefined) return '';
                 if (updateStatus) return 'Profile Updated Successully';
