@@ -36,16 +36,14 @@ const ExperienceCommentsDialog: React.FC = () => {
   const postComment = async () => {
     try {
       setIsLoading(true);
-
-      const createdAt = new Date();
-      const { firstName, lastName, imgUrl } = auth.user!;
-
-
       const updatedExperience = await experienceService.postComment(experienceId, newComment);
       queryClient.setQueryData<ExperienceGetByIdResponse>(['experience', experienceId], (oldData) => {
         if (!oldData) {
           return undefined;
         }
+
+        const createdAt = new Date();
+        const { firstName, lastName, imgUrl } = auth.user!;
 
         const commentToAdd = {
           text: newComment,
