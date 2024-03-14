@@ -14,7 +14,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     <div className="root-route">
       <Outlet />
       {(() => {
-        if (import.meta.env.PROD)
+        if (!import.meta.env.PROD)
           return (
             <>
               <TanStackRouterDevtools position="bottom-right" />
