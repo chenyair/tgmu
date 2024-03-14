@@ -32,7 +32,7 @@ afterAll(async () => {
 
 describe('Movie tests', () => {
   test('Get popular movies', async () => {
-    const response = await request(app).get('/movies/popular').set('Authorization', `JWT ${accessToken}`);
+    const response = await request(app).get('/api/movies/popular').set('Authorization', `JWT ${accessToken}`);
     expect(response.statusCode).toBe(httpStatus.OK);
     expect(response.body).toBeDefined();
     const movies = response.body;
@@ -43,5 +43,40 @@ describe('Movie tests', () => {
     const firstMovie = movies[0];
     expect(firstMovie).toHaveProperty('id');
     expect(firstMovie).toHaveProperty('title');
+  }, 5000);
+
+  test('Search movies by query', async () => {
+    const response = await request(app)
+      .get('/api/movies/search')
+      .query({ query: 'Batman' })
+      .set('Authorization', `JWT ${accessToken}`);
+    expect(response.statusCode).toBe(httpStatus.OK);
+    expect(response.body).toBeDefined();
+    expect(response.body.length).toBeGreaterThan(0);
+    expect(response.body[0]).toHaveProperty('id');
+    expect(response.body[0]).toHaveProperty('title');
+  }, 5000);
+
+  test('Search movies by empty query', async () => {
+    const response = await request(app)
+      .get('/api/movies/search')
+      .query({ query: '' })
+      .set('Authorization', `JWT ${accessToken}`);
+    expect(response.statusCode).toBe(httpStatus.OK);
+    expect(response.body).toBeDefined();
+    expect(response.body.length).toBeGreaterThan(0);
+    expect(response.body[0]).toHaveProperty('id');
+    expect(response.body[0]).toHaveProperty('title');
+  }, 5000);
+
+  test('Search movies without query', async () => {
+    const response = await request(app)
+      .get('/api/movies/search')
+      .set('Authorization', `JWT ${accessToken}`);
+    expect(response.statusCode).toBe(httpStatus.OK);
+    expect(response.body).toBeDefined();
+    expect(response.body.length).toBeGreaterThan(0);
+    expect(response.body[0]).toHaveProperty('id');
+    expect(response.body[0]).toHaveProperty('title');
   }, 5000);
 });
