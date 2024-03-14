@@ -1,9 +1,9 @@
-import { AuthRequest } from 'common/auth.middleware';
+import { AuthRequest } from '../common/auth.middleware';
 import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';
 import { IUserDetails } from 'shared-types';
-import createLogger from 'utils/logger';
+import createLogger from '../utils/logger';
 
 const logger = createLogger('auth middleware');
 

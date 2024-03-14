@@ -1,6 +1,6 @@
-import ExperienceModel from 'models/experience.model';
-import initApp from 'app';
-import User from 'models/user.model';
+import ExperienceModel from '../models/experience.model';
+import initApp from '../app';
+import User from '../models/user.model';
 import { Express } from 'express';
 import httpStatus from 'http-status';
 import { IComment, IExperience, IUser, NewExperience, PopulatedComment, MovieDetails } from 'shared-types';

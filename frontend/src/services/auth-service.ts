@@ -5,7 +5,7 @@ export class AuthenticationService {
   private apiClient: AxiosInstance;
 
   constructor() {
-    this.apiClient = axios.create({ baseURL: `http://localhost:8000/auth` });
+    this.apiClient = axios.create({ baseURL: `/auth` });
   }
 
   async login(email: string, password: string, signal?: AbortSignal): Promise<UserTokens> {

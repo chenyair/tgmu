@@ -1,6 +1,6 @@
-import UserModel from 'models/user.model';
-import initApp from 'app';
-import User from 'models/user.model';
+import UserModel from '../models/user.model';
+import initApp from '../app';
+import User from '../models/user.model';
 import { Express } from 'express';
 import httpStatus from 'http-status';
 import { IUser } from 'shared-types';

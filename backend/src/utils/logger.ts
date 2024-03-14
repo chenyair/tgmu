@@ -4,7 +4,7 @@ const getFileNameAndLineNumber = () => {
   const originalStackTrace = Error.prepareStackTrace;
   const originalStackTraceLimit = Error.stackTraceLimit;
 
-  const ignoreFilePatterns = ['logger.ts', 'node_modules', 'node:'];
+  const ignoreFilePatterns = ['logger.ts', 'logger.js', 'node_modules', 'node:'];
   const isNonBoilerplateLine = (line: NodeJS.CallSite) =>
     line && line.getFileName() && ignoreFilePatterns.every((pattern) => !line.getFileName()!.includes(pattern));
 

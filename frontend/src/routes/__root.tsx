@@ -13,8 +13,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <div className="root-route">
       <Outlet />
-      <TanStackRouterDevtools position="bottom-right" />
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" />
+      {(() => {
+        if (!import.meta.env.PROD)
+          return (
+            <>
+              <TanStackRouterDevtools position="bottom-right" />
+              <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" />
+            </>
+          );
+      })()}
     </div>
   ),
 });

@@ -7,9 +7,11 @@
     "lint": "eslint . --ignore-path .eslintignore --ext .js,.ts",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "test": "jest --detectOpenHandles --coverage --forceExit",
-    "build": "npx tsc",
+    "build": "cp .env.prod .env; tsc -p tsconfig.json",
     "start": "node dist/index.js",
-    "dev": "cross-env NODE_PATH=./src NODE_ENV=development nodemon src/index.ts"
+    "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
+    "deploy": "pm2 restart ecosystem.config.js --env production",
+    "prod": "npm run build && npm run deploy"
   },
   "author": "",
   "license": "ISC",

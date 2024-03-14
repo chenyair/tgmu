@@ -1,7 +1,7 @@
 import express, { Response } from 'express';
 const router = express.Router();
 import * as authController from '../controllers/auth.controller';
-import authMiddleware from 'common/auth.middleware';
+import authMiddleware from '../common/auth.middleware';
 import httpStatus from 'http-status';
 import 'express-async-errors';
 
