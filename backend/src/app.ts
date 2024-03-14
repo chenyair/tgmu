@@ -62,9 +62,11 @@ const initApp = async (url: string = 'localhost:80'): Promise<Express> => {
 
   app.use('/api', apiRoute);
 
-  app.get('*', (_, res) => {
-    res.sendFile(`${__dirname}/ui/index.html`);
-  });
+  if (process.env.NODE_ENV === 'production') {
+    app.get('*', (_, res) => {
+      res.sendFile(`${__dirname}/ui/index.html`);
+    });
+  }
 
   app.use(errorMiddleware);
 

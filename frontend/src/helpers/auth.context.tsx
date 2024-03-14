@@ -27,6 +27,7 @@ const useRememberMe = () =>
           }
 
           // Current access token is still valid
+          writeTokens({ accessToken, refreshToken }, true);
           return { accessToken, refreshToken };
         }
       } catch {
