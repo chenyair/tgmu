@@ -43,6 +43,10 @@ export class ExperienceService {
       })
     ).data;
   }
+
+  async delete(experienceId: string): Promise<IExperience> {
+    return (await this.apiClient.delete(`/${experienceId}`)).data;
+  }
 }
 
 export const experienceService = new ExperienceService();

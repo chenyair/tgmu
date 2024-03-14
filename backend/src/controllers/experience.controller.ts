@@ -2,6 +2,8 @@ import { ExperienceGetAllResponse, IExperience } from 'shared-types';
 import { BaseController } from './base.controller';
 import ExperienceModel from '../models/experience.model';
 import { Request, Response } from 'express';
+import { AuthRequest } from 'common/auth.middleware';
+import httpStatus from 'http-status';
 
 class ExperienceController extends BaseController<IExperience> {
   constructor() {
@@ -47,6 +49,22 @@ class ExperienceController extends BaseController<IExperience> {
       currentPage: pageNumber,
     });
   }
+
+  async deleteById(req: AuthRequest, res: Response) {
+    const { id } = req.params;
+    const doc = await this.model.findById(id);
+
+    if (!doc) {
+      return res.status(httpStatus.NOT_FOUND).send('Document not found');
+    }
+
+    if (req.user?._id !== doc.userId.toString()) {
+      return res.status(httpStatus.UNAUTHORIZED).send('Unauthorized to perform actions on other user');
+    }
+
+    return super.deleteById(req, res);
+  }
+  
 }
 
 export const experienceController = new ExperienceController();

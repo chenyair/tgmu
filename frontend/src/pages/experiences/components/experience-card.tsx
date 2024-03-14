@@ -1,6 +1,7 @@
 import { IExperience, IUserDetails } from 'shared-types';
 import './experience-card.scss';
 import { FaHeart, FaRegHeart, FaRegComment } from 'react-icons/fa6';
+import { MdDelete } from 'react-icons/md';
 import MovieCard from '@/components/movie-card';
 interface ExperienceCardProps {
   experience: IExperience;
@@ -10,6 +11,9 @@ interface ExperienceCardProps {
   style?: React.CSSProperties;
   height: string;
   width: string;
+  isOwner: boolean;
+  onDeleteClicked: (experience: IExperience) => void;
+  onEditClicked?: (experience: IExperience) => void;
 }
 
 const ExperienceCard = ({
@@ -19,10 +23,21 @@ const ExperienceCard = ({
   height,
   width,
   onCommentClicked,
+  onDeleteClicked,
+  onEditClicked,
+  isOwner,
   style = {},
 }: ExperienceCardProps) => {
   return (
-    <div className="d-flex gap-3 px-4" style={{ ...style, height, width }}>
+    <div className="d-flex gap-3 px-4" style={{ ...style, height, width, position: 'relative' }}>
+      {isOwner && (
+        <div className="experience-card-owner-actions">
+          <MdDelete
+            style={{ color: 'red', height: '20px', width: '20px', cursor: 'pointer' }}
+            onClick={() => onDeleteClicked(experience)}
+          />
+        </div>
+      )}
       <div style={{ width: '20%' }}>
         <MovieCard
           height={height}
