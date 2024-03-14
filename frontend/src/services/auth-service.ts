@@ -49,6 +49,12 @@ export class AuthenticationService {
       )
     ).data;
   }
+
+  async logout(refreshToken: string): Promise<void> {
+    return this.apiClient.get('/logout', {
+      headers: { Authorization: `Bearer ${refreshToken}`, 'Content-Type': 'application/json' },
+    });
+  }
 }
 
 export const authenticationService = new AuthenticationService();

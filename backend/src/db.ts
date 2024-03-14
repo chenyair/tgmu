@@ -12,7 +12,7 @@ const initDB = async (): Promise<mongoose.mongo.Db> => {
 
   logger.debug(`Connecting to ${process.env.NODE_ENV} DB at ${DB_USER}@${DB_URL}`);
 
-  mongoose.connection.on('error', logger.error);
+  mongoose.connection.on('error', (err) => logger.error(err));
   const { connection } = await mongoose.connect(url, {
     monitorCommands: true,
     retryWrites: true,

@@ -17,11 +17,13 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
   const queryClient = useQueryClient();
 
   // TODO: Implement functions
-  const handleLikeClicked = (experience: IExperience) => {};
-  const handleCommentClicked = (experience: IExperience) => {};
+  const handleLikeClicked = (experience: IExperience) => { };
+
+  const handleCommentClicked = (experience: IExperience) => {
+    navigate({ to: `/experiences/${experience._id}/comments` });
+  };
 
   const handleDeleteClicked = async (experience: IExperience) => {
-    debugger;
     // TODO: Add Loader
     await experienceService.delete(experience._id!);
 

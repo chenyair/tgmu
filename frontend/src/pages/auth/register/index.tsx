@@ -2,6 +2,7 @@ import { useAuth } from '@/helpers/auth.context';
 import { authenticationService } from '@/services/auth-service';
 import { writeTokens } from '@/utils/local-storage';
 import { useForm } from '@tanstack/react-form';
+import { Puff as Loader } from 'react-loader-spinner';
 import { useNavigate } from '@tanstack/react-router';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 import React, { useState } from 'react';
@@ -14,6 +15,7 @@ const RegisterPage: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [errorOccurred, setErrorOccurred] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const registerForm = useForm({
     defaultValues: {
@@ -28,6 +30,7 @@ const RegisterPage: React.FC = () => {
     onSubmit: async ({ value }) => {
       try {
         setErrorOccurred(false);
+        setIsLoading(true);
         const { email, password, birthdate, firstName, lastName, imgUrl } = value;
         const tokens = await authenticationService.register({
           firstName,
@@ -47,6 +50,8 @@ const RegisterPage: React.FC = () => {
         navigate({ to: '/' });
       } catch {
         setErrorOccurred(true);
+      } finally {
+        setIsLoading(false);
       }
     },
     validators: {
@@ -172,8 +177,14 @@ const RegisterPage: React.FC = () => {
           )}
         />
         <div className="mt-3">
-          <button type="submit" className="btn btn-success w-100">
-            Register now
+          <button type="submit" className="btn btn-success w-100" style={{ minHeight: '2.2rem' }}>
+            {isLoading ? (
+              <div className="d-flex justify-content-center">
+                <Loader width="1.5rem" height="1.5rem"></Loader>
+              </div>
+            ) : (
+              'Register now'
+            )}
           </button>
           <div>
             <span className="no-account-text">Already have an account? </span>
