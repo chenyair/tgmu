@@ -50,6 +50,21 @@ class ExperienceController extends BaseController<IExperience> {
     });
   }
 
+  async deleteById(req: AuthRequest, res: Response) {
+    const { id } = req.params;
+    const doc = await this.model.findById(id);
+
+    if (!doc) {
+      return res.status(httpStatus.NOT_FOUND).send('Document not found');
+    }
+
+    if (req.user?._id !== doc.userId.toString()) {
+      return res.status(httpStatus.UNAUTHORIZED).send('Unauthorized to perform actions on other user');
+    }
+
+    return super.deleteById(req, res);
+  }
+  
   async getById(req: Request, res: Response): Promise<Response<ExperienceGetByIdResponse>> {
     const { id } = req.params;
     this.debug(`Get by id ${id}`);

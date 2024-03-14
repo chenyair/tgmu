@@ -239,6 +239,32 @@ router.get('/:id', experienceController.getById.bind(experienceController));
  */
 router.post('', saveFileMiddleware.single('experienceImage'), experienceController.post.bind(experienceController));
 
+/** [DELETE EXPERIENCE]
+ * @swagger
+ * /experience/{id}:
+ *   delete:
+ *     tags: [Experience]
+ *     summary: Deletes an experience by id
+ *     parameters:
+ *     - in: path
+ *       name: id
+ *       required: true
+ *       schema:
+ *         type: string
+ *         description: The experience's _id
+ *         example: 1234-abcd-5678-efgh
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       OK:
+ *         description: Deleted experience successfully
+ *       UNAUTHORIZED:
+ *         description: No token provided, or attempted to delete a different user's experience
+ *       INTERNAL_SERVER_ERROR:
+ *         description: Internal server error
+ */
+router.delete('/:id', experienceController.deleteById.bind(experienceController));
+ 
 /**
  * @swagger
  * /experiences/{id}/comment:

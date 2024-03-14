@@ -19,6 +19,8 @@ const user: Partial<IUser> = {
   imgUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Bob_the_builder.jpg/220px-Bob_the_builder.jpg',
 };
 
+const secondUserEmail = 'experience2@test.com';
+
 const movieDetails: MovieDetails = {
   id: 1,
   title: 'test movie',
@@ -45,6 +47,7 @@ let createdFiles: string[] = [];
 beforeAll(async () => {
   app = await initApp();
   await User.deleteMany({ email: user.email });
+  await User.deleteMany({ email: secondUserEmail });
   const registerResponse = (await request(app).post('/auth/register').send(user)).body;
   accessToken = registerResponse.accessToken;
   userId = registerResponse._id;
@@ -52,6 +55,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await ExperienceModel.deleteMany({ userId });
+  await User.deleteMany({ email: user.email });
+  await User.deleteMany({ email: secondUserEmail });
 
   // Delete all created files
   createdFiles
@@ -167,4 +172,48 @@ describe('Experience tests', () => {
     expect(matchComment!.userId.firstName).toBe(user.firstName);
     expect(matchComment!.userId.lastName).toBe(user.lastName);
   });
+
+  describe('Delete experience tests', () => {
+    let firstExperienceId: string;
+
+    beforeEach(async () => {
+      // Add experience before deletion
+      firstNewExperience.userId = userId.toString();
+      const response = await request(app)
+        .post('/experiences')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .attach('experienceImage', path.resolve(__dirname, 'test.png'))
+        .field('title', firstNewExperience.title)
+        .field('description', firstNewExperience.description)
+        .field('userId', firstNewExperience.userId)
+        .field('movieId', movieDetails.id)
+        .field('moviePosterPath', movieDetails.poster_path)
+        .field('movieTitle', movieDetails.title);
+
+      firstExperienceId = response.body._id;
+    });
+
+    test('Delete experience', async () => {
+      const response = await request(app).delete(`/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
+      expect(response.statusCode).toBe(httpStatus.CREATED);
+      expect(response.body).toBeDefined();
+      expect(response.body._id).toBe(firstExperienceId);
+    });
+  
+    test('delete experience that does not exist', async () => {
+      await request(app).delete(`/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
+      const response = await request(app).delete(`/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
+      expect(response.statusCode).toBe(httpStatus.NOT_FOUND);
+    });
+  
+    test('delete experience that does not belong to the user', async () => {
+      // Create new user
+      const registerResponse = (await request(app).post('/auth/register').send({ ...user, email: secondUserEmail })).body;
+      const secondUserAccessToken = registerResponse.accessToken;
+  
+      const response = await request(app).delete(`/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${secondUserAccessToken}`);
+      expect(response.statusCode).toBe(httpStatus.UNAUTHORIZED);
+    });
+  });
+
 });
