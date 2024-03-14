@@ -16,8 +16,26 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // TODO: Implement functions
-  // const handleLikeClicked = (experience: IExperience) => { };
+  const handleLikeClicked = async (experience: IExperience, like: boolean = true) => {
+    const updatedExperience = await experienceService.toggleLike(experience._id!, like);
+    const updateQueryData = (data: InfiniteData<ExperienceGetAllResponse, number> | undefined) => {
+      if (data === undefined) return undefined;
+
+      const filteredPages = data.pages.map((page) => ({
+        ...page,
+        experiences: page.experiences.map((exp) => (exp._id === updatedExperience._id ? updatedExperience : exp)),
+      }));
+
+      return {
+        pages: filteredPages,
+        pageParams: data.pageParams,
+      };
+    };
+
+    // Delete experience from the list
+    queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', true], updateQueryData);
+    queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', false], updateQueryData);
+  };
 
   const handleCommentClicked = (experience: IExperience) => {
     navigate({ to: '/experiences/$experienceId/comments', params: { experienceId: experience._id! } });
@@ -38,7 +56,7 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
         pages: filteredPages,
         pageParams: data.pageParams,
       };
-    }
+    };
 
     // Delete experience from the list
     queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', true], updateQueryData);
@@ -54,7 +72,7 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
             experience={experience}
             loggedUser={user!}
             onCommentClicked={handleCommentClicked}
-            // onLikeClicked={handleLikeClicked}
+            onLikeClicked={handleLikeClicked}
             onDeleteClicked={handleDeleteClicked}
             isOwner={user!._id === experience.userId.toString()}
             height="14rem"

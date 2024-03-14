@@ -9,7 +9,10 @@ export class ExperienceService {
     this.apiClient = createApiClient('/experiences');
   }
 
-  async getAll({page = 1, limit= 1, owner}: { owner?: string, page: number, limit: number }, signal?: AbortSignal): Promise<ExperienceGetAllResponse> {
+  async getAll(
+    { page = 1, limit = 1, owner }: { owner?: string; page: number; limit: number },
+    signal?: AbortSignal
+  ): Promise<ExperienceGetAllResponse> {
     return (
       await this.apiClient.get<ExperienceGetAllResponse>('', {
         params: {
@@ -55,6 +58,10 @@ export class ExperienceService {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
     ).data;
+  }
+
+  async toggleLike(experienceId: string, like: boolean = true): Promise<IExperience> {
+    return (await this.apiClient.post<IExperience>(`/${experienceId}/like`, { like })).data;
   }
 
   async delete(experienceId: string): Promise<IExperience> {

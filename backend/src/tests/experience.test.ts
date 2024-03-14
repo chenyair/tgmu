@@ -112,22 +112,21 @@ describe('Experience tests', () => {
     expect(experiencesGetAll.experiences.length).toBe(1);
     expect(experiencesGetAll.experiences[0]._id).toBe(firstExperiece._id);
   });
-  
-  
+
   test('Get all experiences second page', async () => {
     // Enter second experience to db
     secondNewExperience.userId = userId.toString();
     const secondExperienceResponse = await request(app)
-    .post('/api/experiences')
-    .set('Authorization', `Bearer ${accessToken}`)
-    .attach('experienceImage', path.resolve(__dirname, 'test.png'))
-    .field('title', secondNewExperience.title)
-    .field('description', secondNewExperience.description)
-    .field('userId', secondNewExperience.userId.toString())
-    .field('movieId', movieDetails.id)
-    .field('moviePosterPath', movieDetails.poster_path)
-    .field('movieTitle', movieDetails.title);
-    
+      .post('/api/experiences')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .attach('experienceImage', path.resolve(__dirname, 'test.png'))
+      .field('title', secondNewExperience.title)
+      .field('description', secondNewExperience.description)
+      .field('userId', secondNewExperience.userId.toString())
+      .field('movieId', movieDetails.id)
+      .field('moviePosterPath', movieDetails.poster_path)
+      .field('movieTitle', movieDetails.title);
+
     const secondExperience = secondExperienceResponse.body;
     createdFiles = [...createdFiles, secondExperience.imgUrl];
 
@@ -136,12 +135,12 @@ describe('Experience tests', () => {
       .set('Authorization', `Bearer ${accessToken}`);
     expect(secondPageResponse.statusCode).toBe(httpStatus.OK);
     expect(secondPageResponse.body).toBeDefined();
-    
+
     const secondPageGetAll = secondPageResponse.body;
     expect(secondPageGetAll.currentPage).toBe(2);
     expect(secondPageGetAll.experiences).toBeDefined();
     expect(secondPageGetAll.experiences.length).toBe(1);
-    
+
     // The new experience should be in the first page cause its the newest so the preivous
     // experience should be the first in the second page
     expect(secondPageGetAll.experiences[0]._id).not.toBe(secondExperience._id);
@@ -157,6 +156,34 @@ describe('Experience tests', () => {
     const createdComment = response.body.comments.find((comment: IComment) => comment.text === commentText)!;
     expect(createdComment).toBeDefined();
     expect(createdComment!.userId).toBe(userId.toString());
+  });
+
+  test('Like experience', async () => {
+    const response = await request(app)
+      .post(`/api/experiences/${firstExperiece._id}/like`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ like: true });
+    expect(response.statusCode).toBe(httpStatus.CREATED);
+    expect(response.body.likedUsers).toContain(userId.toString());
+  });
+
+  test('Like experience again', async () => {
+    const response = await request(app)
+      .post(`/api/experiences/${firstExperiece._id}/like`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ like: true });
+    expect(response.statusCode).toBe(httpStatus.CREATED);
+    const matches = response.body.likedUsers.filter((user: string) => user === userId.toString());
+    expect(matches.length).toBe(1);
+  });
+
+  test('Unlike experience', async () => {
+    const response = await request(app)
+      .post(`/api/experiences/${firstExperiece._id}/like`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ like: false });
+    expect(response.statusCode).toBe(httpStatus.CREATED);
+    expect(response.body.likedUsers).not.toContain(userId.toString());
   });
 
   test('Get experience by id', async () => {
@@ -198,24 +225,34 @@ describe('Experience tests', () => {
     });
 
     test('Delete experience', async () => {
-      const response = await request(app).delete(`/api/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
+      const response = await request(app)
+        .delete(`/api/experiences/${firstExperienceId}`)
+        .set('Authorization', `Bearer ${accessToken}`);
       expect(response.statusCode).toBe(httpStatus.CREATED);
       expect(response.body).toBeDefined();
       expect(response.body._id).toBe(firstExperienceId);
     });
-  
+
     test('delete experience that does not exist', async () => {
       await request(app).delete(`/api/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
-      const response = await request(app).delete(`/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
+      const response = await request(app)
+        .delete(`/experiences/${firstExperienceId}`)
+        .set('Authorization', `Bearer ${accessToken}`);
       expect(response.statusCode).toBe(httpStatus.NOT_FOUND);
     });
-  
+
     test('delete experience that does not belong to the user', async () => {
       // Create new user
-      const registerResponse = (await request(app).post('/auth/register').send({ ...user, email: secondUserEmail })).body;
+      const registerResponse = (
+        await request(app)
+          .post('/auth/register')
+          .send({ ...user, email: secondUserEmail })
+      ).body;
       const secondUserAccessToken = registerResponse.accessToken;
-      
-      const response = await request(app).delete(`/api/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${secondUserAccessToken}`);
+
+      const response = await request(app)
+        .delete(`/api/experiences/${firstExperienceId}`)
+        .set('Authorization', `Bearer ${secondUserAccessToken}`);
       expect(response.statusCode).toBe(httpStatus.UNAUTHORIZED);
 
       await User.deleteMany({ email: secondUserEmail });
@@ -224,9 +261,13 @@ describe('Experience tests', () => {
 
   test('Get all experiences with owner', async () => {
     await ExperienceModel.deleteMany({ userId });
-    
+
     // Create second new user
-    const registerResponse = (await request(app).post('/auth/register').send({ ...user, email: secondUserEmail })).body;
+    const registerResponse = (
+      await request(app)
+        .post('/auth/register')
+        .send({ ...user, email: secondUserEmail })
+    ).body;
     const secondUserAccessToken = registerResponse.accessToken;
     secondUserId = registerResponse._id;
 
@@ -255,7 +296,7 @@ describe('Experience tests', () => {
       .field('movieId', movieDetails.id)
       .field('moviePosterPath', movieDetails.poster_path)
       .field('movieTitle', movieDetails.title);
-  
+
     // Get all experiences
     const response = await request(app)
       .get(`/api/experiences?page=1&limit=10&owner=${secondUserId}`)
@@ -263,10 +304,9 @@ describe('Experience tests', () => {
 
     expect(response.statusCode).toBe(httpStatus.OK);
     expect(response.body).toBeDefined();
-    
+
     const experiences = response.body.experiences;
     expect(experiences).toBeDefined();
     expect(experiences.length).toBe(1);
   });
-
 });

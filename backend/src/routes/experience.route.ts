@@ -335,8 +335,8 @@ router.post('/:id/comments', experienceController.addComment.bind(experienceCont
  *                 like:
  *                   type: boolean
  *                   description: Whether to like or unlike the experience
- *            example:
- *               like: true
+ *           example:
+ *              like: true
  *     security:
  *       - bearerAuth: []
  *     responses:

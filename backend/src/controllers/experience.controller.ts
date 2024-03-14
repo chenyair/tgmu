@@ -97,14 +97,12 @@ class ExperienceController extends BaseController<IExperience> {
       return res.status(httpStatus.NOT_FOUND).send('Experience not found');
     }
 
-    if (like) {
-      doc.likedUsers.push(userId!);
-    } else {
-      doc.likedUsers = doc.likedUsers.filter((id) => id.toString() !== userId);
-    }
+    const withOutUser = doc.likedUsers.filter((id) => id.toString() !== userId);
+
+    doc.likedUsers = like ? [...withOutUser, userId!] : withOutUser;
 
     await doc.save();
-    return res.status(httpStatus.OK).send(doc);
+    return res.status(httpStatus.CREATED).send(doc);
   }
 }
 
