@@ -17,7 +17,7 @@ export class BaseController<ModelType> {
     logger.debug(`${this.loggerPrefix} ${msg.join(' ')}`);
   }
 
-  private sanitizeObject(obj: object, ...exclude: string[]): FilterQuery<ModelType> | Partial<ModelType> {
+  sanitizeObject(obj: object, ...exclude: string[]): FilterQuery<ModelType> | Partial<ModelType> {
     const allowed = pick(obj, Object.keys(this.model.schema.paths)) ?? {};
 
     const sanitized = omit(allowed, exclude);
@@ -51,6 +51,10 @@ export class BaseController<ModelType> {
     this.debug(`Updating ${id}`);
     const updatePayload: Partial<ModelType> = this.sanitizeObject(req.body, '_id');
     const doc = await this.model.findById(id);
+
+    if (!doc) {
+      return res.status(httpStatus.NOT_FOUND).send('Document not found');
+    }
 
     // Set the new values with this syntax to use `save` (for pre-save middleware)
     Object.keys(updatePayload).forEach((key) => {

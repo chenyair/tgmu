@@ -1,4 +1,10 @@
-import { ExperienceGetAllResponse, ExperienceGetByIdResponse, IComment, IExperience } from 'shared-types';
+import {
+  ExperienceGetAllResponse,
+  ExperienceGetByIdResponse,
+  IComment,
+  IExperience,
+  NewExperience,
+} from 'shared-types';
 import { BaseController } from './base.controller';
 import ExperienceModel from '../models/experience.model';
 import { Request, Response } from 'express';
@@ -64,7 +70,7 @@ class ExperienceController extends BaseController<IExperience> {
 
     return super.deleteById(req, res);
   }
-  
+
   async getById(req: Request, res: Response): Promise<Response<ExperienceGetByIdResponse>> {
     const { id } = req.params;
     this.debug(`Get by id ${id}`);
@@ -84,6 +90,24 @@ class ExperienceController extends BaseController<IExperience> {
     doc.comments.push({ userId: userId!, text } as IComment);
     await doc.save();
     return res.status(httpStatus.CREATED).send(doc);
+  }
+
+  async putById(req: Request<{ id: string }, IExperience, NewExperience | Partial<IExperience>>, res: Response) {
+    const updatePayload: Partial<IExperience> = this.sanitizeObject(
+      req.body,
+      '_id',
+      'comments',
+      'likedUsers',
+      'createdAt',
+      'updatedAt'
+    );
+
+    if (req.file?.path) {
+      updatePayload.imgUrl = req.file.path;
+    }
+
+    req.body = updatePayload;
+    return super.putById(req, res);
   }
 }
 
