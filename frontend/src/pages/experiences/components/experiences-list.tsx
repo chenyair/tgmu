@@ -17,7 +17,9 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
   const handleLikeClicked = (experience: IExperience) => {
     navigate({ to: '/experiences/new' });
   };
-  const handleCommentClicked = (experience: IExperience) => {};
+  const handleCommentClicked = (experience: IExperience) => {
+    navigate({ to: `/experiences/${experience._id}/comments` });
+  };
 
   return (
     <TgmuScrollArea onScrollBottom={onScrollBottom} style={{ height: '80%', width: '70%' }}>
