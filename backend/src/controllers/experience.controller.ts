@@ -13,7 +13,7 @@ class ExperienceController extends BaseController<IExperience> {
   async post(req: Request, res: Response) {
     const newBody = req.body as IExperience;
     if (req.file?.path) {
-      newBody.imgUrl = req.file.path;
+      newBody.imgUrl = req.file.path.replace(/\\/g, '/');
     }
 
     const { movieId, moviePosterPath, movieTitle } = req.body;
@@ -32,17 +32,18 @@ class ExperienceController extends BaseController<IExperience> {
       Record<string, never>,
       ExperienceGetAllResponse,
       Record<string, never>,
-      { page: string; limit: string }
+      { page: string; limit: string, owner?: string}
     >,
     res: Response
   ) {
-    const { page = '1', limit = '10' } = req.query;
+    const { page = '1', limit = '10', owner } = req.query;
     const pageNumber = parseInt(page);
     const limitNumber = parseInt(limit);
 
     const skip = (pageNumber - 1) * limitNumber;
-    const totalDocsCount = await this.model.countDocuments();
-    const currentPageDocs = await this.model.find().sort({ createdAt: -1 }).skip(skip).limit(limitNumber);
+    const dbQuery = owner ? { userId: owner } : {};
+    const totalDocsCount = await this.model.countDocuments(dbQuery);
+    const currentPageDocs = await this.model.find(dbQuery).sort({ createdAt: -1 }).skip(skip).limit(limitNumber);
     res.status(200).send({
       experiences: currentPageDocs,
       totalPages: Math.ceil(totalDocsCount / limitNumber),

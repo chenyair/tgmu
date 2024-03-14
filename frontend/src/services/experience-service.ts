@@ -9,12 +9,13 @@ export class ExperienceService {
     this.apiClient = createApiClient('/experiences');
   }
 
-  async getAll(page: number = 1, limit: number = 10, signal?: AbortSignal): Promise<ExperienceGetAllResponse> {
+  async getAll({page = 1, limit= 1, owner}: { owner?: string, page: number, limit: number }, signal?: AbortSignal): Promise<ExperienceGetAllResponse> {
     return (
       await this.apiClient.get<ExperienceGetAllResponse>('', {
         params: {
           page,
           limit,
+          owner,
         },
         signal,
       })
