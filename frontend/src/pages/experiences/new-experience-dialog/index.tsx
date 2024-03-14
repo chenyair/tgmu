@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import TgmuDialog from '@/components/tgmu-dialog';
 import { useForm } from '@tanstack/react-form';
 import ImageEditor from './components/image-editor';
-import { ExperienceGetAllResponse, IExperience, Movie } from 'shared-types';
+import { ExperienceGetAllResponse, Movie } from 'shared-types';
 import MoviePicker from './components/movie-picker';
 import './index.scss';
 import Divider from '@/components/divider';
@@ -108,7 +108,7 @@ const NewExperienceDialog: React.FC = () => {
         >
           <div className="d-flex flex-column gap-3" style={{ height: '10%' }}>
             <div className="experience-form-title">New Experience</div>
-            <Divider classNames="" />
+            <Divider className="" />
           </div>
           <div className="d-flex gap-3 py-2" style={{ height: '80%' }}>
             <experienceForm.Field
@@ -165,7 +165,7 @@ const NewExperienceDialog: React.FC = () => {
             </div>
           </div>
           <div className="d-flex flex-column gap-3" style={{ height: '10%' }}>
-            <Divider classNames="" />
+            <Divider className="" />
             <div className="w-100 d-flex justify-content-center">
               <button
                 type="submit"

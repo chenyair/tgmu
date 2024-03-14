@@ -1,0 +1,13 @@
+#add-comment-input::placeholder {
+  color: #ccc;
+}
+
+#add-comment-input:focus {
+  outline: 1px !important;
+  // Purple box shadow
+  box-shadow: 0 0 0 0.2rem rgba(149, 63, 171, 0.15);
+}
+
+#post-comment-button:disabled {
+  border-color: transparent;
+}
