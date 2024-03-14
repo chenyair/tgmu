@@ -61,6 +61,11 @@ const initApp = async (url: string = 'localhost:80'): Promise<Express> => {
   app.use('/auth', authRoute);
 
   app.use('/api', apiRoute);
+
+  app.get('*', (_, res) => {
+    res.sendFile(`${__dirname}/ui/index.html`);
+  });
+
   app.use(errorMiddleware);
 
   logger.debug('calling init DB');
