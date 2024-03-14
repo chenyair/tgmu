@@ -57,7 +57,7 @@ const ExperienceCard = ({
       </div>
       <div className="d-flex h-100 justify-content-center experience-card" style={{ width: '80%' }}>
         <img
-          src={experience.imgUrl}
+          src={`/${experience.imgUrl}`}
           alt={experience.title}
           className="mw-100 mh-100 experience-card-img"
           style={{ width: '50%' }}

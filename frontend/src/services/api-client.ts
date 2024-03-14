@@ -18,13 +18,12 @@ export const createApiClient = (endpoint: string = ''): AxiosInstance => {
     async (error) => Promise.reject(error)
   );
 
-  // TODO: Handle multiple requests trying to refresh token at once
   apiClient.interceptors.response.use(
     (response) => response,
     async (error) => {
       if (axios.isAxiosError(error) && error.config) {
         const refreshToken = sessionStorage.getItem('refreshToken');
-        if (error.response?.status === 403 && error.response?.data === 'jwt expired' && refreshToken) {
+        if (error.response?.status === 401 && error.response?.data === 'jwt expired' && refreshToken) {
           const tokens = await authenticationService.refreshAccessToken(refreshToken);
           error.config.headers.Authorization = `Bearer ${tokens.accessToken}`;
 
