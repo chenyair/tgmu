@@ -36,6 +36,7 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
     queryKey: ['experience', experienceId],
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+    gcTime: 0,
     queryFn: ({ signal, queryKey }) => experienceService.getById(queryKey.at(-1)!, signal),
     enabled: mode === 'edit',
   });
