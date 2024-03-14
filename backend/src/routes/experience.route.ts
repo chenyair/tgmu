@@ -353,4 +353,46 @@ router.delete('/:id', experienceController.deleteById.bind(experienceController)
  */
 router.post('/:id/comments', experienceController.addComment.bind(experienceController));
 
+/** [TOGGLE LIKE]
+ * @swagger
+ * /experiences/{id}/like:
+ *   post:
+ *     tags: [Experience]
+ *     summary: Toggles a like on an experience
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: The experience's _id
+ *           example: 1234-abcd-5678-efgh
+ *     requestBody:
+ *       default: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             schema:
+ *               type: object
+ *               required:
+ *                 - like
+ *               properties:
+ *                 like:
+ *                   type: boolean
+ *                   description: Whether to like or unlike the experience
+ *           example:
+ *              like: true
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       OK:
+ *         description: Toggled like successfully
+ *       UNAUTHORIZED:
+ *         description: No token provided
+ *       INTERNAL_SERVER_ERROR:
+ *         description: Internal server error
+ */
+router.post('/:id/like', experienceController.toggleLike.bind(experienceController));
+
 export default router;

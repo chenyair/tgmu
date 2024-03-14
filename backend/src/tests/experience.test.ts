@@ -159,6 +159,34 @@ describe('Experience tests', () => {
     firstExperiece.comments = [...firstExperiece.comments, createdComment];
   });
 
+  test('Like experience', async () => {
+    const response = await request(app)
+      .post(`/api/experiences/${firstExperiece._id}/like`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ like: true });
+    expect(response.statusCode).toBe(httpStatus.CREATED);
+    expect(response.body.likedUsers).toContain(userId.toString());
+  });
+
+  test('Like experience again', async () => {
+    const response = await request(app)
+      .post(`/api/experiences/${firstExperiece._id}/like`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ like: true });
+    expect(response.statusCode).toBe(httpStatus.CREATED);
+    const matches = response.body.likedUsers.filter((user: string) => user === userId.toString());
+    expect(matches.length).toBe(1);
+  });
+
+  test('Unlike experience', async () => {
+    const response = await request(app)
+      .post(`/api/experiences/${firstExperiece._id}/like`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ like: false });
+    expect(response.statusCode).toBe(httpStatus.CREATED);
+    expect(response.body.likedUsers).not.toContain(userId.toString());
+  });
+
   test('Get experience by id', async () => {
     const response = await request(app)
       .get(`/api/experiences/${firstExperiece._id}`)

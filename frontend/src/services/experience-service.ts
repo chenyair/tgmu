@@ -60,6 +60,10 @@ export class ExperienceService {
     ).data;
   }
 
+  async toggleLike(experienceId: string, like: boolean = true): Promise<IExperience> {
+    return (await this.apiClient.post<IExperience>(`/${experienceId}/like`, { like })).data;
+  }
+
   async updateById(id: string, experience: NewExperience): Promise<IExperience> {
     const formData = new FormData();
 

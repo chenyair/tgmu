@@ -87,6 +87,24 @@ class ExperienceController extends BaseController<IExperience> {
     return res.status(httpStatus.CREATED).send(doc);
   }
 
+  async toggleLike(req: AuthRequest<{ id: string }, ExperienceGetByIdResponse, { like: boolean }>, res: Response) {
+    const { id: experienceId } = req.params;
+    const { _id: userId } = req.user!;
+    const { like } = req.body;
+
+    const doc = await this.model.findById(experienceId);
+    if (!doc) {
+      return res.status(httpStatus.NOT_FOUND).send('Experience not found');
+    }
+
+    const withOutUser = doc.likedUsers.filter((id) => id.toString() !== userId);
+
+    doc.likedUsers = like ? [...withOutUser, userId!] : withOutUser;
+
+    await doc.save();
+    return res.status(httpStatus.CREATED).send(doc);
+  }
+
   async putById(req: Request<{ id: string }>, res: Response) {
     const newBody = req.body as IExperience;
     const { movieId, moviePosterPath, movieTitle } = req.body;

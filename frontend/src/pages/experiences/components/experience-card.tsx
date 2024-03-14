@@ -6,7 +6,7 @@ import MovieCard from '@/components/movie-card';
 interface ExperienceCardProps {
   experience: IExperience;
   loggedUser: IUserDetails;
-  onLikeClicked?: (experience: IExperience) => void;
+  onLikeClicked: (experience: IExperience, like: boolean) => void;
   onCommentClicked: (experience: IExperience) => void;
   style?: React.CSSProperties;
   height: string;
@@ -28,6 +28,8 @@ const ExperienceCard = ({
   isOwner,
   style = {},
 }: ExperienceCardProps) => {
+  const isLiked = experience.likedUsers.includes(loggedUser?._id!);
+
   return (
     <div className="d-flex gap-3 px-4" style={{ ...style, height, width, position: 'relative' }}>
       {isOwner && (
@@ -66,13 +68,9 @@ const ExperienceCard = ({
           <div className="experience-actions d-flex mt-auto justify-content-evenly">
             <div
               className="d-flex align-items-center justify-content-center gap-2 fs-6 experience-card-likes-btn w-100"
-              onClick={() => onLikeClicked && onLikeClicked(experience)}
+              onClick={() => onLikeClicked(experience, !isLiked)}
             >
-              {experience.likedUsers.findIndex((like) => like === loggedUser?._id) !== -1 ? (
-                <FaHeart color="#CE2C31" />
-              ) : (
-                <FaRegHeart />
-              )}
+              {isLiked ? <FaHeart color="#CE2C31" /> : <FaRegHeart />}
 
               <div>{experience.likedUsers.length}</div>
             </div>
