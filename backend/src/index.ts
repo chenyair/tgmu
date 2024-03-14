@@ -8,7 +8,7 @@ import fs from 'fs';
 const logger = createLogger('Express');
 const { NODE_ENV: ENV, LISTEN_ADDRESS } = process.env as Record<string, string>;
 
-const SERVER_PROTOCOL = ENV === 'production' ? 'https' : 'http';
+const SERVER_PROTOCOL = process.env.PROTOCOL || 'http'
 
 const PORT = process.env.PORT || ENV === 'production' ? '443' : '80'
 
@@ -18,7 +18,7 @@ initApp().then((app: Express) => {
   logger.debug(`Running in ${ENV}`);
 
   const port = PORT || 8000;
-  if (ENV !== 'production') {
+  if (SERVER_PROTOCOL !== 'https') {
     http.createServer(app).listen(PORT);
   } else {
     const httpsConf = {
