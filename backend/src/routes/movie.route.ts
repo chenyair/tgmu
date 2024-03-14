@@ -80,7 +80,7 @@ import 'express-async-errors';
  *           description: The vote count of the movie
  */
 
-/** [Register]
+/** [POPULAR]
  * @swagger
  * /movies/popular:
  *   get:
@@ -107,5 +107,41 @@ import 'express-async-errors';
  *                   type: string
  */
 router.get('/popular', movieController.getPopularMovies.bind(movieController));
+
+/** [ByQuery]
+ * @swagger
+ * /movies:
+ *   get:
+ *     tags:
+ *       - Movie
+ *     description: Get movies by query
+ *     parameters:
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *           description: The query to search for
+ *           example: "The Matrix"
+ *         required: false
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/Movie'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+router.get('/', movieController.getByQuery.bind(movieController));
 
 export default router;
