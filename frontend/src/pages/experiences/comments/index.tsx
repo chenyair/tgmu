@@ -135,6 +135,7 @@ const ExperienceCommentsDialog: React.FC = () => {
               style={{ backgroundColor: 'transparent', caretColor: purpleColor, borderColor: purpleColor }}
               placeholder="Reply here..."
               className="form-control text-white form-control-md tgmu-form-input"
+              value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
             />
           </div>
