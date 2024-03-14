@@ -33,7 +33,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       {value || placeholderImg ? (
         <img
           className="image-editor-image"
-          src={value ? URL.createObjectURL(value) : `/${placeholderImg}`}
+          src={value ? URL.createObjectURL(value) : placeholderImg}
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       ) : (

@@ -13,7 +13,7 @@ class ExperienceController extends BaseController<IExperience> {
   async post(req: Request, res: Response) {
     const newBody = req.body as IExperience;
     if (req.file?.path) {
-      newBody.imgUrl = req.file.path.replace(/\\/g, '/');
+      newBody.imgUrl = `/${req.file.path}`.replace(/\\/g, '/');
     }
 
     const { movieId, moviePosterPath, movieTitle } = req.body;
@@ -115,7 +115,7 @@ class ExperienceController extends BaseController<IExperience> {
     };
 
     if (req.file?.path) {
-      newBody.imgUrl = req.file.path;
+      newBody.imgUrl = `/${req.file.path}`;
     }
 
     req.body = newBody;
