@@ -110,7 +110,7 @@ router.get('/popular', movieController.getPopularMovies.bind(movieController));
 
 /** [ByQuery]
  * @swagger
- * /movies:
+ * /movies/search:
  *   get:
  *     tags:
  *       - Movie
@@ -130,8 +130,8 @@ router.get('/popular', movieController.getPopularMovies.bind(movieController));
  *           application/json:
  *             schema:
  *               type: array
- *                 items:
- *                   $ref: '#/components/schemas/Movie'
+ *               items:
+ *                 $ref: '#/components/schemas/Movie'
  *       401:
  *         description: Unauthorized
  *         content:
@@ -142,6 +142,6 @@ router.get('/popular', movieController.getPopularMovies.bind(movieController));
  *                 message:
  *                   type: string
  */
-router.get('/', movieController.getByQuery.bind(movieController));
+router.get('/search', movieController.getByQuery.bind(movieController));
 
 export default router;
