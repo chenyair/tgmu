@@ -64,7 +64,7 @@ function backend() {
     # check return code of last command
     if [ $? -ne 0 ]; then
         cd ..
-        echo "$BUILD_OUTPUT" | tee -a ./frontend.build.log
+        echo "$BUILD_OUTPUT" | tee -a ./backend.build.log
         echo "Backend build failed.. See above logs."
         exit 1
     fi
