@@ -1,30 +1,60 @@
-import React, { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useState } from 'react';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import TgmuDialog from '@/components/tgmu-dialog';
 import { useForm } from '@tanstack/react-form';
-import ImageEditor from './components/image-editor';
+import ImageEditor from './image-editor';
 import { ExperienceGetAllResponse, Movie } from 'shared-types';
-import MoviePicker from './components/movie-picker';
-import './index.scss';
+import MoviePicker from './movie-picker';
+import './experience-dialog.scss';
 import Divider from '@/components/divider';
 import { TailSpin as Loader } from 'react-loader-spinner';
 import { experienceService } from '@/services/experience-service';
 import { useAuth } from '@/helpers/auth.context';
-import { useQueryClient, InfiniteData } from '@tanstack/react-query';
+import { useQueryClient, InfiniteData, useQuery } from '@tanstack/react-query';
 
-const NewExperienceDialog: React.FC = () => {
+interface ExperienceDialogProps {
+  mode: 'edit' | 'new';
+}
+
+interface ExperienceFormValues {
+  title: string;
+  description: string;
+  experienceImage: File | undefined;
+  movie: Movie | undefined;
+}
+
+const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isLoding, setIsLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
-  const experienceForm = useForm<{
-    title: string;
-    description: string;
-    experienceImage: File | undefined;
-    movie: Movie | undefined;
-  }>({
-    defaultValues: { title: '', description: '', experienceImage: undefined, movie: undefined },
+  const { experienceId } = getRouteApi('/_authenticated/experiences/$experienceId/edit').useParams();
+
+  const { data: experience, status } = useQuery({
+    queryKey: ['experience', experienceId],
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    queryFn: ({ signal, queryKey }) => experienceService.getById(queryKey.at(-1)!, signal),
+    enabled: mode === 'edit',
+  });
+
+  const formDefaultValues: ExperienceFormValues = experience
+    ? {
+        title: experience.title,
+        description: experience.description,
+        experienceImage: undefined,
+        movie: experience.movieDetails as Movie,
+      }
+    : {
+        title: '',
+        description: '',
+        experienceImage: undefined,
+        movie: undefined,
+      };
+
+  const experienceForm = useForm<ExperienceFormValues>({
+    defaultValues: formDefaultValues,
     onSubmit: async ({ value }) => {
       const { title, description, experienceImage, movie } = value;
 
@@ -107,7 +137,7 @@ const NewExperienceDialog: React.FC = () => {
           }}
         >
           <div className="d-flex flex-column gap-3" style={{ height: '10%' }}>
-            <div className="experience-form-title">New Experience</div>
+            <div className="experience-form-title">{mode === 'new' ? 'New' : 'Edit'} Experience</div>
             <Divider className="" />
           </div>
           <div className="d-flex gap-3 py-2" style={{ height: '80%' }}>
@@ -116,6 +146,7 @@ const NewExperienceDialog: React.FC = () => {
               children={(field) => (
                 <ImageEditor
                   style={{ width: '40%' }}
+                  placeholderImg={experience?.imgUrl}
                   value={field.state.value}
                   onChange={(file) => field.handleChange(file)}
                 />
@@ -182,4 +213,4 @@ const NewExperienceDialog: React.FC = () => {
   );
 };
 
-export default NewExperienceDialog;
+export default ExperienceDialog;

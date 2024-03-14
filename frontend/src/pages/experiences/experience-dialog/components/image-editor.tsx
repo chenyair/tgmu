@@ -5,10 +5,17 @@ import './image-editor.scss';
 interface ImageEditorProps {
   onChange: (image: File) => void;
   value?: File;
+  placeholderImg?: string;
   className?: string;
   style?: React.CSSProperties;
 }
-const ImageEditor: React.FC<ImageEditorProps> = ({ onChange, value, className, style }: ImageEditorProps) => {
+const ImageEditor: React.FC<ImageEditorProps> = ({
+  onChange,
+  value,
+  className,
+  style,
+  placeholderImg,
+}: ImageEditorProps) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,10 +30,10 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ onChange, value, className, s
 
   return (
     <div className={`h-100 ${className}`} style={{ ...style, position: 'relative' }}>
-      {value ? (
+      {value || placeholderImg ? (
         <img
           className="image-editor-image"
-          src={URL.createObjectURL(value)}
+          src={value ? URL.createObjectURL(value) : `/${placeholderImg}`}
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       ) : (
