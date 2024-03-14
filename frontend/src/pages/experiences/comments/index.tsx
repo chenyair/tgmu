@@ -1,7 +1,7 @@
 import React from 'react';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import TgmuDialog from '@/components/tgmu-dialog';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { format as formatTimeAgo } from 'timeago.js';
 import { Puff as PostLoader } from 'react-loader-spinner';
 import { Grid as InitialLoader } from 'react-loader-spinner';
@@ -10,7 +10,7 @@ import { experienceService } from '@/services/experience-service';
 import TgmuScrollArea from '@/components/tgmu-scroll-area';
 import * as Avatar from '@radix-ui/react-avatar';
 import './index.scss';
-import { ExperienceGetByIdResponse } from 'shared-types';
+import { ExperienceGetAllResponse, ExperienceGetByIdResponse } from 'shared-types';
 import { useAuth } from '@/helpers/auth.context';
 import Divider from '@/components/divider';
 
@@ -36,32 +36,52 @@ const ExperienceCommentsDialog: React.FC = () => {
   const postComment = async () => {
     try {
       setIsLoading(true);
-      await experienceService.postComment(experienceId, newComment);
+
+      const createdAt = new Date();
+      const { firstName, lastName, imgUrl } = auth.user!;
+
+      const commentToAdd = {
+        text: newComment,
+        userId: {
+          firstName,
+          lastName,
+          imgUrl,
+        },
+        createdAt,
+        updatedAt: createdAt,
+      };
+
+      const updatedExperience = await experienceService.postComment(experienceId, newComment);
       queryClient.setQueryData<ExperienceGetByIdResponse>(['experience', experienceId], (oldData) => {
         if (!oldData) {
           return undefined;
         }
-
-        const createdAt = new Date();
-        const { firstName, lastName, imgUrl } = auth.user!;
-
-        const commentToAdd = {
-          text: newComment,
-          userId: {
-            firstName,
-            lastName,
-            imgUrl,
-          },
-          createdAt,
-          updatedAt: createdAt,
-        };
 
         return {
           ...oldData!,
           comments: [...oldData!.comments, commentToAdd],
         };
       });
-      
+
+      const updateExperienceListData = (data: InfiniteData<ExperienceGetAllResponse, number> | undefined) => {
+        if (data === undefined) return undefined;
+
+        const newPages = data.pages.map(page => ({
+          ...page,
+          experiences: page.experiences.map(exp => exp._id === experienceId ? updatedExperience : exp)
+        }))
+
+
+        return {
+          pages: newPages,
+          pageParams: data.pageParams,
+        };
+      }
+
+      // Insert new experience to the first page of the experiences list
+      queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', true], (data) => updateExperienceListData(data));
+      queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', false], (data) => updateExperienceListData(data));
+
       setNewComment('');
     } finally {
       setIsLoading(false);
