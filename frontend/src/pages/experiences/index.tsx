@@ -32,9 +32,6 @@ const ExperiencesPage: React.FC = () => {
       fetchNextPage();
     }
   };
-
-  yesyesyes;
-
   const handleToggleMyExperiences = () => {
     setIsMyExperiences((prev) => !prev);
   };
