@@ -16,7 +16,8 @@ const ExperiencesPage: React.FC = () => {
 
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useInfiniteQuery({
     queryKey: ['experiences', isMyExperiences],
-    queryFn: async ({ signal, pageParam }) => experienceService.getAll({ page: pageParam, limit: 10, owner: isMyExperiences ? user?._id! : undefined }, signal),
+    queryFn: async ({ signal, pageParam }) =>
+      experienceService.getAll({ page: pageParam, limit: 10, owner: isMyExperiences ? user?._id! : undefined }, signal),
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => {
       if (lastPage.experiences.length === 0) {
@@ -32,9 +33,11 @@ const ExperiencesPage: React.FC = () => {
     }
   };
 
+  yesyesyes;
+
   const handleToggleMyExperiences = () => {
     setIsMyExperiences((prev) => !prev);
-  }
+  };
 
   const handleScrollBottom = useMemo(() => debounce(handleNextPage, 300), [hasNextPage, isFetchingNextPage]);
   const handleNewExperience = () => {
@@ -53,7 +56,9 @@ const ExperiencesPage: React.FC = () => {
         <FaCirclePlus className="new-experience-btn" style={{}} onClick={handleNewExperience} />
       </div>
       <div style={{ position: 'absolute', left: '8%', top: '3%' }}>
-        <button type="button" className="btn btn-outline-info" onClick={handleToggleMyExperiences}>Click to show {isMyExperiences ? 'all' : 'only yours'}</button>
+        <button type="button" className="btn btn-outline-info" onClick={handleToggleMyExperiences}>
+          Click to show {isMyExperiences ? 'all' : 'only yours'}
+        </button>
       </div>
       <div className="d-flex flex-column justify-content-center align-items-center h-100">
         {(() => {
