@@ -197,7 +197,7 @@ describe('Experience tests', () => {
 
     // Expect no change in comments and likes
     expect(response.body.comments).toMatchObject(firstExperiece.comments);
-    expect(response.body.likedUsers).not.toContain(liked);
+    expect(response.body.likedUsers).not.toContain(liked[0]);
     expect(response.body.likedUsers).toMatchObject(firstExperiece.likedUsers);
   });
 
