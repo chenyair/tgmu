@@ -1,10 +1,4 @@
-import {
-  ExperienceGetAllResponse,
-  ExperienceGetByIdResponse,
-  IComment,
-  IExperience,
-  NewExperience,
-} from 'shared-types';
+import { ExperienceGetAllResponse, ExperienceGetByIdResponse, IComment, IExperience } from 'shared-types';
 import { BaseController } from './base.controller';
 import ExperienceModel from '../models/experience.model';
 import { Request, Response } from 'express';
@@ -38,7 +32,7 @@ class ExperienceController extends BaseController<IExperience> {
       Record<string, never>,
       ExperienceGetAllResponse,
       Record<string, never>,
-      { page: string; limit: string, owner?: string}
+      { page: string; limit: string; owner?: string }
     >,
     res: Response
   ) {
@@ -93,21 +87,20 @@ class ExperienceController extends BaseController<IExperience> {
     return res.status(httpStatus.CREATED).send(doc);
   }
 
-  async putById(req: Request<{ id: string }, IExperience, NewExperience | Partial<IExperience>>, res: Response) {
-    const updatePayload: Partial<IExperience> = this.sanitizeObject(
-      req.body,
-      '_id',
-      'comments',
-      'likedUsers',
-      'createdAt',
-      'updatedAt'
-    );
+  async putById(req: Request<{ id: string }>, res: Response) {
+    const newBody = req.body as IExperience;
+    const { movieId, moviePosterPath, movieTitle } = req.body;
+    newBody.movieDetails = {
+      id: movieId,
+      poster_path: moviePosterPath,
+      title: movieTitle,
+    };
 
     if (req.file?.path) {
-      updatePayload.imgUrl = req.file.path;
+      newBody.imgUrl = req.file.path;
     }
 
-    req.body = updatePayload;
+    req.body = newBody;
     return super.putById(req, res);
   }
 }

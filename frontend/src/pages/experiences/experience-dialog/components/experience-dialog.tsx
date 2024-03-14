@@ -77,7 +77,7 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
 
       setIsLoading(false);
 
-      const updateQueryData = (data: InfiniteData<ExperienceGetAllResponse, number> | undefined) => {
+      const updateQueryAfterCreate = (data: InfiniteData<ExperienceGetAllResponse, number> | undefined) => {
         if (data === undefined) return undefined;
         data.pages[0].experiences = [newExperience, ...data.pages[0].experiences];
         return {
@@ -86,12 +86,28 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
         };
       };
 
+      const updateQueryAfterUpdate = (data: InfiniteData<ExperienceGetAllResponse, number> | undefined) => {
+        if (data === undefined) return undefined;
+
+        const pages = data.pages.map((page) => ({
+          ...page,
+          experiences: page.experiences.map((exp) => (exp._id === experienceId ? newExperience : exp)),
+        }));
+
+        return {
+          pages,
+          pageParams: data.pageParams,
+        };
+      };
+
+      const updateQuery = mode === 'new' ? updateQueryAfterCreate : updateQueryAfterUpdate;
+
       // Insert new experience to the first page of the experiences list
       queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', true], (data) =>
-        updateQueryData(data)
+        updateQuery(data)
       );
       queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', false], (data) =>
-        updateQueryData(data)
+        updateQuery(data)
       );
 
       // Redirect back to experiences page
