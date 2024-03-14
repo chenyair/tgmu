@@ -1,4 +1,4 @@
-import { ExperienceGetAllResponse } from 'shared-types';
+import { ExperienceGetAllResponse, ExperienceGetByIdResponse, IExperience } from 'shared-types';
 import { createApiClient } from './api-client';
 import { AxiosInstance } from 'axios';
 
@@ -19,6 +19,18 @@ export class ExperienceService {
         signal,
       })
     ).data;
+  }
+
+  async getById(id: string, signal?: AbortSignal): Promise<ExperienceGetByIdResponse> {
+    return (
+      await this.apiClient.get<ExperienceGetByIdResponse>(`/${id}`, {
+        signal,
+      })
+    ).data;
+  }
+
+  async postComment(experienceId: string, text: string, signal?: AbortSignal): Promise<IExperience> {
+    return (await this.apiClient.post<IExperience>(`/${experienceId}/comments`, { text }, { signal })).data;
   }
 }
 

@@ -12,19 +12,19 @@ interface TgmuDialogProps {
 
 const TgmuDialog: React.FC<TgmuDialogProps> = ({ open, onOpenChange, children, style }: TgmuDialogProps) => {
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="DialogOverlay" />
-        <Dialog.Content className="DialogContent" style={style}>
-          {children}
-          <Dialog.Close>
-            <button className="IconButton" aria-label="Close">
+    <div id="tgmu-dialog-wrapper">
+      <Dialog.Root open={open} onOpenChange={onOpenChange}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="DialogOverlay" />
+          <Dialog.Content className="DialogContent" style={style}>
+            {children}
+            <button className="IconButton" aria-label="Close" onClick={onOpenChange}>
               <IoMdClose />
             </button>
-          </Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </div>
   );
 };
 
