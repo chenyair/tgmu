@@ -17,7 +17,7 @@ export class BaseController<ModelType> {
     logger.debug(`${this.loggerPrefix} ${msg.join(' ')}`);
   }
 
-  sanitizeObject(obj: object, ...exclude: string[]): FilterQuery<ModelType> | Partial<ModelType> {
+  private sanitizeObject(obj: object, ...exclude: string[]): FilterQuery<ModelType> | Partial<ModelType> {
     const allowed = pick(obj, Object.keys(this.model.schema.paths)) ?? {};
 
     const sanitized = omit(allowed, exclude);
