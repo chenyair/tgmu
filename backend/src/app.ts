@@ -6,11 +6,8 @@ import dotenv from 'dotenv';
 import createLogger from './utils/logger';
 import initDB from './db';
 import authRoute from './routes/auth.route';
-import userRoute from './routes/user.route';
-import movieRoute from './routes/movie.route';
-import experienceRoute from './routes/experience.route';
-import authMiddleware from './common/auth.middleware';
 import errorMiddleware from './common/error.middleware';
+import apiRoute from './routes/api.route';
 import 'express-async-errors';
 
 const logger = createLogger('app');
@@ -63,11 +60,7 @@ const initApp = async (url: string = 'localhost:80'): Promise<Express> => {
 
   app.use('/auth', authRoute);
 
-  app.use(authMiddleware);
-  app.use('/users', userRoute);
-  app.use('/movies', movieRoute);
-  app.use('/experiences', authMiddleware, experienceRoute);
-
+  app.use('/api', apiRoute);
   app.use(errorMiddleware);
 
   logger.debug('calling init DB');
