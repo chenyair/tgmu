@@ -19,11 +19,11 @@ import 'express-async-errors';
  *     MovieDetails:
  *       type: object
  *       required:
- *         - id 
+ *         - movieId 
  *         - title
  *         - poster_path
  *       properties:
- *         id:
+ *         movieId:
  *           type: integer
  *           description: The movie's id
  *         title:
@@ -32,6 +32,10 @@ import 'express-async-errors';
  *         poster_path:
  *           type: string
  *           description: The movie's poster path
+ *       example:
+ *         movieId: 1234
+ *         title: 'Bob the builder'
+ *         posterPath: '/bob_the_builder.png'
  * 
  *     Comment:
  *       type: object
@@ -55,12 +59,12 @@ import 'express-async-errors';
  *           description: The comment's last update date
  * 
  *     BaseExperience:
- *       type: object
  *       required:
  *         - userId
  *         - title
  *         - description
  *         - imgUrl
+ *       type: object
  *       properties:
  *         userId:
  *           type: string
@@ -74,6 +78,7 @@ import 'express-async-errors';
  *         imgUrl:
  *           type: string
  *           description: The experience's image URL
+ *         
  *       example:
  *         userId: '90101234'
  *         title: 'Bob the builder experience'
@@ -219,7 +224,9 @@ router.get('/:id', experienceController.getById.bind(experienceController));
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/BaseExperience'
+ *             allOf:
+ *               - $ref: '#/components/schemas/BaseExperience'
+ *               - $ref: '#/components/schemas/MovieDetails'
  *     responses:
  *       201:
  *         description: Created
@@ -239,6 +246,45 @@ router.get('/:id', experienceController.getById.bind(experienceController));
  */
 router.post('', saveFileMiddleware.single('experienceImage'), experienceController.post.bind(experienceController));
 
+/**
+ * @swagger
+ * /experiences/{id}:
+ *   put:
+ *     tags:
+ *       - Experience
+ *     description: Update an existing experience
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             allOf:
+ *               - $ref: '#/components/schemas/BaseExperience'
+ *               - $ref: '#/components/schemas/MovieDetails'
+ *     responses:
+ *       201:
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Experience'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+router.put(
+  '/:id',
+  saveFileMiddleware.single('experienceImage'),
+  experienceController.putById.bind(experienceController)
+);
 /** [DELETE EXPERIENCE]
  * @swagger
  * /experience/{id}:

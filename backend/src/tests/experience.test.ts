@@ -156,6 +156,7 @@ describe('Experience tests', () => {
     const createdComment = response.body.comments.find((comment: IComment) => comment.text === commentText)!;
     expect(createdComment).toBeDefined();
     expect(createdComment!.userId).toBe(userId.toString());
+    firstExperiece.comments = [...firstExperiece.comments, createdComment];
   });
 
   test('Like experience', async () => {
@@ -204,6 +205,30 @@ describe('Experience tests', () => {
     expect(matchComment!.userId.lastName).toBe(user.lastName);
   });
 
+  test('Update experience', async () => {
+    const liked = [new Date().getTime()];
+    const newTitle = 'New title';
+    const newDescription = 'New description';
+    const response = await request(app)
+      .put(`/api/experiences/${firstExperiece._id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .attach('experienceImage', path.resolve(__dirname, 'another.webp'))
+      .field('title', newTitle)
+      .field('description', newDescription)
+      .field('likedUsers', liked.toString());
+    expect(response.statusCode).toBe(httpStatus.CREATED);
+    expect(response.body).toBeDefined();
+    expect(response.body.title).toBe(newTitle);
+    expect(response.body.description).toBe(newDescription);
+    expect(response.body.imgUrl).toBeDefined();
+    createdFiles = [...createdFiles, response.body.imgUrl];
+
+    // Expect no change in comments and likes
+    expect(response.body.comments).toMatchObject(firstExperiece.comments);
+    expect(response.body.likedUsers).not.toContain(liked[0]);
+    expect(response.body.likedUsers).toMatchObject(firstExperiece.likedUsers);
+  });
+
   describe('Delete experience tests', () => {
     let firstExperienceId: string;
 
@@ -236,7 +261,7 @@ describe('Experience tests', () => {
     test('delete experience that does not exist', async () => {
       await request(app).delete(`/api/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
       const response = await request(app)
-        .delete(`/experiences/${firstExperienceId}`)
+        .delete(`/api/experiences/${firstExperienceId}`)
         .set('Authorization', `Bearer ${accessToken}`);
       expect(response.statusCode).toBe(httpStatus.NOT_FOUND);
     });

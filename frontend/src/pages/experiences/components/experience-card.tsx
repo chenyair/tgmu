@@ -1,7 +1,7 @@
 import { IExperience, IUserDetails } from 'shared-types';
 import './experience-card.scss';
 import { FaHeart, FaRegHeart, FaRegComment } from 'react-icons/fa6';
-import { MdDelete } from 'react-icons/md';
+import { MdDelete, MdEdit } from 'react-icons/md';
 import MovieCard from '@/components/movie-card';
 interface ExperienceCardProps {
   experience: IExperience;
@@ -13,7 +13,7 @@ interface ExperienceCardProps {
   width: string;
   isOwner: boolean;
   onDeleteClicked: (experience: IExperience) => void;
-  onEditClicked?: (experience: IExperience) => void;
+  onEditClicked: (experience: IExperience) => void;
 }
 
 const ExperienceCard = ({
@@ -24,7 +24,7 @@ const ExperienceCard = ({
   width,
   onCommentClicked,
   onDeleteClicked,
-  // onEditClicked,
+  onEditClicked,
   isOwner,
   style = {},
 }: ExperienceCardProps) => {
@@ -33,11 +33,19 @@ const ExperienceCard = ({
   return (
     <div className="d-flex gap-3 px-4" style={{ ...style, height, width, position: 'relative' }}>
       {isOwner && (
-        <div className="experience-card-owner-actions">
-          <MdDelete
-            style={{ color: 'red', height: '20px', width: '20px', cursor: 'pointer' }}
-            onClick={() => onDeleteClicked(experience)}
-          />
+        <div className="experience-card-owner-actions d-flex flex-column">
+          <div>
+            <MdDelete
+              style={{ color: 'red', height: '20px', width: '20px', cursor: 'pointer' }}
+              onClick={() => onDeleteClicked(experience)}
+            />
+          </div>
+          <div style={{ paddingTop: '0.2rem' }}>
+            <MdEdit
+              style={{ color: 'grey', height: '20px', width: '20px', cursor: 'pointer' }}
+              onClick={() => onEditClicked(experience)}
+            />
+          </div>
         </div>
       )}
       <div style={{ width: '20%' }}>

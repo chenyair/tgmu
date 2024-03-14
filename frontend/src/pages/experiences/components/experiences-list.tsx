@@ -41,6 +41,10 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
     navigate({ to: '/experiences/$experienceId/comments', params: { experienceId: experience._id! } });
   };
 
+  const handleEditClicked = (experience: IExperience) => {
+    navigate({ to: '/experiences/$experienceId/edit', params: { experienceId: experience._id! } });
+  };
+
   const handleDeleteClicked = async (experience: IExperience) => {
     await experienceService.delete(experience._id!);
 
@@ -73,6 +77,7 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
             loggedUser={user!}
             onCommentClicked={handleCommentClicked}
             onLikeClicked={handleLikeClicked}
+            onEditClicked={handleEditClicked}
             onDeleteClicked={handleDeleteClicked}
             isOwner={user!._id === experience.userId.toString()}
             height="14rem"

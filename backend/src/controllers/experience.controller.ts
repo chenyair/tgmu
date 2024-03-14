@@ -104,6 +104,23 @@ class ExperienceController extends BaseController<IExperience> {
     await doc.save();
     return res.status(httpStatus.CREATED).send(doc);
   }
+
+  async putById(req: Request<{ id: string }>, res: Response) {
+    const newBody = req.body as IExperience;
+    const { movieId, moviePosterPath, movieTitle } = req.body;
+    newBody.movieDetails = {
+      id: movieId,
+      poster_path: moviePosterPath,
+      title: movieTitle,
+    };
+
+    if (req.file?.path) {
+      newBody.imgUrl = req.file.path;
+    }
+
+    req.body = newBody;
+    return super.putById(req, res);
+  }
 }
 
 export const experienceController = new ExperienceController();
