@@ -69,15 +69,18 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
       });
       setIsLoading(false);
 
-      // Insert new experience to the first page of the experiences list
-      queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences'], (data) => {
+      const updateQueryData = (data: InfiniteData<ExperienceGetAllResponse, number> | undefined) => {
         if (data === undefined) return undefined;
         data.pages[0].experiences = [newExperience, ...data.pages[0].experiences];
         return {
           pages: data.pages,
           pageParams: data.pageParams,
         };
-      });
+      }
+
+      // Insert new experience to the first page of the experiences list
+      queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', true], (data) => updateQueryData(data));
+      queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', false], (data) => updateQueryData(data));
 
       // Redirect back to experiences page
       handleClose();

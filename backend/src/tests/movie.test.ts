@@ -72,7 +72,6 @@ describe('Movie tests', () => {
   test('Search movies without query', async () => {
     const response = await request(app)
       .get('/api/movies/search')
-      .query({ query: '' })
       .set('Authorization', `JWT ${accessToken}`);
     expect(response.statusCode).toBe(httpStatus.OK);
     expect(response.body).toBeDefined();

@@ -28,12 +28,11 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
   };
 
   const handleDeleteClicked = async (experience: IExperience) => {
-    // TODO: Add Loader
     await experienceService.delete(experience._id!);
 
-    // Delete experience from the list
-    queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences'], (data) => {
+    const updateQueryData = (data: InfiniteData<ExperienceGetAllResponse, number> | undefined) => {
       if (data === undefined) return undefined;
+
       const filteredPages = data.pages.map((page) => ({
         ...page,
         experiences: page.experiences.filter((exp) => exp._id !== experience._id),
@@ -43,7 +42,11 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
         pages: filteredPages,
         pageParams: data.pageParams,
       };
-    });
+    }
+
+    // Delete experience from the list
+    queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', true], updateQueryData);
+    queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', false], updateQueryData);
   };
 
   return (
