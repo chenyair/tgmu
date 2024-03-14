@@ -16,9 +16,9 @@ function help() {
 }
 
 function frontend_deploy() {
-    echo "Removing current build..."
+    echo "Removing current frontend build..."
     rm -rf ./backend/dist/ui
-    echo "Copying build to server..."
+    echo "Copying frontend build to server..."
     cp -r ./frontend/dist ./backend/dist/ui
     echo "Successfully deployed frontend to server"
 }
@@ -27,11 +27,22 @@ function frontend() {
     echo "Building and deploying frontend changes..."
     echo "Starting build..."
     cd frontend
-    npm run build >> ./frontend.build.log
-    echo ""
+
+    BUILD_OUTPUT=$(npm run build)
+    # check return code of last command
+    if [ $? -ne 0 ]; then
+        cd ..
+        echo "$BUILD_OUTPUT" | tee -a ./frontend.build.log
+        echo "Frontend build failed.. See above logs."
+        exit 1
+    fi
+
     cd ..
-    echo "Build complete."
+    echo "$BUILD_OUTPUT" >> ./frontend.build.log
     echo ""
+    echo "Frontend build complete."
+    echo ""
+
     if [[ $1 == "deploy" ]]; then
         frontend_deploy
     else
@@ -48,8 +59,18 @@ function backend() {
     echo "Building and deploying backend changes..."
     echo "Starting build and pm2 restart (npm run prod)..."
     cd backend
-    npm run prod >> ./backend.build.log
+
+    BUILD_OUTPUT=$(npm run prod)
+    # check return code of last command
+    if [ $? -ne 0 ]; then
+        cd ..
+        echo "$BUILD_OUTPUT" | tee -a ./frontend.build.log
+        echo "Backend build failed.. See above logs."
+        exit 1
+    fi
+
     cd ..
+    echo "$BUILD_OUTPUT" >> ./backend.build.log
     echo ""
     echo "Successfully updated backend"
     echo "backend: Done!"
@@ -68,6 +89,9 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+TIMESTAMP=$(date +"%Y-%m-%d %T")
+echo "----------------------------------------"
+echo "[$TIMESTAMP] Starting deployment..."
 
 # Parse options
 while (( "$#" )); do
