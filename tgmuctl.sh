@@ -1,5 +1,7 @@
 #!/bin/bash
 
+TIMESTAMP=$(date +"%Y-%m-%d %T")
+
 # Function to display usage
 function usage() {
     echo "Usage: $0 [-f | --frontend] [-b | --backend] [-a | --all] [-h | --help]"
@@ -24,6 +26,8 @@ function frontend_deploy() {
 }
 
 function frontend() {
+    echo "----------------------------------------" >> ./frontend.build.log
+    echo "[$TIMESTAMP] Starting deployment..." >> ./frontend.build.log
     echo "Building and deploying frontend changes..."
     echo "Starting build..."
     cd frontend
@@ -56,6 +60,8 @@ function frontend() {
 }
 
 function backend() {
+    echo "----------------------------------------" >> ./backend.build.log
+    echo "[$TIMESTAMP] Starting deployment..." >> ./backend.build.log
     echo "Building and deploying backend changes..."
     echo "Starting build and pm2 restart (npm run prod)..."
     cd backend
@@ -88,10 +94,6 @@ if [ $# -eq 0 ]; then
     usage
     exit 1
 fi
-
-TIMESTAMP=$(date +"%Y-%m-%d %T")
-echo "----------------------------------------"
-echo "[$TIMESTAMP] Starting deployment..."
 
 # Parse options
 while (( "$#" )); do
