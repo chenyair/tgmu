@@ -37,7 +37,7 @@ const ExperienceCommentsDialog: React.FC = () => {
     try {
       setIsLoading(true);
       await experienceService.postComment(experienceId, newComment);
-      queryClient.setQueryData<ExperienceGetByIdResponse>([experienceId, 'experience'], (oldData) => {
+      queryClient.setQueryData<ExperienceGetByIdResponse>(['experience', experienceId], (oldData) => {
         if (!oldData) {
           return undefined;
         }
