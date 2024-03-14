@@ -15,6 +15,14 @@ function help() {
     echo "-h, --help: Print help message"
 }
 
+function frontend_deploy() {
+    echo "Removing current build..."
+    rm -rf ./backend/dist/ui
+    echo "Copying build to server..."
+    cp -r ./frontend/dist ./backend/dist/ui
+    echo "Successfully deployed frontend to server"
+}
+
 function frontend() {
     echo "Building and deploying frontend changes..."
     echo "Starting build..."
@@ -25,11 +33,7 @@ function frontend() {
     echo "Build complete."
     echo ""
     if [[ $1 == "deploy" ]]; then
-        echo "Removing current build..."
-        rm -rf ./backend/dist/ui
-        echo "Copying build to server..."
-        cp -r ./frontend/dist ./backend/dist/ui
-        echo "Successfully deployed frontend to server"
+        frontend_deploy
     else
         echo "Removing current frontend build from backend source..."
         rm -rf ./backend/src/ui
@@ -55,6 +59,7 @@ function all() {
     echo "Building and deploying entire application..."
     frontend
     backend
+    frontend_deploy
 } 
 
 # If no arguments were passed, display usage
