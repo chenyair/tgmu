@@ -6,7 +6,7 @@ import MovieCard from '@/components/movie-card';
 interface ExperienceCardProps {
   experience: IExperience;
   loggedUser: IUserDetails;
-  onLikeClicked: (experience: IExperience) => void;
+  onLikeClicked?: (experience: IExperience) => void;
   onCommentClicked: (experience: IExperience) => void;
   style?: React.CSSProperties;
   height: string;
@@ -24,7 +24,7 @@ const ExperienceCard = ({
   width,
   onCommentClicked,
   onDeleteClicked,
-  onEditClicked,
+  // onEditClicked,
   isOwner,
   style = {},
 }: ExperienceCardProps) => {
@@ -58,7 +58,7 @@ const ExperienceCard = ({
           <div className="experience-actions d-flex mt-auto justify-content-evenly">
             <div
               className="d-flex align-items-center justify-content-center gap-2 fs-6 experience-card-likes-btn w-100"
-              onClick={() => onLikeClicked(experience)}
+              onClick={() => onLikeClicked && onLikeClicked(experience)}
             >
               {experience.likedUsers.findIndex((like) => like === loggedUser?._id) !== -1 ? (
                 <FaHeart color="#CE2C31" />
