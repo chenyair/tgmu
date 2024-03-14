@@ -8,16 +8,15 @@ import fs from 'fs';
 const logger = createLogger('Express');
 const { NODE_ENV: ENV, LISTEN_ADDRESS } = process.env as Record<string, string>;
 
-const SERVER_PROTOCOL = process.env.PROTOCOL || 'http'
+const SERVER_PROTOCOL = process.env.PROTOCOL || 'http';
 
-const PORT = process.env.PORT || ENV === 'production' ? '443' : '80'
+const PORT = process.env.PORT || ENV === 'production' ? '443' : '80';
 
 export const SERVER_URL = `${SERVER_PROTOCOL}://${LISTEN_ADDRESS}:${PORT}`;
 
 initApp().then((app: Express) => {
   logger.debug(`Running in ${ENV}`);
 
-  const port = PORT || 8000;
   if (SERVER_PROTOCOL !== 'https') {
     http.createServer(app).listen(PORT);
   } else {
@@ -25,7 +24,7 @@ initApp().then((app: Express) => {
       key: fs.readFileSync(`${__dirname}/../client-key.pem`),
       cert: fs.readFileSync(`${__dirname}/../client-cert.pem`),
     };
-    https.createServer(httpsConf, app).listen(port);
+    https.createServer(httpsConf, app).listen(PORT);
   }
   logger.debug(`The Ger Movie Universe API is listnening on ${SERVER_URL}`);
 });
