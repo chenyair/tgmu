@@ -3,7 +3,7 @@ import initApp from '../app';
 import User from '../models/user.model';
 import { Express } from 'express';
 import httpStatus from 'http-status';
-import { IExperience, IUser, MovieDetails, NewExperience } from 'shared-types';
+import { IComment, IExperience, IUser, NewExperience, PopulatedComment, MovieDetails } from 'shared-types';
 import request from 'supertest';
 import { Types } from 'mongoose';
 import path from 'path';
@@ -34,6 +34,8 @@ const secondNewExperience: Partial<NewExperience> & { description: string; title
   description: 'This is the second test experience',
   title: 'Test experience',
 };
+
+const commentText = `This is a unique test comment ${new Date().getTime()}`;
 
 let userId: Types.ObjectId;
 let accessToken: string;
@@ -135,5 +137,34 @@ describe('Experience tests', () => {
     // experience should be the first in the second page
     expect(secondPageGetAll.experiences[0]._id).not.toBe(secondExperience._id);
     expect(secondPageGetAll.experiences[0]).toMatchObject(firstExperiece);
+  });
+
+  test('Add comment to experience', async () => {
+    const response = await request(app)
+      .post(`/experiences/${firstExperiece._id}/comments`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ text: commentText });
+    expect(response.statusCode).toBe(httpStatus.CREATED);
+    const createdComment = response.body.comments.find((comment: IComment) => comment.text === commentText)!;
+    expect(createdComment).toBeDefined();
+    expect(createdComment!.userId).toBe(userId.toString());
+  });
+
+  test('Get experience by id', async () => {
+    const response = await request(app)
+      .get(`/experiences/${firstExperiece._id}`)
+      .set('Authorization', `Bearer ${accessToken}`);
+    expect(response.statusCode).toBe(httpStatus.OK);
+    expect(response.body).toBeDefined();
+    expect(response.body._id).toMatch(firstExperiece._id!);
+
+    const matchComment: PopulatedComment = response.body.comments.find(
+      (comment: IComment) => comment.text === commentText
+    );
+    expect(matchComment).toBeDefined();
+    expect(matchComment!.userId._id).toBe(userId.toString());
+    expect(matchComment!.userId.imgUrl).toBe(user.imgUrl);
+    expect(matchComment!.userId.firstName).toBe(user.firstName);
+    expect(matchComment!.userId.lastName).toBe(user.lastName);
   });
 });

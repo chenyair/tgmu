@@ -36,7 +36,7 @@ declare namespace sharedTypes {
 
   export type IUserDetails = Pick<IUser, '_id' | 'birthdate' | 'email' | 'firstName' | 'lastName' | 'imgUrl'>;
 
-  type MovieDetails = Pick<Movie, 'id' | 'title' | 'poster_path'>
+  type MovieDetails = Pick<Movie, 'id' | 'title' | 'poster_path'>;
 
   interface IExperience {
     _id?: string;
@@ -57,11 +57,24 @@ declare namespace sharedTypes {
     totalPages: number;
   }
 
-  type NewExperience = Pick<IExperience, 'title' | 'description' | 'movieDetails'> & { experienceImage: File; userId: string };
+  type NewExperience = Pick<IExperience, 'title' | 'description' | 'movieDetails'> & {
+    experienceImage: File;
+    userId: string;
+  };
 
   interface IComment {
     userId: string;
     text: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
+  interface PopulatedComment extends Omit<IComment, 'userId'> {
+    userId: Pick<IUserDetails, '_id' | 'firstName' | 'lastName' | 'imgUrl'>;
+  }
+
+  interface ExperienceGetByIdResponse extends Omit<IExperience, 'comments'> {
+    comments: PopulatedComment[];
   }
 
   export interface IUserUpdatePayload extends Partial<Omit<IUserDetails, 'imgUrl' | '_id'>> {

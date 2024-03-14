@@ -13,7 +13,7 @@ export class BaseController<ModelType> {
     this.loggerPrefix = `model ${model.collection.name}:`;
   }
 
-  private debug(...msg: string[]) {
+  debug(...msg: string[]) {
     logger.debug(`${this.loggerPrefix} ${msg.join(' ')}`);
   }
 

@@ -45,6 +45,14 @@ import 'express-async-errors';
  *         userId:
  *           type: string
  *           description: The comment's userId
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: The comments's creation date
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: The comment's last update date
  * 
  *     BaseExperience:
  *       type: object
@@ -109,7 +117,9 @@ import 'express-async-errors';
  *         userId: '90101234'
  *         title: 'Bob the builder experience'
  *         description: 'That was the best movie ever'
- *         comments: [{text: 'I agree', userId: '1234'}, {text: 'I disagree', userId: '5678'}]
+ *         comments: 
+ *           - {text: 'I agree', userId: '1234', createdAt: '2021-01-02T00:00:00.000Z', updatedAt: '2021-01-02T00:00:00.000Z'} 
+ *           - {text: 'I disagree', userId: '5678', createdAt: '2021-01-03T00:00:00.000Z', updatedAt: '2021-01-03T00:00:00.000Z'}
  *         likedUsers: ['1234']
  *         imgUrl: '/bob_the_builder.png'
  *         movieDetails: {id: 1234, title: 'Bob the builder', poster_path: '/bob_the_builder.png'}
@@ -163,6 +173,40 @@ router.get('', experienceController.getAll.bind(experienceController));
 
 /**
  * @swagger
+ * /experiences/{id}:
+ *   get:
+ *     tags:
+ *       - Experience
+ *     description: Get experience by id
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         description: The experience's _id
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Experience'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+router.get('/:id', experienceController.getById.bind(experienceController));
+
+/**
+ * @swagger
  * /experiences:
  *   post:
  *     tags:
@@ -194,5 +238,47 @@ router.get('', experienceController.getAll.bind(experienceController));
  *                   type: string
  */
 router.post('', saveFileMiddleware.single('experienceImage'), experienceController.post.bind(experienceController));
+
+/**
+ * @swagger
+ * /experiences/{id}/comment:
+ *   post:
+ *     tags:
+ *       - Experience
+ *     description: Add a new comment to an experience
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - text
+ *             properties:
+ *               text:
+ *                 type: string
+ *                 description: The comment's text
+ *             example:
+ *               text: 'Wow, looks amazing!'
+ *     responses:
+ *       201:
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Experience'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+router.post('/:id/comments', experienceController.addComment.bind(experienceController));
 
 export default router;

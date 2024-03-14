@@ -39,6 +39,7 @@
     "react-select": "^5.8.0",
     "sass": "^1.71.1",
     "shared-types": "file:../shared-types",
+    "timeago.js": "^4.0.2",
     "validator": "^13.11.0",
     "zod": "^3.22.4"
   },
