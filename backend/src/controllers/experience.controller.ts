@@ -32,7 +32,7 @@ class ExperienceController extends BaseController<IExperience> {
       Record<string, never>,
       ExperienceGetAllResponse,
       Record<string, never>,
-      { page: string; limit: string, owner?: string}
+      { page: string; limit: string; owner?: string }
     >,
     res: Response
   ) {
@@ -65,7 +65,7 @@ class ExperienceController extends BaseController<IExperience> {
 
     return super.deleteById(req, res);
   }
-  
+
   async getById(req: Request, res: Response): Promise<Response<ExperienceGetByIdResponse>> {
     const { id } = req.params;
     this.debug(`Get by id ${id}`);
@@ -85,6 +85,26 @@ class ExperienceController extends BaseController<IExperience> {
     doc.comments.push({ userId: userId!, text } as IComment);
     await doc.save();
     return res.status(httpStatus.CREATED).send(doc);
+  }
+
+  async toggleLike(req: AuthRequest<{ id: string }, ExperienceGetByIdResponse, { like: boolean }>, res: Response) {
+    const { id: experienceId } = req.params;
+    const { _id: userId } = req.user!;
+    const { like } = req.body;
+
+    const doc = await this.model.findById(experienceId);
+    if (!doc) {
+      return res.status(httpStatus.NOT_FOUND).send('Experience not found');
+    }
+
+    if (like) {
+      doc.likedUsers.push(userId!);
+    } else {
+      doc.likedUsers = doc.likedUsers.filter((id) => id.toString() !== userId);
+    }
+
+    await doc.save();
+    return res.status(httpStatus.OK).send(doc);
   }
 }
 
