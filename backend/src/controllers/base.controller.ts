@@ -52,6 +52,10 @@ export class BaseController<ModelType> {
     const updatePayload: Partial<ModelType> = this.sanitizeObject(req.body, '_id');
     const doc = await this.model.findById(id);
 
+    if (!doc) {
+      return res.status(httpStatus.NOT_FOUND).send('Document not found');
+    }
+
     // Set the new values with this syntax to use `save` (for pre-save middleware)
     Object.keys(updatePayload).forEach((key) => {
       doc?.set(key, updatePayload[key as keyof ModelType]);

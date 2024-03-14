@@ -32,7 +32,7 @@ class ExperienceController extends BaseController<IExperience> {
       Record<string, never>,
       ExperienceGetAllResponse,
       Record<string, never>,
-      { page: string; limit: string, owner?: string}
+      { page: string; limit: string; owner?: string }
     >,
     res: Response
   ) {
@@ -65,7 +65,7 @@ class ExperienceController extends BaseController<IExperience> {
 
     return super.deleteById(req, res);
   }
-  
+
   async getById(req: Request, res: Response): Promise<Response<ExperienceGetByIdResponse>> {
     const { id } = req.params;
     this.debug(`Get by id ${id}`);
@@ -85,6 +85,23 @@ class ExperienceController extends BaseController<IExperience> {
     doc.comments.push({ userId: userId!, text } as IComment);
     await doc.save();
     return res.status(httpStatus.CREATED).send(doc);
+  }
+
+  async putById(req: Request<{ id: string }>, res: Response) {
+    const newBody = req.body as IExperience;
+    const { movieId, moviePosterPath, movieTitle } = req.body;
+    newBody.movieDetails = {
+      id: movieId,
+      poster_path: moviePosterPath,
+      title: movieTitle,
+    };
+
+    if (req.file?.path) {
+      newBody.imgUrl = req.file.path;
+    }
+
+    req.body = newBody;
+    return super.putById(req, res);
   }
 }
 
