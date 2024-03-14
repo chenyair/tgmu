@@ -135,7 +135,7 @@ import 'express-async-errors';
 
 /**
  * @swagger
- * /experiences:
+ * /api/experiences:
  *   get:
  *     tags:
  *       - Experience
@@ -178,7 +178,7 @@ router.get('', experienceController.getAll.bind(experienceController));
 
 /**
  * @swagger
- * /experiences/{id}:
+ * /api/experiences/{id}:
  *   get:
  *     tags:
  *       - Experience
@@ -212,7 +212,7 @@ router.get('/:id', experienceController.getById.bind(experienceController));
 
 /**
  * @swagger
- * /experiences:
+ * /api/experiences:
  *   post:
  *     tags:
  *       - Experience
@@ -248,7 +248,7 @@ router.post('', saveFileMiddleware.single('experienceImage'), experienceControll
 
 /**
  * @swagger
- * /experiences/{id}:
+ * /api/experiences/{id}:
  *   put:
  *     tags:
  *       - Experience
@@ -287,7 +287,7 @@ router.put(
 );
 /** [DELETE EXPERIENCE]
  * @swagger
- * /experience/{id}:
+ * /api/experience/{id}:
  *   delete:
  *     tags: [Experience]
  *     summary: Deletes an experience by id
@@ -313,7 +313,7 @@ router.delete('/:id', experienceController.deleteById.bind(experienceController)
 
 /**
  * @swagger
- * /experiences/{id}/comment:
+ * /api/experiences/{id}/comment:
  *   post:
  *     tags:
  *       - Experience
@@ -355,7 +355,7 @@ router.post('/:id/comments', experienceController.addComment.bind(experienceCont
 
 /** [TOGGLE LIKE]
  * @swagger
- * /experiences/{id}/like:
+ * /api/experiences/{id}/like:
  *   post:
  *     tags: [Experience]
  *     summary: Toggles a like on an experience

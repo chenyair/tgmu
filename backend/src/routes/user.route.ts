@@ -50,7 +50,7 @@ import 'express-async-errors';
 
 /** [Get All Users]
  * @swagger
- * /users:
+ * /api/users:
  *   get:
  *     summary: Returns all users
  *     tags: [User]
@@ -74,7 +74,7 @@ router.get('/', UserController.get.bind(UserController));
 
 /** [Get User by ID]
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   get:
  *     tags: [User]
  *     summary: Returns user details by id
@@ -105,7 +105,7 @@ router.get('/:id', UserController.getById.bind(UserController));
 
 /** [UPDATE USER]
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   put:
  *     tags: [User]
  *     summary: Updates a user by id
@@ -160,7 +160,7 @@ router.put('/:id', saveFileMiddleware.single('imageFile'), UserController.putByI
 
 /** [DELETE USER]
  * @swagger
- * /users/{id}:
+ * /api/users/{id}:
  *   delete:
  *     tags: [User]
  *     summary: Deletes a user by id

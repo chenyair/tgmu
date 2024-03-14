@@ -82,7 +82,7 @@ import 'express-async-errors';
 
 /** [POPULAR]
  * @swagger
- * /movies/popular:
+ * /api/movies/popular:
  *   get:
  *     tags:
  *       - Movie
@@ -110,7 +110,7 @@ router.get('/popular', movieController.getPopularMovies.bind(movieController));
 
 /** [ByQuery]
  * @swagger
- * /movies/search:
+ * /api/movies/search:
  *   get:
  *     tags:
  *       - Movie
