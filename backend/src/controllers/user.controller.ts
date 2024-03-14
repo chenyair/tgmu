@@ -1,9 +1,9 @@
-import UserModel from 'models/user.model';
+import UserModel from '../models/user.model';
 import bcrypt from 'bcrypt';
 import { IUser, IUserUpdatePayload } from 'shared-types';
 import { BaseController } from './base.controller';
 import { Response } from 'express';
-import { AuthRequest } from 'common/auth.middleware';
+import { AuthRequest } from '../common/auth.middleware';
 import httpStatus from 'http-status';
 
 class UserController extends BaseController<IUser> {

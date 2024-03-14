@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import User, { getUserDetails } from 'models/user.model';
+import User, { getUserDetails } from '../models/user.model';
 import { IUser, IUserDetails } from 'shared-types';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import httpStatus from 'http-status';
 import { Document } from 'mongoose';
-import createLogger from 'utils/logger';
+import createLogger from '../utils/logger';
 
 const logger = createLogger('auth controller');
 

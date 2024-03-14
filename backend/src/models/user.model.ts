@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import mongoose, { CallbackError } from 'mongoose';
-import { validateAlphabet } from 'utils/validator';
+import { validateAlphabet } from '../utils/validator';
 import { IUser, IUserDetails } from 'shared-types';
 import { isEmail } from 'validator';
 

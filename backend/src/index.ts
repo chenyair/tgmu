@@ -1,6 +1,6 @@
 import { Express } from 'express';
-import createLogger from 'utils/logger';
-import initApp from 'app';
+import createLogger from './utils/logger';
+import initApp from './app';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
