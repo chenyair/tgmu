@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import LoginFormInput from '@/components/form-input';
 import './index.scss';
 import { useForm } from '@tanstack/react-form';
+import { Puff as Loader } from 'react-loader-spinner';
 import { authenticationService } from '@/services/auth-service';
 import { writeTokens } from '@/utils/local-storage';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/helpers/auth.context';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { flushSync } from 'react-dom';
@@ -17,12 +18,16 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const routeApi = getRouteApi('/_auth/login');
   const search = routeApi.useSearch();
+
   const [errorOccurred, setErrorOccurred] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loginForm = useForm({
     defaultValues: { email: '', password: '', remember: false },
     onSubmit: async ({ value }) => {
       try {
+        setErrorOccurred(false);
+        setIsLoading(true);
         const { email, password, remember } = value;
         const tokens = await authenticationService.login(email, password);
 
@@ -36,6 +41,8 @@ const LoginPage: React.FC = () => {
         navigate({ to: search.redirect });
       } catch {
         setErrorOccurred(true);
+      } finally {
+        setIsLoading(false);
       }
     },
     validators: {
@@ -50,15 +57,23 @@ const LoginPage: React.FC = () => {
   const validateEmail = (email: string) => !isEmpty(email) && isEmail(email);
 
   const handleGoogleSuccess = async (credential: string) => {
-    const tokens = await authenticationService.googleSignIn(credential);
-    writeTokens(tokens, loginForm.getFieldValue('remember'));
+    try {
+      setErrorOccurred(false);
+      setIsLoading(true);
+      const tokens = await authenticationService.googleSignIn(credential);
+      writeTokens(tokens, loginForm.getFieldValue('remember'));
 
-    flushSync(() => {
-      const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
-      auth.setUser(payload);
-    });
+      flushSync(() => {
+        const payload = jwtDecode<JwtPayload & IUserDetails>(tokens.accessToken, {});
+        auth.setUser(payload);
+      });
 
-    navigate({ to: search.redirect });
+      navigate({ to: search.redirect });
+    } catch {
+      setErrorOccurred(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleError = () => {
@@ -137,8 +152,14 @@ const LoginPage: React.FC = () => {
           )}
         />
         <div>
-          <button type="submit" className="btn btn-success w-100">
-            Log In
+          <button type="submit" className="btn btn-success w-100" style={{ minHeight: '2.2rem' }}>
+            {isLoading ? (
+              <div className="d-flex justify-content-center">
+                <Loader width="1.5rem" height="1.5rem"></Loader>
+              </div>
+            ) : (
+              'Log In'
+            )}
           </button>
           <div>
             <span className="no-account-text">Don't have an account? </span>
