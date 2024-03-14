@@ -10,7 +10,7 @@ const { NODE_ENV: ENV, LISTEN_ADDRESS } = process.env as Record<string, string>;
 
 const SERVER_PROTOCOL = process.env.PROTOCOL || 'http';
 
-const PORT = process.env.PORT || ENV === 'production' ? '443' : '80';
+const PORT = process.env.PORT || (ENV === 'production' ? '443' : '80');
 
 export const SERVER_URL = `${SERVER_PROTOCOL}://${LISTEN_ADDRESS}:${PORT}`;
 
