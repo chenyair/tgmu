@@ -3,19 +3,19 @@ import { BaseController } from './base.controller';
 import ExperienceModel from '../models/experience.model';
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
-import { AuthRequest } from 'common/auth.middleware';
+import { AuthRequest } from '../common/auth.middleware';
 
 class ExperienceController extends BaseController<IExperience> {
   constructor() {
     super(ExperienceModel);
   }
-  
+
   async post(req: Request, res: Response) {
     const newBody = req.body as IExperience;
     if (req.file?.path) {
       newBody.imgUrl = req.file.path;
     }
-    
+
     const { movieId, moviePosterPath, movieTitle } = req.body;
     newBody.movieDetails = {
       id: movieId,

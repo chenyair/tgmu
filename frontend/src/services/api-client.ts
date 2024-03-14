@@ -3,7 +3,7 @@ import { authenticationService } from './auth-service';
 import { writeTokens } from '@/utils/local-storage';
 
 export const createApiClient = (endpoint: string = ''): AxiosInstance => {
-  const apiClient = axios.create({ baseURL: `http://localhost:8000${endpoint}` });
+  const apiClient = axios.create({ baseURL: `${endpoint}` });
 
   apiClient.interceptors.request.use(
     (config) => {

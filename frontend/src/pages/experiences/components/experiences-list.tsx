@@ -14,11 +14,11 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
   const navigate = useNavigate();
 
   // TODO: Implement functions
-  const handleLikeClicked = (experience: IExperience) => {
+  const handleLikeClicked = () => {
     navigate({ to: '/experiences/new' });
   };
   const handleCommentClicked = (experience: IExperience) => {
-    navigate({ to: `/experiences/${experience._id}/comments` });
+    navigate({ to: '/experiences/$experienceId/comments', params: { experienceId: experience._id! } });
   };
 
   return (

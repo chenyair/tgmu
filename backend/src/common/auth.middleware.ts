@@ -1,4 +1,4 @@
-import { AuthRequest } from 'common/auth.middleware';
+import { AuthRequest } from '../common/auth.middleware';
 import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';

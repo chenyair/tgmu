@@ -1,7 +1,7 @@
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import cors from 'cors';
-import express, { Request, Response, Express } from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import createLogger from './utils/logger';
 import initDB from './db';
@@ -15,9 +15,11 @@ import 'express-async-errors';
 
 const logger = createLogger('app');
 
+const ENV = process.env.NODE_ENV || 'development';
+
 dotenv.config();
 
-const initApp = async (): Promise<Express> => {
+const initApp = async (url: string = 'localhost:80'): Promise<Express> => {
   const app: Express = express();
   app.use(cors());
   app.use(express.json());
@@ -38,7 +40,7 @@ const initApp = async (): Promise<Express> => {
         version: '1.0.0',
         description: 'TGMU REST API for serving any app related requests including JWT authentication',
       },
-      servers: [{ url: 'http://localhost:8000' }],
+      servers: [{ url }],
       components: {
         securitySchemes: {
           bearerAuth: {
@@ -52,18 +54,18 @@ const initApp = async (): Promise<Express> => {
     apis: ['./src/routes/*.ts'],
   };
 
+  app.use('/public', express.static('public'));
+
+  if (ENV === 'production') {
+    app.use(express.static(`${__dirname}/ui`));
+  }
+
   logger.debug('Initializing Swagger...');
   const specs = swaggerJsDoc(swaggerOptions);
   app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
   logger.debug('Successfully Initialized Swagger at /docs');
 
-  app.get('/', (req: Request, res: Response) => {
-    res.send('Welcome to The Ger Movie Universe API');
-  });
-
   app.use('/auth', authRoute);
-
-  app.use('/public', express.static('public'));
 
   app.use(authMiddleware);
   app.use('/users', userRoute);

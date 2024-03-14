@@ -137,3 +137,6 @@ public/*
 *.crt
 *.pem
 *.key
+
+# Build directory of frontend
+src/ui
