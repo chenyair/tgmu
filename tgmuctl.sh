@@ -91,8 +91,3 @@ while (( "$#" )); do
   esac
 done
 
-# Check if more than one option was provided
-if [ $num_opts -gt 1 ]; then
-    echo "Error: Only one of -f, -b, or -a can be provided at a time."
-    exit 1
-fi
