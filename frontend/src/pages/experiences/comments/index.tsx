@@ -131,7 +131,6 @@ const ExperienceCommentsDialog: React.FC = () => {
           <div className="d-flex d-row pt-4">
             <textarea
               id="add-comment-input"
-              // onBlur={(e) => validate(e.target.value)}
               style={{ backgroundColor: 'transparent', caretColor: purpleColor, borderColor: purpleColor }}
               placeholder="Reply here..."
               className="form-control text-white form-control-md tgmu-form-input"
