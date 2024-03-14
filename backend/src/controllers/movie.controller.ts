@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios';
 import { Movie } from 'shared-types';
-import createApiAgent from 'utils/api.agent';
+import createApiAgent from '../utils/api.agent';
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 

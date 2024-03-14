@@ -1,23 +1,20 @@
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import cors from 'cors';
-import express, { Request, Response, Express } from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
-import createLogger from 'utils/logger';
-import initDB from 'db';
-import authRoute from 'routes/auth.route';
-import userRoute from 'routes/user.route';
-import movieRoute from 'routes/movie.route';
-import experienceRoute from 'routes/experience.route';
-import authMiddleware from 'common/auth.middleware';
-import errorMiddleware from 'common/error.middleware';
+import createLogger from './utils/logger';
+import initDB from './db';
+import authRoute from './routes/auth.route';
+import errorMiddleware from './common/error.middleware';
+import apiRoute from './routes/api.route';
 import 'express-async-errors';
 
 const logger = createLogger('app');
 
 dotenv.config();
 
-const initApp = async (): Promise<Express> => {
+const initApp = async (url: string = 'localhost:80'): Promise<Express> => {
   const app: Express = express();
   app.use(cors());
   app.use(express.json());
@@ -38,7 +35,7 @@ const initApp = async (): Promise<Express> => {
         version: '1.0.0',
         description: 'TGMU REST API for serving any app related requests including JWT authentication',
       },
-      servers: [{ url: 'http://localhost:8000' }],
+      servers: [{ url }],
       components: {
         securitySchemes: {
           bearerAuth: {
@@ -52,23 +49,22 @@ const initApp = async (): Promise<Express> => {
     apis: ['./src/routes/*.ts'],
   };
 
+  app.use('/public', express.static('public'));
+
+  app.use(express.static(`${__dirname}/ui`));
+
   logger.debug('Initializing Swagger...');
   const specs = swaggerJsDoc(swaggerOptions);
   app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
   logger.debug('Successfully Initialized Swagger at /docs');
 
-  app.get('/', (req: Request, res: Response) => {
-    res.send('Welcome to The Ger Movie Universe API');
-  });
-
   app.use('/auth', authRoute);
 
-  app.use('/public', express.static('public'));
+  app.use('/api', apiRoute);
 
-  app.use(authMiddleware);
-  app.use('/users', userRoute);
-  app.use('/movies', movieRoute);
-  app.use('/experiences', authMiddleware, experienceRoute);
+  app.get('*', (_, res) => {
+    res.sendFile(`${__dirname}/ui/index.html`);
+  });
 
   app.use(errorMiddleware);
 

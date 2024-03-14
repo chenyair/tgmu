@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { FilterQuery, Model } from 'mongoose';
 import { omit, pick } from 'lodash';
 import httpStatus from 'http-status';
-import createLogger from 'utils/logger';
+import createLogger from '../utils/logger';
 
 const logger = createLogger('base controller');
 
@@ -13,7 +13,7 @@ export class BaseController<ModelType> {
     this.loggerPrefix = `model ${model.collection.name}:`;
   }
 
-  private debug(...msg: string[]) {
+  debug(...msg: string[]) {
     logger.debug(`${this.loggerPrefix} ${msg.join(' ')}`);
   }
 

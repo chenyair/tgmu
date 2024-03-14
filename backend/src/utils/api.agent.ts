@@ -1,4 +1,4 @@
-import createLogger from 'utils/logger';
+import createLogger from '../utils/logger';
 import axios, { AxiosInstance, AxiosError, CreateAxiosDefaults, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { UUID, randomUUID } from 'crypto';
 

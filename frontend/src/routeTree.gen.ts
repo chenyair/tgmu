@@ -19,6 +19,7 @@ import { Route as AuthenticatedExperiencesImport } from './routes/_authenticated
 import { Route as AuthRegisterImport } from './routes/_auth/register'
 import { Route as AuthLoginImport } from './routes/_auth/login'
 import { Route as AuthenticatedExperiencesNewImport } from './routes/_authenticated/experiences/new'
+import { Route as AuthenticatedExperiencesExperienceIdCommentsImport } from './routes/_authenticated/experiences/$experienceId/comments'
 
 // Create/Update Routes
 
@@ -63,6 +64,12 @@ const AuthenticatedExperiencesNewRoute =
     getParentRoute: () => AuthenticatedExperiencesRoute,
   } as any)
 
+const AuthenticatedExperiencesExperienceIdCommentsRoute =
+  AuthenticatedExperiencesExperienceIdCommentsImport.update({
+    path: '/$experienceId/comments',
+    getParentRoute: () => AuthenticatedExperiencesRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -99,6 +106,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExperiencesNewImport
       parentRoute: typeof AuthenticatedExperiencesImport
     }
+    '/_authenticated/experiences/$experienceId/comments': {
+      preLoaderRoute: typeof AuthenticatedExperiencesExperienceIdCommentsImport
+      parentRoute: typeof AuthenticatedExperiencesImport
+    }
   }
 }
 
@@ -109,6 +120,7 @@ export const routeTree = rootRoute.addChildren([
   AuthenticatedRoute.addChildren([
     AuthenticatedExperiencesRoute.addChildren([
       AuthenticatedExperiencesNewRoute,
+      AuthenticatedExperiencesExperienceIdCommentsRoute,
     ]),
     AuthenticatedProfileRoute,
     AuthenticatedIndexRoute,

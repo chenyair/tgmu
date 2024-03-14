@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaEdit } from 'react-icons/fa'; // Import edit icon from react-icons
 import './image-editor.scss';
 

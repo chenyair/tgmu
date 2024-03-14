@@ -1,12 +1,11 @@
 import MovieCard from '@/components/movie-card';
 import { movieService } from '@/services/movie-service';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Movie } from 'shared-types';
 import Select, { InputActionMeta } from 'react-select';
 import { debounce } from 'lodash';
 import './movie-picker.scss';
-import StateManagedSelect from 'node_modules/react-select/dist/declarations/src/stateManager';
 import React from 'react';
 
 interface MoviePickerProps {

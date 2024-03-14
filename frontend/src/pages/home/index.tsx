@@ -4,7 +4,7 @@ import { movieService } from '@/services/movie-service';
 import MoviesList from './components/movies-list';
 
 const HomePage: React.FC = () => {
-  const { data, error, status } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ['popularMovies'],
     refetchOnWindowFocus: false,
     refetchOnMount: false,

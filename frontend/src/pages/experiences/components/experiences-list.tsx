@@ -20,7 +20,7 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
   const handleLikeClicked = (experience: IExperience) => { };
 
   const handleCommentClicked = (experience: IExperience) => {
-    navigate({ to: `/experiences/${experience._id}/comments` });
+    navigate({ to: '/experiences/$experienceId/comments', params: { experienceId: experience._id! } });
   };
 
   const handleDeleteClicked = async (experience: IExperience) => {

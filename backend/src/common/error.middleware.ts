@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import { MongooseError } from 'mongoose';
-import createLogger from 'utils/logger';
+import createLogger from '../utils/logger';
 
 const logger = createLogger('error middleware');
 
