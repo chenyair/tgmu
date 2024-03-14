@@ -56,13 +56,13 @@ const ExperienceCommentsDialog: React.FC = () => {
           updatedAt: createdAt,
         };
 
-        setNewComment('');
-
         return {
           ...oldData!,
           comments: [...oldData!.comments, commentToAdd],
         };
       });
+      
+      setNewComment('');
     } finally {
       setIsLoading(false);
     }
