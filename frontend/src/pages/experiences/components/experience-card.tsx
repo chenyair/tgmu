@@ -7,13 +7,25 @@ interface ExperienceCardProps {
   loggedUser: IUserDetails;
   onLikeClicked: (experience: IExperience) => void;
   onCommentClicked: (experience: IExperience) => void;
+  style?: React.CSSProperties;
+  height: string;
+  width: string;
 }
 
-const ExperienceCard = ({ experience, loggedUser, onLikeClicked, onCommentClicked }: ExperienceCardProps) => {
+const ExperienceCard = ({
+  experience,
+  loggedUser,
+  onLikeClicked,
+  height,
+  width,
+  onCommentClicked,
+  style = {},
+}: ExperienceCardProps) => {
   return (
-    <div className="d-flex gap-3 px-4">
+    <div className="d-flex gap-3 px-4" style={{ ...style, height, width }}>
       <div style={{ width: '20%' }}>
         <MovieCard
+          height={height}
           posterImageUrl={`https://image.tmdb.org/t/p/w185${experience.movieDetails.poster_path}`}
           title={experience.movieDetails.title}
         />

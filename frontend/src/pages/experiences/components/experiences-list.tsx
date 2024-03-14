@@ -29,6 +29,8 @@ const ExperiencesList: React.FC<ExperiencesListProps> = ({ experiences, onScroll
             loggedUser={user!}
             onCommentClicked={handleCommentClicked}
             onLikeClicked={handleLikeClicked}
+            height="14rem"
+            width="100%"
           />
         ))}
       </div>

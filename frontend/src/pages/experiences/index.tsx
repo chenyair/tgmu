@@ -4,9 +4,12 @@ import ExperiencesList from './components/experiences-list';
 import { debounce } from 'lodash';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ThreeDots } from 'react-loader-spinner';
-import { Outlet } from '@tanstack/react-router';
+import { Outlet, useNavigate } from '@tanstack/react-router';
+import { FaCirclePlus } from 'react-icons/fa6';
+import './index.scss';
 
 const ExperiencesPage: React.FC = () => {
+  const navigate = useNavigate();
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useInfiniteQuery({
     queryKey: ['experiences'],
     queryFn: async ({ signal, pageParam }) => experienceService.getAll(pageParam, 5, signal),
@@ -26,6 +29,9 @@ const ExperiencesPage: React.FC = () => {
   };
 
   const handleScrollBottom = useMemo(() => debounce(handleNextPage, 300), [hasNextPage, isFetchingNextPage]);
+  const handleNewExperience = () => {
+    navigate({ to: '/experiences/new' });
+  };
 
   useEffect(() => {
     return () => {
@@ -34,7 +40,10 @@ const ExperiencesPage: React.FC = () => {
   }, [handleScrollBottom]);
 
   return (
-    <div className="h-100">
+    <div className="h-100" style={{ position: 'relative' }}>
+      <div style={{ position: 'absolute', left: '2%', top: '2%' }}>
+        <FaCirclePlus className="new-experience-btn" style={{}} onClick={handleNewExperience} />
+      </div>
       <div className="d-flex flex-column justify-content-center align-items-center h-100">
         {(() => {
           if (status === 'pending') return <div></div>;
