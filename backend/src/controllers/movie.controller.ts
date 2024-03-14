@@ -40,13 +40,9 @@ export class MovieController {
       page: 1,
     };
 
-    const parsedQueryParams = Object.entries(queryParams)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
-
-    const moviesResponse = await this.apiAgent.get<{ page: number; results: Movie[] }>(
-      `/search/movie?${parsedQueryParams}`
-    );
+    const moviesResponse = await this.apiAgent.get<{ page: number; results: Movie[] }>('/search/movie', {
+      params: queryParams,
+    });
 
     return res.status(httpStatus.OK).send(moviesResponse.data.results);
   }
