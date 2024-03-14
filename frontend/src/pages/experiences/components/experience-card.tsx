@@ -68,7 +68,7 @@ const ExperienceCard = ({
           <div className="experience-actions d-flex mt-auto justify-content-evenly">
             <div
               className="d-flex align-items-center justify-content-center gap-2 fs-6 experience-card-likes-btn w-100"
-              onClick={() => onLikeClicked && onLikeClicked(experience, !isLiked)}
+              onClick={() => onLikeClicked(experience, !isLiked)}
             >
               {isLiked ? <FaHeart color="#CE2C31" /> : <FaRegHeart />}
 
