@@ -27,10 +27,10 @@ const ExperienceCommentsDialog: React.FC = () => {
   const auth = useAuth();
 
   const { data: experience, status } = useQuery({
-    queryKey: [experienceId, 'experience'],
+    queryKey: ['experience', experienceId],
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    queryFn: ({ signal, queryKey }) => experienceService.getById(queryKey[0], signal),
+    queryFn: ({ signal, queryKey }) => experienceService.getById(queryKey.at(-1)!, signal),
   });
 
   const postComment = async () => {
