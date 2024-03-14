@@ -194,7 +194,6 @@ const RegisterPage: React.FC = () => {
           </div>
         </div>
         <div>
-          <div style={{ position: 'absolute', bottom: '1em', left: '8em' }}></div>
           {errorOccurred && (
             <div className="alert alert-danger text-center" style={{ position: 'absolute' }}>
               <div>Invalid information</div>
