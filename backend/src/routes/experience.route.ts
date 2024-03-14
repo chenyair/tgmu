@@ -16,6 +16,23 @@ import 'express-async-errors';
  * @swagger
  * components:
  *   schemas:
+ *     MovieDetails:
+ *       type: object
+ *       required:
+ *         - id 
+ *         - title
+ *         - poster_path
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The movie's id
+ *         title:
+ *           type: string
+ *           description: The movie's title
+ *         poster_path:
+ *           type: string
+ *           description: The movie's poster path
+ * 
  *     Comment:
  *       type: object
  *       required:
@@ -61,6 +78,7 @@ import 'express-async-errors';
  *         - likedUsers
  *         - comments
  *         - createdAt
+ *         - movieDetails
  *       allOf:
  *         - type: object
  *           properties:
@@ -75,6 +93,8 @@ import 'express-async-errors';
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Comment'
+ *             movieDetails:
+ *               $ref: '#/components/schemas/MovieDetails'
  *             createdAt:
  *               type: string
  *               format: date-time
@@ -92,6 +112,7 @@ import 'express-async-errors';
  *         comments: [{text: 'I agree', userId: '1234'}, {text: 'I disagree', userId: '5678'}]
  *         likedUsers: ['1234']
  *         imgUrl: '/bob_the_builder.png'
+ *         movieDetails: {id: 1234, title: 'Bob the builder', poster_path: '/bob_the_builder.png'}
  *         createdAt: '2021-01-01T00:00:00.000Z'
  *         updatedAt: '2021-01-01T00:00:00.000Z'
  * 

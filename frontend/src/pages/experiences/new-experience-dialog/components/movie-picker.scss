@@ -1,0 +1,15 @@
+.movie-picker-card {
+  border-radius: 25px;
+  border: 2px solid var(--violet-9);
+  background-color: var(--violet-1);
+  text-align: center;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  color: var(--violet-9);
+  padding: 10px;
+}
+
+.basic-single {
+  width: 100%;
+}

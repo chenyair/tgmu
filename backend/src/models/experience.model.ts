@@ -12,6 +12,21 @@ const CommentSchema = new mongoose.Schema<IComment>({
   },
 });
 
+const MovieDetailsSchema = new mongoose.Schema({ 
+  id: {
+    type: Number,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  poster_path: {
+    type: String,
+    required: true,
+  },
+});
+
 const ExperienceSchema = new mongoose.Schema<IExperience>(
   {
     userId: {
@@ -29,6 +44,10 @@ const ExperienceSchema = new mongoose.Schema<IExperience>(
     comments: {
       type: [CommentSchema],
       default: [],
+      required: true,
+    },
+    movieDetails: {
+      type: MovieDetailsSchema,
       required: true,
     },
     likedUsers: {
