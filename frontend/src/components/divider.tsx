@@ -1,5 +1,5 @@
 interface DividerProps {
-  classNames?: string;
+  className?: string;
 }
 const Divider: React.FC<DividerProps> = ({ classNames = 'py-3' }: DividerProps) => {
   return (
