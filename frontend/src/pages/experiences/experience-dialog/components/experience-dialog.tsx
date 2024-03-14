@@ -5,6 +5,7 @@ import { useForm } from '@tanstack/react-form';
 import ImageEditor from './image-editor';
 import { ExperienceGetAllResponse, Movie } from 'shared-types';
 import MoviePicker from './movie-picker';
+import { Grid as InitialLoader } from 'react-loader-spinner';
 import './experience-dialog.scss';
 import Divider from '@/components/divider';
 import { TailSpin as Loader } from 'react-loader-spinner';
@@ -60,13 +61,20 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
 
       // Insert new experience
       setIsLoading(true);
-      const newExperience = await experienceService.create({
+
+      const payload = {
         title,
         description,
         userId: user!._id!,
         experienceImage: experienceImage!,
         movieDetails: { id: movie!.id, poster_path: movie!.poster_path, title: movie!.title },
-      });
+      };
+
+      const newExperience =
+        mode === 'new'
+          ? await experienceService.create(payload)
+          : await experienceService.updateById(experienceId, payload);
+
       setIsLoading(false);
 
       const updateQueryData = (data: InfiniteData<ExperienceGetAllResponse, number> | undefined) => {
@@ -76,11 +84,15 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
           pages: data.pages,
           pageParams: data.pageParams,
         };
-      }
+      };
 
       // Insert new experience to the first page of the experiences list
-      queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', true], (data) => updateQueryData(data));
-      queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', false], (data) => updateQueryData(data));
+      queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', true], (data) =>
+        updateQueryData(data)
+      );
+      queryClient.setQueryData<InfiniteData<ExperienceGetAllResponse, number>>(['experiences', false], (data) =>
+        updateQueryData(data)
+      );
 
       // Redirect back to experiences page
       handleClose();
@@ -112,7 +124,7 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
       }
     },
     experienceImage: (value: File | undefined) => {
-      if (!value) {
+      if (!value && mode === 'new') {
         return 'Experience image is required';
       }
     },
@@ -129,89 +141,98 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
 
   return (
     <TgmuDialog open={true} onOpenChange={handleClose} style={{ height: '70%', width: '70%' }}>
-      <experienceForm.Provider>
-        <form
-          className="d-flex gap-1 h-100 flex-column"
-          style={{ width: '100%' }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            void experienceForm.handleSubmit();
-          }}
+      {mode === 'edit' && status !== 'success' ? (
+        <div
+          style={{ backgroundColor: 'transparent', height: '100%' }}
+          className="d-flex justify-content-center align-items-center"
         >
-          <div className="d-flex flex-column gap-3" style={{ height: '10%' }}>
-            <div className="experience-form-title">{mode === 'new' ? 'New' : 'Edit'} Experience</div>
-            <Divider className="" />
-          </div>
-          <div className="d-flex gap-3 py-2" style={{ height: '80%' }}>
-            <experienceForm.Field
-              name="experienceImage"
-              children={(field) => (
-                <ImageEditor
-                  style={{ width: '40%' }}
-                  placeholderImg={experience?.imgUrl}
-                  value={field.state.value}
-                  onChange={(file) => field.handleChange(file)}
-                />
-              )}
-            />
-            <experienceForm.Field
-              name="movie"
-              children={(field) => (
-                <MoviePicker
-                  onSelect={(movie) => {
-                    field.handleChange(movie);
-                  }}
-                  posterWidth="185px"
-                  posterHeight="278px"
-                  value={field.state.value}
-                  style={{ width: '30%' }}
-                />
-              )}
-            />
-            <div className="d-flex flex-column h-100 gap-2">
+          <InitialLoader color="var(--violet-9)" />
+        </div>
+      ) : (
+        <experienceForm.Provider>
+          <form
+            className="d-flex gap-1 h-100 flex-column"
+            style={{ width: '100%' }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              void experienceForm.handleSubmit();
+            }}
+          >
+            <div className="d-flex flex-column gap-3" style={{ height: '10%' }}>
+              <div className="experience-form-title">{mode === 'new' ? 'New' : 'Edit'} Experience</div>
+              <Divider className="" />
+            </div>
+            <div className="d-flex gap-3 py-2" style={{ height: '80%' }}>
               <experienceForm.Field
-                name="title"
+                name="experienceImage"
                 children={(field) => (
-                  <input
-                    type="text"
-                    placeholder="Enter title..."
-                    className="dialog-input"
+                  <ImageEditor
+                    style={{ width: '40%' }}
+                    placeholderImg={experience?.imgUrl}
                     value={field.state.value}
-                    style={{ width: '100%' }}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={(file) => field.handleChange(file)}
                   />
                 )}
               />
+              <experienceForm.Field
+                name="movie"
+                children={(field) => (
+                  <MoviePicker
+                    onSelect={(movie) => {
+                      field.handleChange(movie);
+                    }}
+                    posterWidth="185px"
+                    posterHeight="278px"
+                    value={field.state.value}
+                    style={{ width: '30%' }}
+                  />
+                )}
+              />
+              <div className="d-flex flex-column h-100 gap-2">
+                <experienceForm.Field
+                  name="title"
+                  children={(field) => (
+                    <input
+                      type="text"
+                      placeholder="Enter title..."
+                      className="dialog-input"
+                      value={field.state.value}
+                      style={{ width: '100%' }}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  )}
+                />
 
-              <experienceForm.Field
-                name="description"
-                children={(field) => (
-                  <textarea
-                    value={field.state.value}
-                    className="dialog-input"
-                    placeholder="Enter description..."
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    style={{ height: '100%', width: '100%' }}
-                  />
-                )}
-              />
+                <experienceForm.Field
+                  name="description"
+                  children={(field) => (
+                    <textarea
+                      value={field.state.value}
+                      className="dialog-input"
+                      placeholder="Enter description..."
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      style={{ height: '100%', width: '100%' }}
+                    />
+                  )}
+                />
+              </div>
             </div>
-          </div>
-          <div className="d-flex flex-column gap-3" style={{ height: '10%' }}>
-            <Divider className="" />
-            <div className="w-100 d-flex justify-content-center">
-              <button
-                type="submit"
-                className="btn w-25 d-flex justify-content-center align-items-center"
-                style={{ height: '40px', backgroundColor: 'var(--violet-9)', color: 'var(--violet-1)' }}
-              >
-                {!isLoding ? 'Save' : <Loader color="#fffcf2" height="1.5rem" width="1.5rem" />}
-              </button>
+            <div className="d-flex flex-column gap-3" style={{ height: '10%' }}>
+              <Divider className="" />
+              <div className="w-100 d-flex justify-content-center">
+                <button
+                  type="submit"
+                  className="btn w-25 d-flex justify-content-center align-items-center"
+                  style={{ height: '40px', backgroundColor: 'var(--violet-9)', color: 'var(--violet-1)' }}
+                >
+                  {!isLoding ? 'Save' : <Loader color="#fffcf2" height="1.5rem" width="1.5rem" />}
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
-      </experienceForm.Provider>
+          </form>
+        </experienceForm.Provider>
+      )}
     </TgmuDialog>
   );
 };

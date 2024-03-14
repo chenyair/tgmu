@@ -24,7 +24,7 @@ const ExperienceCard = ({
   width,
   onCommentClicked,
   onDeleteClicked,
-  // onEditClicked,
+  onEditClicked,
   isOwner,
   style = {},
 }: ExperienceCardProps) => {
