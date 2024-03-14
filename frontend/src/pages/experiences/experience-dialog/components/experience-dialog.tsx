@@ -45,7 +45,7 @@ const ExperienceDialog = ({ mode = 'new' }: ExperienceDialogProps) => {
     if (status === 'success' && experience!.userId.toString() !== user?._id) {
       navigate({ to: '/experiences' });
     }
-  }, [experience?._id, user?._id, status])
+  }, [experience?._id, user?._id, status]);
 
   const formDefaultValues: ExperienceFormValues = experience
     ? {
