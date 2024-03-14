@@ -40,6 +40,8 @@ const secondNewExperience: Partial<NewExperience> & { description: string; title
 const commentText = `This is a unique test comment ${new Date().getTime()}`;
 
 let userId: Types.ObjectId;
+let secondUserId: Types.ObjectId;
+
 let accessToken: string;
 let firstExperiece: IExperience;
 let createdFiles: string[] = [];
@@ -55,6 +57,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await ExperienceModel.deleteMany({ userId });
+  await ExperienceModel.deleteMany({ secondUserId });
   await User.deleteMany({ email: user.email });
   await User.deleteMany({ email: secondUserEmail });
 
@@ -72,7 +75,7 @@ describe('Experience tests', () => {
   test('Create new experience', async () => {
     firstNewExperience.userId = userId.toString();
     const response = await request(app)
-      .post('/experiences')
+      .post('/api/experiences')
       .set('Authorization', `Bearer ${accessToken}`)
       .attach('experienceImage', path.resolve(__dirname, 'test.png'))
       .field('title', firstNewExperience.title)
@@ -98,7 +101,7 @@ describe('Experience tests', () => {
 
   test('Get all experiences first page', async () => {
     const response = await request(app)
-      .get('/experiences?page=1&limit=1')
+      .get('/api/experiences?page=1&limit=1')
       .set('Authorization', `Bearer ${accessToken}`);
     expect(response.statusCode).toBe(httpStatus.OK);
     expect(response.body).toBeDefined();
@@ -109,35 +112,36 @@ describe('Experience tests', () => {
     expect(experiencesGetAll.experiences.length).toBe(1);
     expect(experiencesGetAll.experiences[0]._id).toBe(firstExperiece._id);
   });
-
+  
+  
   test('Get all experiences second page', async () => {
     // Enter second experience to db
     secondNewExperience.userId = userId.toString();
     const secondExperienceResponse = await request(app)
-      .post('/experiences')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .attach('experienceImage', path.resolve(__dirname, 'test.png'))
-      .field('title', secondNewExperience.title)
-      .field('description', secondNewExperience.description)
-      .field('userId', secondNewExperience.userId.toString())
-      .field('movieId', movieDetails.id)
-      .field('moviePosterPath', movieDetails.poster_path)
-      .field('movieTitle', movieDetails.title);
-
+    .post('/api/experiences')
+    .set('Authorization', `Bearer ${accessToken}`)
+    .attach('experienceImage', path.resolve(__dirname, 'test.png'))
+    .field('title', secondNewExperience.title)
+    .field('description', secondNewExperience.description)
+    .field('userId', secondNewExperience.userId.toString())
+    .field('movieId', movieDetails.id)
+    .field('moviePosterPath', movieDetails.poster_path)
+    .field('movieTitle', movieDetails.title);
+    
     const secondExperience = secondExperienceResponse.body;
     createdFiles = [...createdFiles, secondExperience.imgUrl];
 
     const secondPageResponse = await request(app)
-      .get('/experiences?page=2&limit=1')
+      .get('/api/experiences?page=2&limit=1')
       .set('Authorization', `Bearer ${accessToken}`);
     expect(secondPageResponse.statusCode).toBe(httpStatus.OK);
     expect(secondPageResponse.body).toBeDefined();
-
+    
     const secondPageGetAll = secondPageResponse.body;
     expect(secondPageGetAll.currentPage).toBe(2);
     expect(secondPageGetAll.experiences).toBeDefined();
     expect(secondPageGetAll.experiences.length).toBe(1);
-
+    
     // The new experience should be in the first page cause its the newest so the preivous
     // experience should be the first in the second page
     expect(secondPageGetAll.experiences[0]._id).not.toBe(secondExperience._id);
@@ -146,7 +150,7 @@ describe('Experience tests', () => {
 
   test('Add comment to experience', async () => {
     const response = await request(app)
-      .post(`/experiences/${firstExperiece._id}/comments`)
+      .post(`/api/experiences/${firstExperiece._id}/comments`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ text: commentText });
     expect(response.statusCode).toBe(httpStatus.CREATED);
@@ -157,7 +161,7 @@ describe('Experience tests', () => {
 
   test('Get experience by id', async () => {
     const response = await request(app)
-      .get(`/experiences/${firstExperiece._id}`)
+      .get(`/api/experiences/${firstExperiece._id}`)
       .set('Authorization', `Bearer ${accessToken}`);
     expect(response.statusCode).toBe(httpStatus.OK);
     expect(response.body).toBeDefined();
@@ -180,7 +184,7 @@ describe('Experience tests', () => {
       // Add experience before deletion
       firstNewExperience.userId = userId.toString();
       const response = await request(app)
-        .post('/experiences')
+        .post('/api/experiences')
         .set('Authorization', `Bearer ${accessToken}`)
         .attach('experienceImage', path.resolve(__dirname, 'test.png'))
         .field('title', firstNewExperience.title)
@@ -194,14 +198,14 @@ describe('Experience tests', () => {
     });
 
     test('Delete experience', async () => {
-      const response = await request(app).delete(`/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
+      const response = await request(app).delete(`/api/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
       expect(response.statusCode).toBe(httpStatus.CREATED);
       expect(response.body).toBeDefined();
       expect(response.body._id).toBe(firstExperienceId);
     });
   
     test('delete experience that does not exist', async () => {
-      await request(app).delete(`/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
+      await request(app).delete(`/api/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
       const response = await request(app).delete(`/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${accessToken}`);
       expect(response.statusCode).toBe(httpStatus.NOT_FOUND);
     });
@@ -210,10 +214,59 @@ describe('Experience tests', () => {
       // Create new user
       const registerResponse = (await request(app).post('/auth/register').send({ ...user, email: secondUserEmail })).body;
       const secondUserAccessToken = registerResponse.accessToken;
-  
-      const response = await request(app).delete(`/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${secondUserAccessToken}`);
+      
+      const response = await request(app).delete(`/api/experiences/${firstExperienceId}`).set('Authorization', `Bearer ${secondUserAccessToken}`);
       expect(response.statusCode).toBe(httpStatus.UNAUTHORIZED);
+
+      await User.deleteMany({ email: secondUserEmail });
     });
+  });
+
+  test('Get all experiences with owner', async () => {
+    await ExperienceModel.deleteMany({ userId });
+    
+    // Create second new user
+    const registerResponse = (await request(app).post('/auth/register').send({ ...user, email: secondUserEmail })).body;
+    const secondUserAccessToken = registerResponse.accessToken;
+    secondUserId = registerResponse._id;
+
+    // Add first experience with first user
+    firstNewExperience.userId = userId.toString();
+    await request(app)
+      .post('/api/experiences')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .attach('experienceImage', path.resolve(__dirname, 'test.png'))
+      .field('title', firstNewExperience.title)
+      .field('description', firstNewExperience.description)
+      .field('userId', firstNewExperience.userId)
+      .field('movieId', movieDetails.id)
+      .field('moviePosterPath', movieDetails.poster_path)
+      .field('movieTitle', movieDetails.title);
+
+    // Add second experience with second user
+    secondNewExperience.userId = secondUserId.toString();
+    await request(app)
+      .post('/api/experiences')
+      .set('Authorization', `Bearer ${secondUserAccessToken}`)
+      .attach('experienceImage', path.resolve(__dirname, 'test.png'))
+      .field('title', secondNewExperience.title)
+      .field('description', secondNewExperience.description)
+      .field('userId', secondUserId.toString())
+      .field('movieId', movieDetails.id)
+      .field('moviePosterPath', movieDetails.poster_path)
+      .field('movieTitle', movieDetails.title);
+  
+    // Get all experiences
+    const response = await request(app)
+      .get(`/api/experiences?page=1&limit=10&owner=${secondUserId}`)
+      .set('Authorization', `Bearer ${secondUserAccessToken}`);
+
+    expect(response.statusCode).toBe(httpStatus.OK);
+    expect(response.body).toBeDefined();
+    
+    const experiences = response.body.experiences;
+    expect(experiences).toBeDefined();
+    expect(experiences.length).toBe(1);
   });
 
 });

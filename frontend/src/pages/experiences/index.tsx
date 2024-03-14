@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { experienceService } from '@/services/experience-service';
 import ExperiencesList from './components/experiences-list';
 import { debounce } from 'lodash';
@@ -7,12 +7,16 @@ import { ThreeDots } from 'react-loader-spinner';
 import { Outlet, useNavigate } from '@tanstack/react-router';
 import { FaCirclePlus } from 'react-icons/fa6';
 import './index.scss';
+import { useAuth } from '@/helpers/auth.context';
 
 const ExperiencesPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [isMyExperiences, setIsMyExperiences] = useState(false);
+
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['experiences'],
-    queryFn: async ({ signal, pageParam }) => experienceService.getAll(pageParam, 5, signal),
+    queryKey: ['experiences', isMyExperiences],
+    queryFn: async ({ signal, pageParam }) => experienceService.getAll({ page: pageParam, limit: 10, owner: isMyExperiences ? user?._id! : undefined }, signal),
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => {
       if (lastPage.experiences.length === 0) {
@@ -27,6 +31,10 @@ const ExperiencesPage: React.FC = () => {
       fetchNextPage();
     }
   };
+
+  const handleToggleMyExperiences = () => {
+    setIsMyExperiences((prev) => !prev);
+  }
 
   const handleScrollBottom = useMemo(() => debounce(handleNextPage, 300), [hasNextPage, isFetchingNextPage]);
   const handleNewExperience = () => {
@@ -43,6 +51,9 @@ const ExperiencesPage: React.FC = () => {
     <div className="h-100" style={{ position: 'relative' }}>
       <div style={{ position: 'absolute', left: '2%', top: '2%' }}>
         <FaCirclePlus className="new-experience-btn" style={{}} onClick={handleNewExperience} />
+      </div>
+      <div style={{ position: 'absolute', left: '8%', top: '3%' }}>
+        <button type="button" className="btn btn-outline-info" onClick={handleToggleMyExperiences}>Click to show {isMyExperiences ? 'all' : 'only yours'}</button>
       </div>
       <div className="d-flex flex-column justify-content-center align-items-center h-100">
         {(() => {
