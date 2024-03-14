@@ -15,8 +15,6 @@ import 'express-async-errors';
 
 const logger = createLogger('app');
 
-const ENV = process.env.NODE_ENV || 'development';
-
 dotenv.config();
 
 const initApp = async (url: string = 'localhost:80'): Promise<Express> => {
@@ -56,9 +54,7 @@ const initApp = async (url: string = 'localhost:80'): Promise<Express> => {
 
   app.use('/public', express.static('public'));
 
-  if (ENV === 'production') {
-    app.use(express.static(`${__dirname}/ui`));
-  }
+  app.use(express.static(`${__dirname}/ui`));
 
   logger.debug('Initializing Swagger...');
   const specs = swaggerJsDoc(swaggerOptions);
