@@ -14,7 +14,7 @@ const PORT = process.env.PORT || (ENV === 'production' ? '443' : '80');
 
 export const SERVER_URL = `${SERVER_PROTOCOL}://${LISTEN_ADDRESS}:${PORT}`;
 
-initApp(SERVER_URL).then((app: Express) => {
+initApp().then((app: Express) => {
   logger.debug(`Running in ${ENV}`);
 
   if (SERVER_PROTOCOL !== 'https') {

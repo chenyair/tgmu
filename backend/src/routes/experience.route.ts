@@ -303,7 +303,11 @@ router.put(
  *       - bearerAuth: []
  *     responses:
  *       OK:
- *         description: Deleted experience successfully
+ *         description: Deleted successfully. Returns deleted document
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Experience'
  *       UNAUTHORIZED:
  *         description: No token provided, or attempted to delete a different user's experience
  *       INTERNAL_SERVER_ERROR:
@@ -388,6 +392,10 @@ router.post('/:id/comments', experienceController.addComment.bind(experienceCont
  *     responses:
  *       OK:
  *         description: Toggled like successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Experience'
  *       UNAUTHORIZED:
  *         description: No token provided
  *       INTERNAL_SERVER_ERROR:

@@ -14,7 +14,7 @@ const logger = createLogger('app');
 
 dotenv.config();
 
-const initApp = async (url: string = 'localhost:80'): Promise<Express> => {
+const initApp = async (): Promise<Express> => {
   const app: Express = express();
   app.use(cors());
   app.use(express.json());
@@ -35,7 +35,6 @@ const initApp = async (url: string = 'localhost:80'): Promise<Express> => {
         version: '1.0.0',
         description: 'TGMU REST API for serving any app related requests including JWT authentication',
       },
-      servers: [{ url }],
       components: {
         securitySchemes: {
           bearerAuth: {

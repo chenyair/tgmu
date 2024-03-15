@@ -98,8 +98,9 @@ router.get('/', UserController.get.bind(UserController));
  *               items:
  *                 $ref: '#/components/schemas/UserDetails'
  *       UNAUTHORIZED:
- *           description: No refresh token / invalid refresh token provided
+ *         description: No refresh token / invalid refresh token provided
  *       INTERNAL_SERVER_ERROR:
+ *         description: Internal server error
  */
 router.get('/:id', UserController.getById.bind(UserController));
 
