@@ -33,7 +33,7 @@ class UserController extends BaseController<IUser> {
     }
 
     if (req.file?.path) {
-      req.body.imgUrl = req.file.path;
+      req.body.imgUrl = `/${req.file.path}`;
     }
 
     return super.putById(req, res);
