@@ -6,15 +6,47 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.DiscoverFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
+
+
+    <com.google.android.material.search.SearchBar
+        android:id="@+id/sbMovie"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/title_discover"
+        android:layout_marginTop="30dp"
+        android:hint="@string/search_movie"
+        app:layout_constraintBottom_toTopOf="@+id/rvPopularMovies"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPopularMovies"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintTop_toBottomOf="@+id/sbMovie" />
+
+    <com.google.android.material.search.SearchView
+        android:id="@+id/svMovie"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="@string/search_movie">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMovieSearchSuggestions"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+    </com.google.android.material.search.SearchView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

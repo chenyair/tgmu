@@ -9,4 +9,8 @@ class MovieRepositoryImpl(private val tmdbApi: TmdbApi) : MovieRepository {
     override suspend fun getPopularMovies(): List<Movie> {
         return tmdbApi.getPopularMovies().toModel()
     }
+
+    override suspend fun searchMovies(query: String): List<Movie> {
+        return tmdbApi.searchMovies(query).toModel()
+    }
 }
