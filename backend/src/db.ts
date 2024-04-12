@@ -8,7 +8,7 @@ const logger = createLogger('db');
 const { DB_URL, DB_USER, DB_PASSWORD } = process.env as Record<string, string>;
 
 const initDB = async (): Promise<mongoose.mongo.Db> => {
-  const url = `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_URL}`;
+  const url = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_URL}`;
 
   logger.debug(`Connecting to ${process.env.NODE_ENV} DB at ${DB_USER}@${DB_URL}`);
 
