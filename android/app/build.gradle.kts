@@ -6,11 +6,13 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs")
 }
 
 val properties = Properties().apply {
     FileInputStream(rootProject.file("local.properties")).use { load(it) }
 }
+
 
 android {
     namespace = "com.tgmu.tgmu"
@@ -18,6 +20,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        viewBinding = true
     }
 
     defaultConfig {
@@ -78,7 +81,19 @@ dependencies {
     // ViewModel and LiveData
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+
+    // Fragment
     implementation("androidx.fragment:fragment-ktx:1.6.2")
+
+    // Navigaton
+    val nav_version = "2.7.7"
+
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
+
+
+
 }
 
 // Allow references to generated code

@@ -9,14 +9,16 @@ import com.tgmu.tgmu.domain.model.Movie
 fun MovieEntity.toModel(): Movie {
     return Movie(
         id = id,
-        title = "title"
+        title = "title",
+        poster_path = "poster_path"
     )
 }
 
 fun TmdbMovie.toModel(): Movie {
     return Movie(
         id = id,
-        title = title
+        title = title,
+        poster_path = poster_path
     )
 }
 
