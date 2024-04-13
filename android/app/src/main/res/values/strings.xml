@@ -5,4 +5,7 @@
     <string name="title_experiences">Experiences</string>
     <string name="title_profile">Profile</string>
     <string name="search_movie">Search for a movie</string>
+
+    <string name="show_popular_movies">Show popular movies</string>
+    <string name="show_posters_containing">Show posters containing \"%1$s\"</string>
 </resources>

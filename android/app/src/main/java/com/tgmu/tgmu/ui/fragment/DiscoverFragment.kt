@@ -13,8 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.search.SearchView
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentDiscoverBinding
+import com.tgmu.tgmu.databinding.HeaderMovieSearchSuggestionBinding
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
-import com.tgmu.tgmu.ui.adapters.PopularMoviesAdapter
+import com.tgmu.tgmu.ui.adapters.MoviePostersAdapter
 import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
 import com.tgmu.tgmu.utils.Constants.Companion.SEARCH_MOVIES_TIME_DELAY
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,20 +41,60 @@ class DiscoverFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val popularMoviesAdapter = PopularMoviesAdapter()
-        val movieSearchSuggestionAdapter = MovieSearchSuggestionsAdapter()
+        val postersAdapter = MoviePostersAdapter()
+        val searchAdapter = MovieSearchSuggestionsAdapter()
+
+        setupPostersList(postersAdapter)
+        setupSearchView(searchAdapter)
+    }
+
+    private fun setupPostersList(postersAdapter: MoviePostersAdapter) {
+        moviesViewModel.posterMovies.observe(viewLifecycleOwner) {
+            postersAdapter.differ.submitList(it)
+        }
 
         binding.apply {
-            rvPopularMovies.layoutManager = GridLayoutManager(requireContext(), 2)
-            rvPopularMovies.adapter = popularMoviesAdapter
-            svMovie.setupWithSearchBar(sbMovie)
+            rvPosterMovies.layoutManager = GridLayoutManager(requireContext(), 2)
+            rvPosterMovies.adapter = postersAdapter
+        }
+    }
 
-            // Setup search movie suggestion autocomplete
+    private fun setupSearchView(
+        searchAdapter: MovieSearchSuggestionsAdapter,
+    ) {
+
+        moviesViewModel.searchedMovies.observe(viewLifecycleOwner) {
+            searchAdapter.differ.submitList(it)
+        }
+
+        binding.apply {
+            svMovie.setupWithSearchBar(sbMovie)
             rvMovieSearchSuggestions.layoutManager = LinearLayoutManager(requireContext())
-            rvMovieSearchSuggestions.adapter = movieSearchSuggestionAdapter
+            rvMovieSearchSuggestions.adapter = searchAdapter
+
+            val searchByQueryBinding =
+                HeaderMovieSearchSuggestionBinding.inflate(LayoutInflater.from(requireContext()))
+            searchByQueryBinding.apply {
+                clHeader.setOnClickListener {
+                    svMovie.hide()
+                    moviesViewModel.updatePosters(svMovie.text.toString())
+                    sbMovie.setText(svMovie.text.toString())
+                }
+            }
+            llMovieSearchSuggestions.addView(searchByQueryBinding.root, 0)
 
             var searchMovieJob: Job? = null
             svMovie.editText.addTextChangedListener { editable ->
+                searchByQueryBinding.tvQuery.text = if (editable.toString()
+                        .isEmpty()
+                ) {
+                    getString(R.string.show_popular_movies)
+                } else {
+                    getString(
+                        R.string.show_posters_containing,
+                        svMovie.text.toString()
+                    )
+                }
                 searchMovieJob?.cancel()
                 searchMovieJob = lifecycleScope.launch {
                     delay(SEARCH_MOVIES_TIME_DELAY)
@@ -64,21 +105,12 @@ class DiscoverFragment : Fragment() {
 
             }
 
-            svMovie.addTransitionListener{ searchView, previousState, newState ->
+            svMovie.addTransitionListener { searchView, previousState, newState ->
                 if (previousState == SearchView.TransitionState.SHOWN && newState == SearchView.TransitionState.HIDING) {
-                    movieSearchSuggestionAdapter.differ.submitList(emptyList())
+                    searchAdapter.differ.submitList(emptyList())
                 }
             }
         }
-
-        moviesViewModel.popularMovies.observe(viewLifecycleOwner) {
-            popularMoviesAdapter.differ.submitList(it)
-        }
-
-        moviesViewModel.searchedMovies.observe(viewLifecycleOwner) {
-            movieSearchSuggestionAdapter.differ.submitList(it)
-        }
-
     }
 
     override fun onDestroyView() {

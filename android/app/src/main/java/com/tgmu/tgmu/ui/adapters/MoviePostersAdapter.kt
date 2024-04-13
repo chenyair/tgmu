@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.tgmu.tgmu.databinding.ItemImageCardBinding
 import com.tgmu.tgmu.domain.model.Movie
 
-class PopularMoviesAdapter : RecyclerView.Adapter<PopularMoviesAdapter.ViewHolder>() {
+class MoviePostersAdapter : RecyclerView.Adapter<MoviePostersAdapter.ViewHolder>() {
 
     inner class ViewHolder(var binding: ItemImageCardBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -29,13 +29,13 @@ class PopularMoviesAdapter : RecyclerView.Adapter<PopularMoviesAdapter.ViewHolde
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): PopularMoviesAdapter.ViewHolder {
+    ): MoviePostersAdapter.ViewHolder {
         val binding =
             ItemImageCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: PopularMoviesAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MoviePostersAdapter.ViewHolder, position: Int) {
         val movie = differ.currentList[position]
         holder.binding.apply {
             Glide
