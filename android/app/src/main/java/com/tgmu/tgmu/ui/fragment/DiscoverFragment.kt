@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.search.SearchView
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentDiscoverBinding
-import com.tgmu.tgmu.databinding.HeaderMovieSearchSuggestionBinding
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
 import com.tgmu.tgmu.ui.adapters.MoviePostersAdapter
 import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
@@ -72,20 +71,15 @@ class DiscoverFragment : Fragment() {
             rvMovieSearchSuggestions.layoutManager = LinearLayoutManager(requireContext())
             rvMovieSearchSuggestions.adapter = searchAdapter
 
-            val searchByQueryBinding =
-                HeaderMovieSearchSuggestionBinding.inflate(LayoutInflater.from(requireContext()))
-            searchByQueryBinding.apply {
-                clHeader.setOnClickListener {
-                    svMovie.hide()
-                    moviesViewModel.updatePosters(svMovie.text.toString())
-                    sbMovie.setText(svMovie.text.toString())
-                }
+            clHeader.setOnClickListener {
+                svMovie.hide()
+                moviesViewModel.updatePosters(svMovie.text.toString())
+                sbMovie.setText(svMovie.text.toString())
             }
-            llMovieSearchSuggestions.addView(searchByQueryBinding.root, 0)
 
             var searchMovieJob: Job? = null
             svMovie.editText.addTextChangedListener { editable ->
-                searchByQueryBinding.tvQuery.text = if (editable.toString()
+                tvPosterSuggestionQuery.text = if (editable.toString()
                         .isEmpty()
                 ) {
                     getString(R.string.show_popular_movies)

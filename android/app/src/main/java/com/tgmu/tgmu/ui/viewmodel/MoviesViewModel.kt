@@ -24,10 +24,10 @@ class MoviesViewModel @Inject constructor(
     val searchedMovies: LiveData<List<Movie>> get() = _searchedMovies
 
     init {
-        getPopularMovies(overridePosters = true)
+        getPopularMovies()
     }
 
-    private fun getPopularMovies(overridePosters: Boolean = false) {
+    private fun getPopularMovies() {
         viewModelScope.launch {
             val result = movieRepository.getPopularMovies()
             _popularMovies.postValue(result)
