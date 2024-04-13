@@ -10,7 +10,8 @@ fun MovieEntity.toModel(): Movie {
     return Movie(
         id = id,
         title = "title",
-        poster_path = "poster_path"
+        poster_path = "poster_path",
+        genre_ids = emptyList()
     )
 }
 
@@ -18,7 +19,8 @@ fun TmdbMovie.toModel(): Movie {
     return Movie(
         id = id,
         title = title,
-        poster_path = poster_path
+        poster_path = poster_path,
+        genre_ids = genre_ids
     )
 }
 
