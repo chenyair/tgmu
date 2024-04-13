@@ -6,12 +6,12 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.tgmu.tgmu.databinding.ItemImageCardBinding
+import com.tgmu.tgmu.databinding.ItemMoviePosterBinding
 import com.tgmu.tgmu.domain.model.Movie
 
 class MoviePostersAdapter : RecyclerView.Adapter<MoviePostersAdapter.ViewHolder>() {
 
-    inner class ViewHolder(var binding: ItemImageCardBinding) :
+    inner class ViewHolder(var binding: ItemMoviePosterBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     private val differCallback = object : DiffUtil.ItemCallback<Movie>() {
@@ -31,7 +31,7 @@ class MoviePostersAdapter : RecyclerView.Adapter<MoviePostersAdapter.ViewHolder>
         viewType: Int
     ): MoviePostersAdapter.ViewHolder {
         val binding =
-            ItemImageCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemMoviePosterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -43,6 +43,10 @@ class MoviePostersAdapter : RecyclerView.Adapter<MoviePostersAdapter.ViewHolder>
                 .load("https://image.tmdb.org/t/p/original/${movie.poster_path ?: ""}")
                 .centerCrop()
                 .into(ivMoviePoster)
+
+            ivMoviePoster.setOnClickListener {
+                // TODO: Implement poster clicked
+            }
         }
     }
 
