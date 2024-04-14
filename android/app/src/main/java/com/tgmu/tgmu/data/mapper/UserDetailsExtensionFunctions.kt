@@ -5,7 +5,7 @@ import com.tgmu.tgmu.domain.model.UserDetails
 
 
 fun FirestoreUserDetails.toModel() = UserDetails(
-    email = email,
-    fullName = fullName,
-    birthdate = birthdate
+    email = email!!,
+    fullName = fullName!!,
+    birthdate = birthdate!!
 )

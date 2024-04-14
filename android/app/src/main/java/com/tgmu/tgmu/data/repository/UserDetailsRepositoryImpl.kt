@@ -20,7 +20,7 @@ class UserDetailsRepositoryImpl : UserDetailsRepository {
     private lateinit var collection: CollectionReference
 
     init {
-        collection = Firebase.firestore.collection("users")
+        collection = Firebase.firestore.collection("users_details")
     }
 
     override suspend fun getUserDetails(email: String): Flow<Resource<UserDetails>> = flow {
