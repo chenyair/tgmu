@@ -24,12 +24,14 @@ class ExperienceRepositoryImpl : ExperienceRepository {
 
     override suspend fun getExperiences(): Flow<Resource<List<Experience>>> = flow {
         emit(Resource.loading())
+        Log.d("test", "reached0")
         try {
             val response = collection.get().await()
 
             val experiences = response.documents.mapNotNull { it.toObject(FirestoreExperience::class.java)?.toModel() }
             emit(Resource.success(experiences))
         } catch (e: Exception) {
+
             Log.e("ExperienceRepository", "getExperiences: $e")
             emit(Resource.failed("An error occurred while getting experiences"))
         }
