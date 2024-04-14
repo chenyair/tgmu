@@ -10,6 +10,8 @@ material = "1.11.0"
 activity = "1.8.2"
 constraintlayout = "2.1.4"
 googleServices = "4.4.1"
+firebaseAuth = "22.3.1"
+playServicesAuth = "21.0.0"
 firebaseFirestore = "24.11.1"
 
 [libraries]
@@ -22,6 +24,8 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 [plugins]

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clLogin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".ui.activities.LoginActivity">
+
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="128dp"
+        android:src="@drawable/tgmu_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/btnRegister"
+        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
+        app:layout_constraintVertical_bias="0.2">
+
+        <ImageView
+            android:id="@+id/ivGoogleSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:src="@drawable/google_sign_in"
+            app:layout_constraintBottom_toTopOf="@+id/tvOr"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvOr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/or"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivGoogleSignIn" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tiEmail"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/email"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvOr">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tiPassword"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/password"
+            app:endIconMode="password_toggle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tiEmail">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnSignIn"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/sign_in"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tiPassword" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <Button
+        android:id="@+id/btnRegister"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:text="@string/register"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

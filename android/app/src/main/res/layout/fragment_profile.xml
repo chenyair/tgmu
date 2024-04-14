@@ -7,9 +7,19 @@
     tools:context=".ui.fragment.ProfileFragment">
 
     <TextView
+        android:id="@+id/tvDisplayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title_profile"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogOut"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnLogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log out"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
