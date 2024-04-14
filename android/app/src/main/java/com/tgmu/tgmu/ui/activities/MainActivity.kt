@@ -1,17 +1,12 @@
-package com.tgmu.tgmu.ui
+package com.tgmu.tgmu.ui.activities
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.ActivityMainBinding
-import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
