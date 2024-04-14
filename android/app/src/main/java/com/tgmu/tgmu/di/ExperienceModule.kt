@@ -1,6 +1,7 @@
 package com.tgmu.tgmu.di
 
-import com.google.firebase.firestore.FirebaseFirestore
+import com.tgmu.tgmu.data.repository.ExperienceRepositoryImpl
+import com.tgmu.tgmu.domain.repository.ExperienceRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,10 +10,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object FirestoreModule {
+class ExperienceModule {
+
     @Provides
     @Singleton
-    fun provideFirestore(): FirebaseFirestore {
-        return FirebaseFirestore.getInstance()
+    fun provideUserDetailsRepository(): ExperienceRepository {
+        return ExperienceRepositoryImpl()
     }
 }

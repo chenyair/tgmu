@@ -22,7 +22,7 @@ data class Experience(
             "description" to description,
             "likedUsers" to likedUsers,
             "imgUrl" to imgUrl,
-            "comments" to comments.map { it.toMap() }, // Assuming Comment has a toMap method
+            "comments" to comments.map { it.toMap() },
             "createdAt" to createdAt
         )
     }
