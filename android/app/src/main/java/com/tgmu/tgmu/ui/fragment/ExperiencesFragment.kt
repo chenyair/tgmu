@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentDiscoverBinding
 import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
@@ -67,7 +68,7 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         binding.apply {
             rvExperienceList.apply {
                 adapter = experienceAdapter
-                layoutManager = GridLayoutManager(requireContext(), 2)
+                layoutManager = LinearLayoutManager(requireContext())
             }
         }
     }

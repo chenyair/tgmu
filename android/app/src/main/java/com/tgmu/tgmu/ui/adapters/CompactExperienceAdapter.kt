@@ -1,10 +1,16 @@
 package com.tgmu.tgmu.ui.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.ItemCompactExperienceCardBinding
 import com.tgmu.tgmu.domain.model.Experience
 import org.ocpsoft.prettytime.PrettyTime
@@ -43,6 +49,7 @@ class CompactExperienceAdapter : RecyclerView.Adapter<CompactExperienceAdapter.V
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val experience = differ.currentList[position]
+        val currUserUID = Firebase.auth.currentUser!!.uid
         holder.binding.apply {
             tvExperienceMovieTitle.text = experience.movie_id.toString()
             tvExperienceName.text = experience.title
@@ -50,7 +57,29 @@ class CompactExperienceAdapter : RecyclerView.Adapter<CompactExperienceAdapter.V
             tvLikeCount.text = experience.likedUsers.size.toString()
             tvCommentCount.text = experience.comments.size.toString()
 
-            // TODO: implement case liked button
+            Glide
+                .with(holder.itemView.context)
+                .load(experience.imgUrl?: "https://open-stand.org/wp-content/uploads/2016/04/International-Union-of-Cinemas-Calls-for-Open-Standards-in-the-Cinema-Industry.jpg")
+                .centerCrop()
+                .into(ivExperiencePoster)
+
+            if (currUserUID == experience.user_id) {
+                icEdit.visibility = View.VISIBLE
+            } else {
+                icEdit.visibility = View.GONE
+            }
+
+            if (currUserUID in experience.likedUsers || true) {
+                icLikes.apply {
+                    setImageResource(R.drawable.ic_liked)
+                    drawable.setTint(
+                        icLikes.context.resources.getColor(
+                            R.color.md_theme_error,
+                            null
+                        )
+                    )
+                }
+            }
         }
     }
 
