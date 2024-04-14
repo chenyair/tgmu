@@ -1,8 +1,11 @@
 package com.tgmu.tgmu.ui.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -26,13 +29,15 @@ import com.tgmu.tgmu.databinding.ActivityLoginBinding
 import com.tgmu.tgmu.ui.viewmodel.UsersDetailsViewModel
 import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
-    private val usersDetailsViewModel: UsersDetailsViewModel by viewModels()
 
+    @Inject
+    lateinit var usersDetailsViewModel: UsersDetailsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -44,19 +49,27 @@ class LoginActivity : AppCompatActivity() {
         if (auth.currentUser != null) {
             usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
         }
+
+        val builder = AlertDialog.Builder(this@LoginActivity)
+        builder.setView(layoutInflater.inflate(R.layout.loading_modal, null))
+        builder.setCancelable(false)
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // Set the background to transparent
+
         usersDetailsViewModel.currentUserDetails.observe(this) {
             when (it) {
                 is Resource.Loading -> {
-                    // TODO: Show loading modal
-                    Log.d("LoginActivity", "Loading user details")
+                    dialog.show()
                 }
 
                 is Resource.Success -> {
+                    dialog.dismiss()
                     openMainActivity()
                 }
 
                 is Resource.Failed -> {
-                    // TODO: Create a new UserDetails if it doesn't exist
+                    dialog.dismiss()
+                    // TODO: Create a new UserDetails if it doesn't exist else show error
                 }
             }
         }

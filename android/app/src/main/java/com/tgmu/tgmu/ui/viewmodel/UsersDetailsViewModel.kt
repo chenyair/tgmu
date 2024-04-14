@@ -11,15 +11,20 @@ import com.tgmu.tgmu.domain.repository.MovieRepository
 import com.tgmu.tgmu.domain.repository.UserDetailsRepository
 import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@HiltViewModel
+@Singleton
 class UsersDetailsViewModel @Inject constructor(
     private val userDetailsRepository: UserDetailsRepository
 ) : ViewModel() {
 
-    private val _currentUserDetails = MutableLiveData<Resource<UserDetails>>()
+    private var _currentUserDetails = MutableLiveData<Resource<UserDetails>>()
+
 
     val currentUserDetails: LiveData<Resource<UserDetails>>
         get() = _currentUserDetails
@@ -31,5 +36,11 @@ class UsersDetailsViewModel @Inject constructor(
                 _currentUserDetails.value = it
             }
         }
+    }
+
+    fun logOut() {
+        // Reset value to default
+        _currentUserDetails = MutableLiveData<Resource<UserDetails>>()
+
     }
 }

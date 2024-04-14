@@ -30,6 +30,7 @@ class UserDetailsRepositoryImpl : UserDetailsRepository {
             if (result.isEmpty) {
                 emit(Resource.failed("User not found"))
             } else {
+                Log.d("UserDetailsRepository", "getUserDetails: ${result.documents.first()}")
                 val userDetails =
                     result.documents.first().toObject(FirestoreUserDetails::class.java)
                 emit(Resource.success(userDetails!!.toModel()))
