@@ -64,6 +64,12 @@ class LoginActivity : AppCompatActivity() {
                     signInWithUsernameAndPassword(email, password)
                 }
             }
+
+            btnRegister.setOnClickListener {
+                val intent = Intent(this@LoginActivity, RegisterActivity::class.java).also {
+                    startActivity(it)
+                }
+            }
         }
 
         setupGoogleSignIn()
