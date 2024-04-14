@@ -33,10 +33,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val tmdbKey = properties.getProperty("tmdb.key") ?: error("tmdb.key not found in local.properties")
+        val tmdbKey =
+            properties.getProperty("tmdb.key") ?: error("tmdb.key not found in local.properties")
         buildConfigField("String", "TMDB_API_KEY", "\"$tmdbKey\"")
 
-        val googleWebClientId = properties.getProperty("google.web.client.id") ?: error("google.web.client.id not found in local.properties")
+        val googleWebClientId = properties.getProperty("google.web.client.id")
+            ?: error("google.web.client.id not found in local.properties")
         buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
     }
 
@@ -66,6 +68,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

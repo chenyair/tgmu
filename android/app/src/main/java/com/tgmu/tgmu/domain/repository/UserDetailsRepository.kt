@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserDetailsRepository {
 
-    suspend fun getUserDetails(email: String): LiveData<Resource<UserDetails>>
+    suspend fun getUserDetails(email: String): Flow<Resource<UserDetails>>
 }

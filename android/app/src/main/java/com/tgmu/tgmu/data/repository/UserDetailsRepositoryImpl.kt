@@ -7,6 +7,8 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.tgmu.tgmu.data.mapper.toModel
+import com.tgmu.tgmu.data.remote.FirestoreUserDetails
 import com.tgmu.tgmu.domain.model.UserDetails
 import com.tgmu.tgmu.domain.repository.UserDetailsRepository
 import com.tgmu.tgmu.utils.Resource
@@ -21,23 +23,20 @@ class UserDetailsRepositoryImpl : UserDetailsRepository {
         collection = Firebase.firestore.collection("users")
     }
 
-    override suspend fun getUserDetails(email: String): LiveData<Resource<UserDetails>> {
-        val liveData = MutableLiveData<Resource<UserDetails>>()
-        liveData.value = Resource.loading()
-        collection.whereEqualTo("email", email).get()
-            .addOnSuccessListener { querySnapshot ->
-                if (querySnapshot.isEmpty) {
-                    liveData.value = Resource.failed("User not found")
-                } else {
-                    val userDetails =
-                        querySnapshot.documents.first().toObject(UserDetails::class.java)
-                    liveData.value = Resource.success(userDetails!!)
-                }
-            }.addOnFailureListener { exception ->
-                Log.e("UserDetailsRepository", "Error getting user details", exception)
-                liveData.value = Resource.failed("Error getting user details")
+    override suspend fun getUserDetails(email: String): Flow<Resource<UserDetails>> = flow {
+        emit(Resource.loading())
+        try {
+            val result = collection.whereEqualTo("email", email).get().await()
+            if (result.isEmpty) {
+                emit(Resource.failed("User not found"))
+            } else {
+                val userDetails =
+                    result.documents.first().toObject(FirestoreUserDetails::class.java)
+                emit(Resource.success(userDetails!!.toModel()))
             }
-
-        return liveData
+        } catch (e: Exception) {
+            Log.e("UserDetailsRepository", "getUserDetails: $e")
+            emit(Resource.failed("An error communicating with firebase occurred"))
+        }
     }
 }
