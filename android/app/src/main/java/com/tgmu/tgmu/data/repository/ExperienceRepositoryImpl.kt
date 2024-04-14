@@ -1,8 +1,6 @@
 package com.tgmu.tgmu.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
-import com.tgmu.tgmu.di.FirestoreModule
 import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.domain.repository.ExperienceRepository
 import kotlinx.coroutines.tasks.await
