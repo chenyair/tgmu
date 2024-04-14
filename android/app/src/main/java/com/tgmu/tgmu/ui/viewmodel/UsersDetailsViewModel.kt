@@ -1,5 +1,6 @@
 package com.tgmu.tgmu.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,7 @@ class UsersDetailsViewModel @Inject constructor(
     fun getUserDetails(email: String) {
         viewModelScope.launch {
             userDetailsRepository.getUserDetails(email).collect {
+                Log.d("UsersDetailsViewModel", "getUserDetails: $it")
                 _currentUserDetails.value = it
             }
         }
