@@ -22,9 +22,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.tgmu.tgmu.BuildConfig
 import com.tgmu.tgmu.R
-import com.tgmu.tgmu.data.remote.FirestoreUserDetails
 import com.tgmu.tgmu.databinding.ActivityLoginBinding
 import com.tgmu.tgmu.ui.viewmodel.UsersDetailsViewModel
+import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,11 +39,28 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Check if user is already logged in
+        // Redirect to MainActivity when user is logged
         auth = Firebase.auth
         if (auth.currentUser != null) {
-            openMainActivity()
+            usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
         }
+        usersDetailsViewModel.currentUserDetails.observe(this) {
+            when (it) {
+                is Resource.Loading -> {
+                    // TODO: Show loading modal
+                    Log.d("LoginActivity", "Loading user details")
+                }
+
+                is Resource.Success -> {
+                    openMainActivity()
+                }
+
+                is Resource.Failed -> {
+                    // TODO: Create a new UserDetails if it doesn't exist
+                }
+            }
+        }
+
 
         binding.apply {
             // Enable clicking outside to dismiss keyboard
@@ -83,7 +100,6 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun openMainActivity() {
-        usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
         val intent = Intent(this, MainActivity::class.java).also {
             it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(it)
@@ -125,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(username, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    openMainActivity()
+                    usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
                 } else {
                     Log.e("LoginActivity", "signInWithUsernameAndPassword:failure", task.exception)
                     Snackbar.make(
@@ -161,8 +177,8 @@ class LoginActivity : AppCompatActivity() {
                         auth.signInWithCredential(credential)
                             .addOnCompleteListener(this) { task ->
                                 if (task.isSuccessful) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    openMainActivity()
+                                    Log.d("LoginActivity", "signInWithCredential:success")
+                                    usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
                                 } else {
                                     Log.e(
                                         "LoginActivity",
