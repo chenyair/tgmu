@@ -69,7 +69,7 @@ class CompactExperienceAdapter : RecyclerView.Adapter<CompactExperienceAdapter.V
                 icEdit.visibility = View.GONE
             }
 
-            if (currUserUID in experience.likedUsers || true) {
+            if (currUserUID in experience.likedUsers) {
                 icLikes.apply {
                     setImageResource(R.drawable.ic_liked)
                     drawable.setTint(
