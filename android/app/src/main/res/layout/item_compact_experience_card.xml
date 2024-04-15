@@ -12,24 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        >
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:paddingHorizontal="15dp"
-            android:paddingTop="15dp"
->
+            android:paddingTop="15dp">
+
             <LinearLayout
                 android:id="@+id/llExperienceDetails"
                 android:layout_width="0dp"
+                android:paddingBottom="15dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="15dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ivExperiencePoster"
                 app:layout_constraintEnd_toStartOf="@+id/ivExperiencePoster"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="@+id/ivExperiencePoster">
 
                 <TextView
                     android:id="@+id/tvMovieName"
@@ -54,11 +54,11 @@
                 android:id="@+id/ivExperiencePoster"
                 android:layout_width="80dp"
                 android:layout_height="120dp"
-                app:shapeAppearanceOverlay="@style/RoundedImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/llExperienceDetails"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/RoundedImage" />
 
             <LinearLayout
                 android:id="@+id/llReactions"
@@ -72,19 +72,18 @@
 
                 <TextView
                     android:id="@+id/tvLikeCount"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="5" />
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                 <ImageView
                     android:id="@+id/icLikes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:scaleType="centerInside"
                     android:padding="2dp"
+                    android:scaleType="centerInside"
                     android:src="@drawable/ic_like" />
 
                 <TextView
@@ -92,9 +91,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:paddingLeft="10dp"
-                    android:text="5" />
+                    android:paddingStart="10dp"
+                    android:paddingEnd="0dp"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                 <ImageView
                     android:id="@+id/icComments"
@@ -110,10 +109,10 @@
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipExperienceTimeAgo"
                 android:layout_width="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:layout_height="45dp"
-                app:chipBackgroundColor="@color/md_theme_onSecondaryFixedVariant"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:textColor="@color/material_dynamic_neutral_variant50"
+                app:chipBackgroundColor="@color/md_theme_onSecondaryFixedVariant"
                 app:chipStrokeWidth="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/llExperienceDetails" />

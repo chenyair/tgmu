@@ -1,7 +1,6 @@
 package com.tgmu.tgmu.ui.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -10,7 +9,7 @@ import com.tgmu.tgmu.databinding.ItemMovieSearchSuggestionBinding
 import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.utils.Constants
 
-class MovieSearchSuggestionsAdapter :
+class MovieSearchSuggestionsAdapter(private val onSearchOptionClick: (Movie) -> Unit = {}) :
     RecyclerView.Adapter<MovieSearchSuggestionsAdapter.ViewHolder>() {
     inner class ViewHolder(var binding: ItemMovieSearchSuggestionBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -43,7 +42,7 @@ class MovieSearchSuggestionsAdapter :
         }
 
         holder.itemView.setOnClickListener {
-            // TODO: Implement movie suggestion clicked
+            onSearchOptionClick(movie)
         }
     }
 

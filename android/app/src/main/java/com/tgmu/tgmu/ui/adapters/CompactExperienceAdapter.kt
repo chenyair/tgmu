@@ -63,7 +63,7 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
 
             Glide
                 .with(holder.itemView.context)
-                .load(experience.moviePoster)
+                .load("https://image.tmdb.org/t/p/original/${experience.moviePoster ?: ""}")
                 .centerCrop()
                 .into(ivExperiencePoster)
 
