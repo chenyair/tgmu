@@ -17,10 +17,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="180dp"
             android:paddingHorizontal="15dp"
-            android:paddingVertical="10dp">
-
+            android:paddingTop="15dp"
+>
             <LinearLayout
                 android:id="@+id/llExperienceDetails"
                 android:layout_width="0dp"
@@ -32,7 +32,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/tvExperienceName"
+                    android:id="@+id/tvMovieName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Movie Name"
@@ -41,19 +41,20 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/tvExperienceMovieTitle"
+                    android:id="@+id/tvExperienceTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="5dp"
                     android:text="Movie Title"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvExperienceName" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvMovieName" />
             </LinearLayout>
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivExperiencePoster"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
+                android:layout_width="80dp"
+                android:layout_height="120dp"
+                app:shapeAppearanceOverlay="@style/RoundedImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/llExperienceDetails"
@@ -110,8 +111,9 @@
                 android:id="@+id/chipExperienceTimeAgo"
                 android:layout_width="wrap_content"
                 android:layout_height="45dp"
-                android:textColor="@color/material_dynamic_neutral_variant50"
                 android:text="Time Ago"
+                app:chipBackgroundColor="@color/md_theme_onSecondaryFixedVariant"
+                android:textColor="@color/material_dynamic_neutral_variant50"
                 app:chipStrokeWidth="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/llExperienceDetails" />

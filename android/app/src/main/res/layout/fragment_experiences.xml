@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.ExperiencesFragment">
 
-    <TextView
-        android:id="@+id/tvLoadingExperiences"
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/cpiExperienceList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="loading experiences..."
+        android:indeterminate="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -22,8 +22,8 @@
         android:id="@+id/rvExperienceList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,10 +34,10 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
         android:layout_margin="10dp"
-        app:shapeAppearanceOverlay="@style/ButtonRounded"
+        android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedCard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,26 +5,24 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.tgmu.tgmu.data.mapper.toFirestoreObject
 import com.tgmu.tgmu.data.mapper.toModel
 import com.tgmu.tgmu.data.remote.FirestoreExperience
 import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.domain.repository.ExperienceRepository
 import com.tgmu.tgmu.utils.Resource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.math.exp
 
 class ExperienceRepositoryImpl : ExperienceRepository {
-    private lateinit var collection: CollectionReference
-
-    init {
-        collection = Firebase.firestore.collection("experiences")
-    }
+    private var collection: CollectionReference = Firebase.firestore.collection("experiences")
 
     override suspend fun getExperiences(): Flow<Resource<List<Experience>>> = flow {
         emit(Resource.loading())
-        Log.d("test", "reached0")
         try {
             val response = collection.get().await()
 
@@ -52,8 +50,7 @@ class ExperienceRepositoryImpl : ExperienceRepository {
     override suspend fun addExperience(experience: Experience): Flow<Resource<String>> = flow {
         emit(Resource.loading())
         try {
-            val experienceMap = experience.toMap()
-            val documentReference = collection.add(experienceMap).await()
+            val documentReference = collection.add(experience.toFirestoreObject()).await()
             emit(Resource.success(documentReference.id))
         } catch (e: Exception) {
             Log.e("ExperienceRepository", "addExperience: $e")
@@ -76,8 +73,8 @@ class ExperienceRepositoryImpl : ExperienceRepository {
         flow {
             emit(Resource.loading())
             try {
-                val experienceMap = experience.toMap()
-                collection.document(experience.id).set(experienceMap).await()
+                Log.d("ExperienceRepository", "updateExperience: $experience")
+                collection.document(experience.id).set(experience.toFirestoreObject()).await()
                 emit(Resource.success(experience))
             } catch (e: Exception) {
                 Log.e("ExperienceRepository", "updateExperience: $e")

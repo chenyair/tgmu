@@ -6,23 +6,43 @@ import com.tgmu.tgmu.domain.model.Experience
 
 // Generate extension that parses FirestoreExperience to Experience
 
-fun FirestoreExperience.Comment.toModel(): Comment {
-    return Comment(
-        user_id = user_id,
+fun FirestoreExperience.Comment.toModel(): Comment =
+    Comment(
+        user_id = userId,
         text = text,
         createdAt = createdAt
     )
-}
-fun FirestoreExperience.toModel(): Experience {
-    return Experience(
-        id = id,
+
+fun FirestoreExperience.toModel(): Experience =
+    Experience(
+        id = id ?: "",
         title = title,
-        movie_id = movie_id,
-        user_id = user_id,
+        movieId = movieId,
+        userId = userId,
         description = description,
         likedUsers = likedUsers,
         imgUrl = imgUrl,
         comments = comments.map { it.toModel() },
+        movieName = movieName,
+        moviePoster = moviePoster,
         createdAt = createdAt
     )
-}
+
+fun Comment.toFirestoreObject(): FirestoreExperience.Comment = FirestoreExperience.Comment(
+    userId = user_id,
+    text = text,
+    createdAt = createdAt
+)
+fun Experience.toFirestoreObject(): FirestoreExperience = FirestoreExperience(
+    id = id,
+    title = title,
+    movieId = movieId,
+    userId = userId,
+    description = description,
+    likedUsers = likedUsers,
+    imgUrl = imgUrl,
+    comments = comments.map { it.toFirestoreObject() },
+    movieName = movieName,
+    moviePoster = moviePoster,
+    createdAt = createdAt
+)
