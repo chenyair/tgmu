@@ -28,4 +28,6 @@
     <string name="back">Back</string>
     <string name="register_failed">Registration failed. Please try again.</string>
     <string name="something_went_wrong">Something went wrong. Please try again.</string>
+
+    <string name="transition_name_movie_poster">moviePosterTransition</string>
 </resources>
