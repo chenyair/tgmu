@@ -9,6 +9,7 @@ import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.domain.repository.ExperienceRepository
 import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,6 +26,7 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
 
     fun getLatestExperiences() {
         viewModelScope.launch {
+            delay(500L)
             experienceRepository.getExperiences().collect {
                 Log.d("UsersDetailsViewModel", "getUserDetails: $it")
                 _latestExperiences.postValue(it)

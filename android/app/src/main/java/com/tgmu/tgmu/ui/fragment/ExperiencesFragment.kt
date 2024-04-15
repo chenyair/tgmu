@@ -104,7 +104,24 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
     ) {
 
         moviesViewModel.searchedMovies.observe(viewLifecycleOwner) {
-            searchAdapter.differ.submitList(it)
+            when (it) {
+                is Resource.Loading -> {
+                    binding.lpiMovieSearchSuggestions.visibility = View.VISIBLE
+                }
+
+                is Resource.Success -> {
+                    searchAdapter.differ.submitList(it.data)
+                    binding.lpiMovieSearchSuggestions.visibility = View.GONE
+                }
+
+                is Resource.Failed -> {
+                    Snackbar.make(
+                        requireView(),
+                        it.message ?: getString(R.string.something_went_wrong),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
         }
 
         binding.apply {

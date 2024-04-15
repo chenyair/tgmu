@@ -1,7 +1,10 @@
 package com.tgmu.tgmu.ui.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -16,13 +19,21 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.ActivityRegisterBinding
+import com.tgmu.tgmu.ui.viewmodel.UsersDetailsViewModel
+import com.tgmu.tgmu.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var auth: FirebaseAuth
+
+    @Inject
+    lateinit var usersDetailsViewModel: UsersDetailsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +84,32 @@ class RegisterActivity : AppCompatActivity() {
                 )
             }
         }
+
+        val builder = AlertDialog.Builder(this@RegisterActivity)
+        builder.setView(layoutInflater.inflate(R.layout.loading_modal, null))
+        builder.setCancelable(false)
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // Set the background to transparent
+
+        usersDetailsViewModel.currentUserDetails.observe(this) {
+            when (it) {
+                is Resource.Loading -> {
+                    dialog.show()
+                }
+
+                is Resource.Success -> {
+                    dialog.dismiss()
+                    openMainActivity()
+                }
+
+                is Resource.Failed -> {
+                    dialog.dismiss()
+                    Snackbar.make(
+                        binding.root, getString(R.string.register_failed), Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 
     private fun openMainActivity() {
@@ -86,7 +123,17 @@ class RegisterActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    openMainActivity()
+                    val email = auth.currentUser?.email!!
+                    val fullName = binding.tiFullName.editText?.text.toString()
+                    val birthdate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(
+                        binding.tiBirthdate.editText?.text.toString()
+                    )!!
+
+                    usersDetailsViewModel.createAndUpdateUserDetails(
+                        email,
+                        fullName,
+                        birthdate
+                    )
                 } else {
                     val exception = task.exception
                     Log.e("RegisterActivity", "Failed to register", exception)
