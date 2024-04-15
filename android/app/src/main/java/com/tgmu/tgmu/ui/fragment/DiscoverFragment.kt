@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.search.SearchView
+import com.google.android.material.snackbar.Snackbar
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentDiscoverBinding
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
@@ -61,7 +62,11 @@ class DiscoverFragment : Fragment() {
                 }
 
                 is Resource.Failed -> {
-                    // TODO: Show error message
+                    Snackbar.make(
+                        requireView(),
+                        it.message ?: getString(R.string.something_went_wrong),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -88,7 +93,11 @@ class DiscoverFragment : Fragment() {
                 }
 
                 is Resource.Failed -> {
-                    // TODO: Show error message
+                    Snackbar.make(
+                        requireView(),
+                        it.message ?: getString(R.string.something_went_wrong),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

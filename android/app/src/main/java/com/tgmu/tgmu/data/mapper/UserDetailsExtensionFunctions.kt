@@ -9,3 +9,9 @@ fun FirestoreUserDetails.toModel() = UserDetails(
     fullName = fullName!!,
     birthdate = birthdate!!
 )
+
+fun UserDetails.toFirestoreObject() = FirestoreUserDetails(
+    email = email,
+    fullName = fullName,
+    birthdate = birthdate
+)

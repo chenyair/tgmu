@@ -29,6 +29,7 @@ import com.tgmu.tgmu.databinding.ActivityLoginBinding
 import com.tgmu.tgmu.ui.viewmodel.UsersDetailsViewModel
 import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -69,7 +70,11 @@ class LoginActivity : AppCompatActivity() {
 
                 is Resource.Failed -> {
                     dialog.dismiss()
-                    // TODO: Create a new UserDetails if it doesn't exist else show error
+                    Snackbar.make(
+                        binding.root,
+                        "Sign in failed. There might be a communication error",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -151,6 +156,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signInWithUsernameAndPassword(username: String, password: String) {
+        usersDetailsViewModel.showLoading()
         auth.signInWithEmailAndPassword(username, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -191,7 +197,17 @@ class LoginActivity : AppCompatActivity() {
                             .addOnCompleteListener(this) { task ->
                                 if (task.isSuccessful) {
                                     Log.d("LoginActivity", "signInWithCredential:success")
-                                    usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
+                                    val isNewUser =
+                                        task.result.additionalUserInfo?.isNewUser ?: false
+                                    if (isNewUser) {
+                                        usersDetailsViewModel.createAndUpdateUserDetails(
+                                            auth.currentUser?.email!!,
+                                            auth.currentUser?.displayName!!,
+                                            Date()
+                                        )
+                                    } else {
+                                        usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
+                                    }
                                 } else {
                                     Log.e(
                                         "LoginActivity",
