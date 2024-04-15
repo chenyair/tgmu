@@ -20,13 +20,21 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
     val latestExperiences: LiveData<Resource<List<Experience>>> get() = _latestExperiences
 
     init {
-        getExperiences()
+        getLatestExperiences()
     }
 
-    private fun getExperiences() {
+    fun getLatestExperiences() {
         viewModelScope.launch {
             experienceRepository.getExperiences().collect {
                 Log.d("UsersDetailsViewModel", "getUserDetails: $it")
+                _latestExperiences.postValue(it)
+            }
+        }
+    }
+
+    fun getExperiencesByMovieId(movieId: Int) {
+        viewModelScope.launch {
+            experienceRepository.getExperiencesByMovieId(movieId).collect {
                 _latestExperiences.postValue(it)
             }
         }
