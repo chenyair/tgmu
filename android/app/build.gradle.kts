@@ -7,6 +7,7 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs")
+    id("com.google.gms.google-services")
 }
 
 val properties = Properties().apply {
@@ -34,6 +35,9 @@ android {
 
         val tmdbKey = properties.getProperty("tmdb.key") ?: error("tmdb.key not found in local.properties")
         buildConfigField("String", "TMDB_API_KEY", "\"$tmdbKey\"")
+
+        val googleWebClientId = properties.getProperty("google.web.client.id") ?: error("google.web.client.id not found in local.properties")
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
     }
 
     buildTypes {
@@ -60,6 +64,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

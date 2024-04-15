@@ -8,4 +8,17 @@
 
     <string name="show_popular_movies">Show popular movies</string>
     <string name="show_posters_containing">Show posters containing \"%1$s\"</string>
+
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="or">or</string>
+    <string name="register">Register</string>
+    <string name="required_email">Email is required</string>
+    <string name="required_password">Password is required</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="invalid_password_length">Password must be at least 8 characters</string>
+    <string name="email_password_sign_in_failed">Sign in failed. Please check your email and password.</string>
+    <string name="google_sign_in_failed">Sign in with google failed. Please try again.</string>
 </resources>
