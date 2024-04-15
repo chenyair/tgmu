@@ -57,6 +57,7 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                 }
 
                 is Resource.Failed -> {
+                    binding.cpiExperienceList.visibility = View.GONE
                     Snackbar.make(
                         requireView(),
                         it.message ?: getString(R.string.something_went_wrong),
