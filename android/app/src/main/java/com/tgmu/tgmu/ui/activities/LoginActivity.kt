@@ -1,8 +1,11 @@
 package com.tgmu.tgmu.ui.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -10,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -22,22 +26,59 @@ import com.google.firebase.ktx.Firebase
 import com.tgmu.tgmu.BuildConfig
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.ActivityLoginBinding
+import com.tgmu.tgmu.ui.viewmodel.UsersDetailsViewModel
+import com.tgmu.tgmu.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.Date
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
 
+    @Inject
+    lateinit var usersDetailsViewModel: UsersDetailsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Check if user is already logged in
+        // Redirect to MainActivity when user is logged
         auth = Firebase.auth
         if (auth.currentUser != null) {
-            openMainActivity()
+            usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
         }
+
+        val builder = AlertDialog.Builder(this@LoginActivity)
+        builder.setView(layoutInflater.inflate(R.layout.loading_modal, null))
+        builder.setCancelable(false)
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // Set the background to transparent
+
+        usersDetailsViewModel.currentUserDetails.observe(this) {
+            when (it) {
+                is Resource.Loading -> {
+                    dialog.show()
+                }
+
+                is Resource.Success -> {
+                    dialog.dismiss()
+                    openMainActivity()
+                }
+
+                is Resource.Failed -> {
+                    dialog.dismiss()
+                    Snackbar.make(
+                        binding.root,
+                        "Sign in failed. There might be a communication error",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
 
         binding.apply {
             // Enable clicking outside to dismiss keyboard
@@ -62,6 +103,12 @@ class LoginActivity : AppCompatActivity() {
 
                 if (isEmailAndPasswordValid(email, password)) {
                     signInWithUsernameAndPassword(email, password)
+                }
+            }
+
+            btnRegister.setOnClickListener {
+                val intent = Intent(this@LoginActivity, RegisterActivity::class.java).also {
+                    startActivity(it)
                 }
             }
         }
@@ -109,10 +156,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signInWithUsernameAndPassword(username: String, password: String) {
+        usersDetailsViewModel.showLoading()
         auth.signInWithEmailAndPassword(username, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    openMainActivity()
+                    usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
                 } else {
                     Log.e("LoginActivity", "signInWithUsernameAndPassword:failure", task.exception)
                     Snackbar.make(
@@ -148,8 +196,18 @@ class LoginActivity : AppCompatActivity() {
                         auth.signInWithCredential(credential)
                             .addOnCompleteListener(this) { task ->
                                 if (task.isSuccessful) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    openMainActivity()
+                                    Log.d("LoginActivity", "signInWithCredential:success")
+                                    val isNewUser =
+                                        task.result.additionalUserInfo?.isNewUser ?: false
+                                    if (isNewUser) {
+                                        usersDetailsViewModel.createAndUpdateUserDetails(
+                                            auth.currentUser?.email!!,
+                                            auth.currentUser?.displayName!!,
+                                            Date()
+                                        )
+                                    } else {
+                                        usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
+                                    }
                                 } else {
                                     Log.e(
                                         "LoginActivity",

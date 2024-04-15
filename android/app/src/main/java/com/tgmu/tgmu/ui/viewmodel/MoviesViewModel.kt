@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.domain.repository.MovieRepository
+import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,13 +17,13 @@ class MoviesViewModel @Inject constructor(
     private val movieRepository: MovieRepository
 ) : ViewModel() {
 
-    private val _popularMovies = MutableLiveData<List<Movie>>()
+    private val _popularMovies = MutableLiveData<Resource<List<Movie>>>()
 
-    private val _posterMovies = MutableLiveData<List<Movie>>()
-    val posterMovies: LiveData<List<Movie>> get() = _posterMovies
+    private val _posterMovies = MutableLiveData<Resource<List<Movie>>>()
+    val posterMovies: LiveData<Resource<List<Movie>>> get() = _posterMovies
 
-    private val _searchedMovies = MutableLiveData<List<Movie>>()
-    val searchedMovies: LiveData<List<Movie>> get() = _searchedMovies
+    private val _searchedMovies = MutableLiveData<Resource<List<Movie>>>()
+    val searchedMovies: LiveData<Resource<List<Movie>>> get() = _searchedMovies
 
     init {
         getPopularMovies()
@@ -29,21 +31,26 @@ class MoviesViewModel @Inject constructor(
 
     private fun getPopularMovies() {
         viewModelScope.launch {
-            val result = movieRepository.getPopularMovies()
-            _popularMovies.postValue(result)
-            _posterMovies.postValue(result)
+            delay(500L)
+            movieRepository.getPopularMovies().collect {
+                _popularMovies.postValue(it)
+                _posterMovies.postValue(it)
+
+            }
         }
     }
 
+
     fun searchMovies(query: String) {
         if (query.isEmpty()) {
-            _searchedMovies.postValue(emptyList())
+            _searchedMovies.postValue(Resource.success(emptyList()))
             return
         }
 
         viewModelScope.launch {
-            val result = movieRepository.searchMovies(query)
-            _searchedMovies.postValue(result)
+            movieRepository.searchMovies(query).collect {
+                _searchedMovies.postValue(it)
+            }
         }
     }
 
@@ -53,5 +60,6 @@ class MoviesViewModel @Inject constructor(
         } else {
             _posterMovies.postValue(_searchedMovies.value)
         }
+
     }
 }

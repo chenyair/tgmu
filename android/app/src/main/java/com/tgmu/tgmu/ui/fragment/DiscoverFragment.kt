@@ -11,12 +11,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.search.SearchView
+import com.google.android.material.snackbar.Snackbar
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentDiscoverBinding
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
 import com.tgmu.tgmu.ui.adapters.MoviePostersAdapter
 import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
 import com.tgmu.tgmu.utils.Constants.Companion.SEARCH_MOVIES_TIME_DELAY
+import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -49,7 +51,24 @@ class DiscoverFragment : Fragment() {
 
     private fun setupPostersList(postersAdapter: MoviePostersAdapter) {
         moviesViewModel.posterMovies.observe(viewLifecycleOwner) {
-            postersAdapter.differ.submitList(it)
+            when (it) {
+                is Resource.Loading -> {
+                    binding.cpiMoviePosters.visibility = View.VISIBLE
+                }
+
+                is Resource.Success -> {
+                    postersAdapter.differ.submitList(it.data)
+                    binding.cpiMoviePosters.visibility = View.GONE
+                }
+
+                is Resource.Failed -> {
+                    Snackbar.make(
+                        requireView(),
+                        it.message ?: getString(R.string.something_went_wrong),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
         }
 
         binding.apply {
@@ -63,7 +82,24 @@ class DiscoverFragment : Fragment() {
     ) {
 
         moviesViewModel.searchedMovies.observe(viewLifecycleOwner) {
-            searchAdapter.differ.submitList(it)
+            when (it) {
+                is Resource.Loading -> {
+                    binding.lpiMovieSearchSuggestions.visibility = View.VISIBLE
+                }
+
+                is Resource.Success -> {
+                    searchAdapter.differ.submitList(it.data)
+                    binding.lpiMovieSearchSuggestions.visibility = View.GONE
+                }
+
+                is Resource.Failed -> {
+                    Snackbar.make(
+                        requireView(),
+                        it.message ?: getString(R.string.something_went_wrong),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
         }
 
         binding.apply {
