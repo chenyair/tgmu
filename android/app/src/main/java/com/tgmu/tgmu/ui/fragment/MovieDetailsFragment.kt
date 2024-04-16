@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.google.android.material.chip.Chip
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentMovieDetailsBinding
+import com.tgmu.tgmu.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -52,6 +54,18 @@ class MovieDetailsFragment : Fragment() {
 
             cvBack.setOnClickListener {
                 findNavController().popBackStack()
+            }
+
+            tvMovieOverview.text = movie.overview
+            movie.genre_ids.map { genreId ->
+                val genre = Constants.GENRE_MAP[genreId] ?: ""
+                Chip(view.context).apply {
+                    text = genre
+                    isCheckable = false
+                    isSelected = true
+                }
+            }.forEach { chip ->
+                cgGenres.addView(chip)
             }
         }
     }

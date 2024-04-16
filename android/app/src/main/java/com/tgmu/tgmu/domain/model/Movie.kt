@@ -9,4 +9,5 @@ data class Movie(
     val title: String,
     val poster_path: String?,
     val genre_ids: List<Int>,
+    val overview: String
 ) : Parcelable

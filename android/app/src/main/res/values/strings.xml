@@ -30,4 +30,7 @@
     <string name="something_went_wrong">Something went wrong. Please try again.</string>
 
     <string name="transition_name_movie_poster">moviePosterTransition</string>
+
+    <string name="show_experiences">Show Experiences</string>
+    <string name="mark_as_favorite">Mark as Favorite</string>
 </resources>
