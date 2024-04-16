@@ -2,10 +2,15 @@ package com.tgmu.tgmu.ui.fragment
 
 import android.os.Bundle
 import android.transition.TransitionInflater
+import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.annotation.MenuRes
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -67,6 +72,48 @@ class MovieDetailsFragment : Fragment() {
             }.forEach { chip ->
                 cgGenres.addView(chip)
             }
+
+            cvMore.setOnClickListener {
+                showMoreOptionsMenu(it, R.menu.movie_details_actions)
+            }
+        }
+    }
+
+    private fun showMoreOptionsMenu(v: View, @MenuRes menuRes: Int) {
+        val popupMenu = PopupMenu(requireContext(), v)
+        popupMenu.menuInflater.inflate(menuRes, popupMenu.menu)
+        popupMenu.gravity = Gravity.END
+
+        // Set mark as favorite icon according to movie favorite status
+        popupMenu.menu.findItem(R.id.markAsFavorite).setIcon(R.drawable.ic_star_outlined)
+
+        popupMenu.setOnMenuItemClickListener { menuItem: MenuItem ->
+            when (menuItem.itemId) {
+                R.id.markAsFavorite -> {
+                    // Handle mark as favorite action
+                    true
+                }
+
+                R.id.showExperiences -> {
+                    // Handle show experiences action
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        try {
+            val popup = PopupMenu::class.java.getDeclaredField("mPopup")
+            popup.isAccessible = true
+            val menu = popup.get(popupMenu)
+            menu.javaClass
+                .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+                .invoke(menu, true)
+        } catch (e: Exception) {
+            Log.e("MovieDetailsFragment", "Error showing menu icons", e)
+        } finally {
+            popupMenu.show()
         }
     }
 }

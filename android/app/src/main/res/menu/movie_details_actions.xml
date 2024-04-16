@@ -3,7 +3,7 @@
     <item
         android:id="@+id/showExperiences"
         android:icon="@drawable/ic_confirmation_number"
-        android:title="@string/mark_as_favorite" />
+        android:title="@string/show_experiences" />
     <item
         android:id="@+id/markAsFavorite"
         android:title="@string/mark_as_favorite" />
