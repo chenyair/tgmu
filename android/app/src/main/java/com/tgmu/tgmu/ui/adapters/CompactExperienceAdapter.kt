@@ -64,7 +64,7 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
             tvExperienceTitle.text = experience.title
             tvCommentCount.text = experience.comments.size.toString()
 
-            // Value of alpha is between 0-255. Therefore 12% * 255
+            // Value of alpha is between 0-255. Therefore 10% * 255
             chipExperienceTimeAgo.background.alpha = (255 * 0.10).toInt()
             chipExperienceTimeAgo.text = formatToTimeAgo(experience.createdAt)
 
