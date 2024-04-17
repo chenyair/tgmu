@@ -84,6 +84,7 @@
                     android:layout_gravity="center"
                     android:padding="2dp"
                     android:scaleType="centerInside"
+                    android:stateListAnimator="@animator/scale"
                     android:src="@drawable/ic_like" />
 
                 <TextView

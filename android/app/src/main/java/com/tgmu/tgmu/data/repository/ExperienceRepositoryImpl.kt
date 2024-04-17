@@ -26,7 +26,7 @@ class ExperienceRepositoryImpl : ExperienceRepository {
         try {
             val response = collection.get().await()
 
-            val experiences = response.documents.mapNotNull { it.toObject(FirestoreExperience::class.java)?.toModel() }
+            val experiences = response.documents.map{ it.toObject(FirestoreExperience::class.java)!!.toModel() }
             emit(Resource.success(experiences))
         } catch (e: Exception) {
 
@@ -39,7 +39,7 @@ class ExperienceRepositoryImpl : ExperienceRepository {
         emit(Resource.loading())
         try {
             val response = collection.whereEqualTo("movie_id", id).get().await()
-            val experiences = response.documents.mapNotNull { it.toObject(FirestoreExperience::class.java)?.toModel() }
+            val experiences = response.documents.map{ it.toObject(FirestoreExperience::class.java)!!.toModel() }
             emit(Resource.success(experiences))
         } catch (e: Exception) {
             Log.e("ExperienceRepository", "getExperiencesByMovieId: $e")
@@ -55,6 +55,23 @@ class ExperienceRepositoryImpl : ExperienceRepository {
         } catch (e: Exception) {
             Log.e("ExperienceRepository", "addExperience: $e")
             emit(Resource.failed("An error occurred while adding experience"))
+        }
+    }
+
+    override suspend fun toggleUserLike(experience: Experience, userId: String): Flow<Resource<List<String>>> = flow {
+        emit(Resource.loading())
+        try {
+            val likedUsers = experience.likedUsers.toMutableList()
+            if (likedUsers.contains(userId)) {
+                likedUsers.remove(userId)
+            } else {
+                likedUsers.add(userId)
+            }
+            collection.document(experience.id).update("liked_users", likedUsers).await()
+            emit(Resource.success(likedUsers))
+        } catch (e: Exception) {
+            Log.e("ExperienceRepository", "toggleUserLike: $e")
+            emit(Resource.failed("An error occurred while toggling like"))
         }
     }
 

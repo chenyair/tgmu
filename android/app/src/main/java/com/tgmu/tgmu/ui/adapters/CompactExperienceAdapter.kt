@@ -3,25 +3,28 @@ package com.tgmu.tgmu.ui.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.material.color.utilities.ColorUtils
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.tgmu.tgmu.R
+import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
 import com.tgmu.tgmu.databinding.ItemCompactExperienceCardBinding
 import com.tgmu.tgmu.domain.model.Experience
 import org.ocpsoft.prettytime.PrettyTime
 import java.util.Date
 import java.util.Locale
-import kotlin.coroutines.coroutineContext
 
 
-class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) : RecyclerView.Adapter<CompactExperienceAdapter.ViewHolder>() {
+class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) :
+    RecyclerView.Adapter<CompactExperienceAdapter.ViewHolder>() {
     inner class ViewHolder(var binding: ItemCompactExperienceCardBinding) :
         RecyclerView.ViewHolder(binding.root)
+
+    private val LIKED_USERS_PAYLOAD = "LIKED_USERS_PAYLOAD"
 
     private val differCallback = object : DiffUtil.ItemCallback<Experience>() {
         override fun areItemsTheSame(oldItem: Experience, newItem: Experience): Boolean {
@@ -31,6 +34,11 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
         override fun areContentsTheSame(oldItem: Experience, newItem: Experience): Boolean {
             return oldItem == newItem
         }
+
+        override fun getChangePayload(oldItem: Experience, newItem: Experience): Any? =
+            if (oldItem.likedUsers != newItem.likedUsers) {
+                LIKED_USERS_PAYLOAD
+            } else null
     }
 
     val differ = AsyncListDiffer(this, differCallback)
@@ -54,7 +62,6 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
         holder.binding.apply {
             tvMovieName.text = experience.movieName
             tvExperienceTitle.text = experience.title
-            tvLikeCount.text = experience.likedUsers.size.toString()
             tvCommentCount.text = experience.comments.size.toString()
 
             // Value of alpha is between 0-255. Therefore 12% * 255
@@ -73,20 +80,50 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
                 icEdit.visibility = View.GONE
             }
 
-            icLikes.setOnClickListener {
-                onLikeClicked(experience)
+
+            bindLikes(this, experience)
+        }
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        when (val latestPayload = payloads.lastOrNull()) {
+            LIKED_USERS_PAYLOAD -> {
+                val experience = differ.currentList[position]
+                val binding = holder.binding
+                scaleImageView(binding.icLikes)
+                bindLikes(binding, experience)
             }
 
+            else -> {
+                onBindViewHolder(holder, position)
+            }
+        }
+    }
+
+    private fun bindLikes(binding: ItemCompactExperienceCardBinding, experience: Experience) {
+        val currUserUID = Firebase.auth.currentUser!!.uid
+
+        binding.apply {
+            tvLikeCount.text = experience.likedUsers.size.toString()
+
+            var color = R.color.md_theme_onSurfaceVariant
+            var icon = R.drawable.ic_like
             if (currUserUID in experience.likedUsers) {
-                icLikes.apply {
-                    setImageResource(R.drawable.ic_liked)
-                    drawable.setTint(
-                        icLikes.context.resources.getColor(
-                            R.color.md_theme_error,
-                            null
-                        )
-                    )
+                color = R.color.md_theme_error
+                icon = R.drawable.ic_liked
+            }
+
+            icLikes.apply {
+                setOnClickListener {
+                    onLikeClicked(experience)
                 }
+                setImageResource(icon)
+                drawable.setTint(
+                    context.resources.getColor(
+                        color,
+                        null
+                    )
+                )
             }
         }
     }
@@ -94,6 +131,22 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
     private fun formatToTimeAgo(time: Date): String {
         val prettyTime = PrettyTime(Locale.getDefault())
         return prettyTime.format(time)
+    }
+
+    private fun scaleImageView(imageView: ImageView) {
+        imageView.animate()
+            .scaleX(1.2f) // increase scale to 120%
+            .scaleY(1.2f)
+            .setDuration(100) // duration of the scale up animation
+            .withEndAction {
+                // scale down after the scale up animation ends
+                imageView.animate()
+                    .scaleX(1f) // back to original size
+                    .scaleY(1f)
+                    .setDuration(100) // duration of the scale down animation
+                    .start()
+            }
+            .start()
     }
 
     override fun getItemCount(): Int = differ.currentList.size

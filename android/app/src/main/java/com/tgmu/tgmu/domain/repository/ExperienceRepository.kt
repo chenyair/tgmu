@@ -11,6 +11,8 @@ interface ExperienceRepository {
 
     suspend fun addExperience(experience: Experience): Flow<Resource<Experience>>
 
+    suspend fun toggleUserLike(experience: Experience, userId: String): Flow<Resource<List<String>>>
+
     suspend fun deleteExperience(experience: Experience): Flow<Resource<String>>
 
     suspend fun updateExperience(experience: Experience): Flow<Resource<Experience>>
