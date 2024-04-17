@@ -1,11 +1,13 @@
 package com.tgmu.tgmu.ui.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.domain.repository.ExperienceRepository
@@ -13,6 +15,7 @@ import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +25,13 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
     val latestExperiences: LiveData<Resource<List<Experience>>> get() = _latestExperiences
 
     private val _selectedMovie = MutableLiveData<Movie>()
+    private val _title = MutableLiveData<String>()
+    private val _description = MutableLiveData<String>()
+    private val _selectedImageUri = MutableLiveData<Uri>()
     val selectedMovie: LiveData<Movie> get() = _selectedMovie
+    val title: LiveData<String> get() = _title
+    val description: LiveData<String> get() = _description
+    val selectedImageUri: LiveData<Uri> get() = _selectedImageUri
 
     init {
         getLatestExperiences()
@@ -47,8 +56,38 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
     fun selectMovie(movie: Movie) =
         _selectedMovie.postValue(movie)
 
-    fun addExperience(experience: Experience) =
+    fun setTitle(title: String) =
+        _title.postValue(title)
+
+    fun setDescription(description: String) =
+        _description.postValue(description)
+
+    fun selectImage(uri: Uri) =
+        _selectedImageUri.postValue(uri)
+
+    fun addExperience() =
         viewModelScope.launch {
+            var imgUrl: String? = null
+            experienceRepository.uploadImage(selectedImageUri.value!!).collect {
+                if (it is Resource.Success) {
+                    imgUrl = it.data
+                }
+            }
+
+            val experience = Experience(
+                id = null,
+                title = title.value!!,
+                moviePoster = selectedMovie.value!!.poster_path!!,
+                movieName = selectedMovie.value!!.title,
+                movieId = selectedMovie.value!!.id,
+                userId = Firebase.auth.currentUser!!.uid,
+                description = description.value!!,
+                likedUsers = emptyList(),
+                imgUrl = imgUrl!!,
+                comments = emptyList(),
+                createdAt = Date(),
+            )
+
             experienceRepository.addExperience(experience).collect {
                 if (it is Resource.Success) {
                     val updatedExperiences =
@@ -58,14 +97,19 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
             }
         }
 
+    fun isReadyToUpload(): Boolean {
+        return title.value != null && description.value != null && selectedMovie.value != null && selectedImageUri.value != null
+    }
+
     fun toggleLiked(experience: Experience, userUID: String) =
         viewModelScope.launch {
             experienceRepository.toggleUserLike(experience, userUID).collect {
                 if (it is Resource.Success) {
                     val updatedExperience = experience.copy(likedUsers = it.data)
-                    val updatedExperiences = (latestExperiences.value as Resource.Success).data.map { exp ->
-                        if (exp.id == updatedExperience.id) updatedExperience else exp
-                    }
+                    val updatedExperiences =
+                        (latestExperiences.value as Resource.Success).data.map { exp ->
+                            if (exp.id == updatedExperience.id) updatedExperience else exp
+                        }
                     _latestExperiences.postValue(Resource.Success(updatedExperiences))
                 }
             }

@@ -1,23 +1,21 @@
 package com.tgmu.tgmu.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.tgmu.tgmu.R
-import com.tgmu.tgmu.databinding.FragmentDiscoverBinding
 import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
 import com.tgmu.tgmu.ui.adapters.CompactExperienceAdapter
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
@@ -34,7 +32,7 @@ import kotlinx.coroutines.launch
 class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
     private var _binding: FragmentExperiencesBinding? = null
     private val binding get() = _binding!!
-    private val experienceViewModel: ExperienceViewModel by viewModels()
+    private val experienceViewModel: ExperienceViewModel by activityViewModels()
     private val moviesViewModel: MoviesViewModel by viewModels()
 
     override fun onCreateView(
@@ -50,9 +48,9 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnAddExperience.setOnClickListener {
-            val action = ExperiencesFragmentDirections.experienceViewToAddExperience()
-            findNavController().navigate(action)
+            findNavController().navigate(R.id.experienceView_to_addExperience)
         }
+
         val searchAdapter = MovieSearchSuggestionsAdapter {
             binding.sbMovie.setText(it.title)
             binding.svMovie.hide()

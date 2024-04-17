@@ -3,7 +3,7 @@ package com.tgmu.tgmu.domain.model
 import java.util.Date
 
 data class Experience(
-    val id: String,
+    val id: String?,
     val title: String,
     val movieId: Int,
     val movieName: String,
