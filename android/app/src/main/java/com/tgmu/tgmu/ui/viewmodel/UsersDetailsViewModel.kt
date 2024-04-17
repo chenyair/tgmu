@@ -33,7 +33,6 @@ class UsersDetailsViewModel @Inject constructor(
         }
     }
 
-    // TODO: Show fail and loading in proper places
     fun showLoading() {
         _currentUserDetails.value = Resource.loading()
     }
