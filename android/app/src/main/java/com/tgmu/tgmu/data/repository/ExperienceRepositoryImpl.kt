@@ -58,6 +58,23 @@ class ExperienceRepositoryImpl : ExperienceRepository {
         }
     }
 
+    override suspend fun toggleUserLike(experience: Experience, userId: String): Flow<Resource<List<String>>> = flow {
+        emit(Resource.loading())
+        try {
+            val likedUsers = experience.likedUsers.toMutableList()
+            if (likedUsers.contains(userId)) {
+                likedUsers.remove(userId)
+            } else {
+                likedUsers.add(userId)
+            }
+            collection.document(experience.id).update("liked_users", likedUsers).await()
+            emit(Resource.success(likedUsers))
+        } catch (e: Exception) {
+            Log.e("ExperienceRepository", "toggleUserLike: $e")
+            emit(Resource.failed("An error occurred while toggling like"))
+        }
+    }
+
     override suspend fun deleteExperience(experience: Experience): Flow<Resource<String>> = flow {
         emit(Resource.loading())
         try {
