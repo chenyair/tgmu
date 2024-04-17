@@ -78,7 +78,7 @@
                 android:alpha="0.16"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="invisible">
 
                 <ImageView
                     android:id="@+id/icTheatersPlaceholder"
@@ -104,8 +104,7 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:paddingHorizontal="20dp"
-                android:paddingVertical="50dp"
-                android:visibility="invisible"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/svMovie"
                 app:layout_constraintTop_toBottomOf="@+id/sbMovie">
 
@@ -113,11 +112,12 @@
                     android:id="@+id/textInputLayout"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:paddingTop="25dp"
+                    android:layout_height="130dp"
                     android:hint="@string/title_experience_hint"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintBottom_toTopOf="@+id/textInputLayout2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteX="20dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/tiTitle"
@@ -128,11 +128,12 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout2"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/describe_experience_hint"
-                    app:layout_constraintBottom_toTopOf="@+id/fabUploadImage"
+                    app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
                     app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
                     tools:layout_editor_absoluteX="20dp">
 
@@ -145,20 +146,57 @@
                         android:lines="6" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/fabUploadImage"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="30dp"
-                    android:backgroundTint="@color/md_theme_secondaryContainer"
-                    android:drawableLeft="@drawable/ic_upload"
-                    android:paddingVertical="15dp"
-                    android:text="@string/upload_image"
-                    android:textColor="@color/md_theme_onSecondaryContainer"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
+                    tools:layout_editor_absoluteX="20dp">
+
+                    <Button
+                        android:id="@+id/fabUploadImage"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:backgroundTint="@color/md_theme_secondaryContainer"
+                        android:drawableLeft="@drawable/ic_upload"
+                        android:paddingVertical="15dp"
+                        android:text="@string/upload_image"
+                        android:textColor="@color/md_theme_onSecondaryContainer"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5" />
+
+                    <ImageView
+                        android:id="@+id/ivExperience"
+                        android:layout_width="260dp"
+                        android:layout_height="180dp"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/fabEditImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/ic_edit"
+                        app:shapeAppearanceOverlay="@style/RoundedCard" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.search.SearchView
