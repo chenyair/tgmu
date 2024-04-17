@@ -98,9 +98,7 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         binding.apply {
             rvExperienceList.apply {
                 adapter = experienceAdapter
-                layoutManager = LinearLayoutManager(requireContext()).apply {
-                    stackFromEnd = true
-                }
+                layoutManager = LinearLayoutManager(requireContext())
             }
         }
     }
