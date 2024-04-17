@@ -99,7 +99,6 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
             rvExperienceList.apply {
                 adapter = experienceAdapter
                 layoutManager = LinearLayoutManager(requireContext()).apply {
-                    reverseLayout = true
                     stackFromEnd = true
                 }
             }
