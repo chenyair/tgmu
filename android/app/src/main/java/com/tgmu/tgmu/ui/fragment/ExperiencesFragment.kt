@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.search.SearchView
@@ -47,6 +48,11 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.btnAddExperience.setOnClickListener {
+            val action = ExperiencesFragmentDirections.experienceViewToAddExperience()
+            findNavController().navigate(action)
+        }
         val searchAdapter = MovieSearchSuggestionsAdapter {
             binding.sbMovie.setText(it.title)
             binding.svMovie.hide()
@@ -94,7 +100,10 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         binding.apply {
             rvExperienceList.apply {
                 adapter = experienceAdapter
-                layoutManager = LinearLayoutManager(requireContext())
+                layoutManager = LinearLayoutManager(requireContext()).apply {
+                    reverseLayout = true
+                    stackFromEnd = true
+                }
             }
         }
     }

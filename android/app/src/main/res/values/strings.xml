@@ -12,6 +12,13 @@
     <string name="show_recent_experiences">Show recent experiences</string>
     <string name="no_experiences_for_movie">There are no experiences for \"%1$s\"</string>
 
+    <string name="post_experience">Post experience</string>
+    <string name="no_selection_placeholder">start by selecting a movie</string>
+    <string name="describe_experience_hint">describe your experience…</string>
+    <string name="title_experience_hint">give a title to your experience</string>
+
+    <string name="upload_image">Upload an image</string>
+
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm password</string>

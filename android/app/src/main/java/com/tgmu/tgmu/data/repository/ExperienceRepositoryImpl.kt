@@ -47,11 +47,11 @@ class ExperienceRepositoryImpl : ExperienceRepository {
         }
     }
 
-    override suspend fun addExperience(experience: Experience): Flow<Resource<String>> = flow {
+    override suspend fun addExperience(experience: Experience): Flow<Resource<Experience>> = flow {
         emit(Resource.loading())
         try {
             val documentReference = collection.add(experience.toFirestoreObject()).await()
-            emit(Resource.success(documentReference.id))
+            emit(Resource.success(experience.copy(id = documentReference.id)))
         } catch (e: Exception) {
             Log.e("ExperienceRepository", "addExperience: $e")
             emit(Resource.failed("An error occurred while adding experience"))

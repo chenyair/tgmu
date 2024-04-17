@@ -9,7 +9,7 @@ interface ExperienceRepository {
 
     suspend fun getExperiencesByMovieId(id: Int): Flow<Resource<List<Experience>>>
 
-    suspend fun addExperience(experience: Experience): Flow<Resource<String>>
+    suspend fun addExperience(experience: Experience): Flow<Resource<Experience>>
 
     suspend fun deleteExperience(experience: Experience): Flow<Resource<String>>
 
