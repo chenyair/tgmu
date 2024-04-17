@@ -7,10 +7,10 @@
     android:padding="5dp">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cwMoviePoster"
+        style="?attr/materialCardViewElevatedStyle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cwElevated"
-        style="?attr/materialCardViewElevatedStyle">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/ivMoviePoster"
