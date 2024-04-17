@@ -142,9 +142,9 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                 sbMovie.setText("")
             }
 
+            tvRecentExperiencesSuggestion.text = getString(R.string.show_recent_experiences)
             var searchMovieJob: Job? = null
             svMovie.editText.addTextChangedListener { editable ->
-                tvRecentExperiencesSuggestion.text = getString(R.string.show_recent_experiences)
                 searchMovieJob?.cancel()
                 searchMovieJob = lifecycleScope.launch {
                     delay(Constants.SEARCH_MOVIES_TIME_DELAY)
