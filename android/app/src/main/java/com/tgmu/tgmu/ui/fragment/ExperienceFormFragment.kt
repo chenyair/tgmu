@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
 import com.tgmu.tgmu.R
-import com.tgmu.tgmu.databinding.FragmentAddExperienceBinding
+import com.tgmu.tgmu.databinding.FragmentExperienceFormBinding
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
 import com.tgmu.tgmu.ui.viewmodel.ExperienceViewModel
 import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
@@ -32,9 +32,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AddExperienceFragment : Fragment() {
-    private var _binding: FragmentAddExperienceBinding? = null
-    private val binding get() = _binding!!
+class ExperienceFormFragment : Fragment() {
+    private var _binding: FragmentExperienceFormBinding? = null
+    private val binding get(): FragmentExperienceFormBinding = _binding!!
     private val experienceViewModel: ExperienceViewModel by activityViewModels()
     private val moviesViewModel: MoviesViewModel by viewModels()
 
@@ -44,16 +44,6 @@ class AddExperienceFragment : Fragment() {
                 lifecycleScope.launch {
                     experienceViewModel.selectImage(it)
                 }
-
-                // Show the uploaded image with option to replace
-                binding.apply {
-                    fabUploadImage.visibility = View.GONE
-                    fabEditImage.visibility = View.VISIBLE
-                    ivExperience.apply {
-                        visibility = View.VISIBLE
-                        setImageURI(it)
-                    }
-                }
             }
         }
 
@@ -62,7 +52,7 @@ class AddExperienceFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentAddExperienceBinding.inflate(inflater, container, false)
+        _binding = FragmentExperienceFormBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -83,11 +73,15 @@ class AddExperienceFragment : Fragment() {
                 false
             }
 
+            if (experienceViewModel.selectedMovie.value != null) {
+                clAddExperienceForm.visibility = View.VISIBLE
+                llNoSelectionPlaceholder.visibility = View.GONE
+            }
             fabBack.setOnClickListener {
                 findNavController().popBackStack()
             }
             fabPost.setOnClickListener {
-                experienceViewModel.addExperience()
+                experienceViewModel.postExperience()
                 watchExperienceUpload()
             }
             fabUploadImage.setOnClickListener {
@@ -111,6 +105,12 @@ class AddExperienceFragment : Fragment() {
                         }
                     }
                 }
+            }
+        }
+
+        experienceViewModel.selectedImageUri.observe(viewLifecycleOwner) {
+            if (it != null) {
+                showSelectedImage()
             }
         }
 
@@ -213,6 +213,17 @@ class AddExperienceFragment : Fragment() {
                 if (previousState == SearchView.TransitionState.SHOWN && newState == SearchView.TransitionState.HIDING) {
                     searchAdapter.differ.submitList(emptyList())
                 }
+            }
+        }
+    }
+
+    private fun showSelectedImage() {
+        binding.apply {
+            fabUploadImage.visibility = View.GONE
+            fabEditImage.visibility = View.VISIBLE
+            ivExperience.apply {
+                visibility = View.VISIBLE
+                setImageURI(experienceViewModel.selectedImageUri.value)
             }
         }
     }
