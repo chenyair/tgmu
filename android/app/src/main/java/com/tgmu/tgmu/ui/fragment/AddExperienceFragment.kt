@@ -44,6 +44,16 @@ class AddExperienceFragment : Fragment() {
                 lifecycleScope.launch {
                     experienceViewModel.selectImage(it)
                 }
+
+                // Show the uploaded image with option to replace
+                binding.apply {
+                    fabUploadImage.visibility = View.GONE
+                    fabEditImage.visibility = View.VISIBLE
+                    ivExperience.apply {
+                        visibility = View.VISIBLE
+                        setImageURI(it)
+                    }
+                }
             }
         }
 
@@ -72,13 +82,18 @@ class AddExperienceFragment : Fragment() {
                 }
                 false
             }
+
             fabBack.setOnClickListener {
                 findNavController().popBackStack()
             }
             fabPost.setOnClickListener {
                 experienceViewModel.addExperience()
+                watchExperienceUpload()
             }
             fabUploadImage.setOnClickListener {
+                selectImageLauncher.launch("image/*")
+            }
+            fabEditImage.setOnClickListener {
                 selectImageLauncher.launch("image/*")
             }
             tiTitle.addTextChangedListener {
@@ -120,15 +135,42 @@ class AddExperienceFragment : Fragment() {
                 alpha = 1f
             } else {
                 isEnabled = false
-                alpha = 0.4f
+                alpha = 0.2f
             }
         }
     }
 
+    private fun watchExperienceUpload() =
+        experienceViewModel.uploadedExperience.observe(viewLifecycleOwner)
+        {
+            when (it) {
+                is Resource.Loading -> {
+                    binding.lpiUploadingExperience.visibility = View.VISIBLE
+                }
+
+                is Resource.Success -> {
+                    experienceViewModel.latestExperiences.observe(viewLifecycleOwner) {
+                        if (it is Resource.Success) {
+                            binding.lpiUploadingExperience.visibility = View.GONE
+                            findNavController().popBackStack()
+                        }
+                    }
+                }
+
+                is Resource.Failed -> {
+                    binding.lpiUploadingExperience.visibility = View.GONE
+                    Snackbar.make(
+                        requireView(),
+                        it.message ?: getString(R.string.something_went_wrong),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+
     private fun setupSearchView(
         searchAdapter: MovieSearchSuggestionsAdapter,
     ) {
-
         moviesViewModel.searchedMovies.observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Loading -> {
@@ -149,6 +191,7 @@ class AddExperienceFragment : Fragment() {
                 }
             }
         }
+
 
         binding.apply {
             svMovie.setupWithSearchBar(sbMovie)

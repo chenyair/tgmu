@@ -73,7 +73,10 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                 }
 
                 is Resource.Success -> {
-                    experienceAdapter.differ.submitList(it.data)
+                    experienceAdapter.differ.submitList(it.data) {
+                        binding.cpiExperienceList.visibility = View.GONE
+                        binding.rvExperienceList.layoutManager!!.scrollToPosition(0)
+                    }
                     if (it.data.isEmpty()) {
                         Snackbar.make(
                             requireView(),
@@ -81,7 +84,6 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
-                    binding.cpiExperienceList.visibility = View.GONE
                 }
 
                 is Resource.Failed -> {

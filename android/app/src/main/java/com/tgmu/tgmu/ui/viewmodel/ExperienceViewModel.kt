@@ -24,10 +24,12 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
     private val _latestExperiences = MutableLiveData<Resource<List<Experience>>>()
     val latestExperiences: LiveData<Resource<List<Experience>>> get() = _latestExperiences
 
+    private val _uploadedExperience = MutableLiveData<Resource<Experience>>()
     private val _selectedMovie = MutableLiveData<Movie>()
     private val _title = MutableLiveData<String>()
     private val _description = MutableLiveData<String>()
     private val _selectedImageUri = MutableLiveData<Uri>()
+    val uploadedExperience: LiveData<Resource<Experience>> get() = _uploadedExperience
     val selectedMovie: LiveData<Movie> get() = _selectedMovie
     val title: LiveData<String> get() = _title
     val description: LiveData<String> get() = _description
@@ -41,8 +43,12 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
         viewModelScope.launch {
             delay(500L)
             experienceRepository.getExperiences().collect {
-                Log.d("UsersDetailsViewModel", "getUserDetails: $it")
-                _latestExperiences.postValue(it)
+                if (it is Resource.Success) {
+                    val sortedExperiences = it.data.sortedByDescending { experience -> experience.createdAt }
+                    _latestExperiences.postValue(Resource.Success(sortedExperiences))
+                } else {
+                    _latestExperiences.postValue(it)
+                }
             }
         }
 
@@ -68,9 +74,12 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
     fun addExperience() =
         viewModelScope.launch {
             var imgUrl: String? = null
+            _uploadedExperience.postValue(Resource.loading()) // Set loading
             experienceRepository.uploadImage(selectedImageUri.value!!).collect {
                 if (it is Resource.Success) {
                     imgUrl = it.data
+                } else if (it is Resource.Failed) {
+                    _uploadedExperience.postValue(Resource.failed(it.message))
                 }
             }
 
@@ -90,9 +99,13 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
 
             experienceRepository.addExperience(experience).collect {
                 if (it is Resource.Success) {
+                    // Prepend the new experience to the list of experiences
                     val updatedExperiences =
-                        (latestExperiences.value as Resource.Success).data + experience
+                        listOf(it.data) + (latestExperiences.value as Resource.Success).data
+                    _uploadedExperience.postValue(Resource.Success(it.data))
                     _latestExperiences.postValue(Resource.Success(updatedExperiences))
+                } else if (it is Resource.Failed) {
+                    _uploadedExperience.postValue(Resource.failed(it.message))
                 }
             }
         }
