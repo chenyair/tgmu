@@ -25,7 +25,7 @@
         android:label="fragment_experiences"
         tools:layout="@layout/fragment_experiences">
         <action
-            android:id="@+id/experienceView_to_addExperience"
+            android:id="@+id/experienceView_to_experienceForm"
             app:destination="@id/experienceForm" />
     </fragment>
 
@@ -42,7 +42,7 @@
     <fragment
         android:id="@+id/experienceForm"
         android:name="com.tgmu.tgmu.ui.fragment.ExperienceFormFragment"
-        android:label="fragment_add_experience"
+        android:label="fragment_experience_form"
         tools:layout="@layout/fragment_experience_form" />
 
 </navigation>

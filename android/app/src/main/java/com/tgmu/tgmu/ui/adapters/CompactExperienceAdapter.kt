@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,6 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.tgmu.tgmu.R
-import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
 import com.tgmu.tgmu.databinding.ItemCompactExperienceCardBinding
 import com.tgmu.tgmu.domain.model.Experience
 import org.ocpsoft.prettytime.PrettyTime
@@ -19,7 +19,10 @@ import java.util.Date
 import java.util.Locale
 
 
-class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) :
+class CompactExperienceAdapter(
+    private val onLikeClicked: (Experience) -> Unit,
+    private val onEditClicked: (Experience) -> Unit
+) :
     RecyclerView.Adapter<CompactExperienceAdapter.ViewHolder>() {
     inner class ViewHolder(var binding: ItemCompactExperienceCardBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -74,10 +77,15 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
                 .centerCrop()
                 .into(ivExperiencePoster)
 
-            if (currUserUID == experience.userId) {
-                icEdit.visibility = View.VISIBLE
-            } else {
-                icEdit.visibility = View.GONE
+            icEdit.apply {
+                if (currUserUID == experience.userId) {
+                    visibility = View.VISIBLE
+                    setOnClickListener {
+                        onEditClicked(experience)
+                    }
+                } else {
+                    visibility = View.GONE
+                }
             }
 
 

@@ -17,6 +17,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
+import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.ui.adapters.CompactExperienceAdapter
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
 import com.tgmu.tgmu.ui.viewmodel.ExperienceViewModel
@@ -48,7 +49,7 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnAddExperience.setOnClickListener {
-            findNavController().navigate(R.id.experienceView_to_addExperience)
+            findNavController().navigate(R.id.experienceView_to_experienceForm)
         }
 
         val searchAdapter = MovieSearchSuggestionsAdapter {
@@ -57,9 +58,23 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
             experienceViewModel.getExperiencesByMovieId(it.id)
         }
 
-        val experienceAdapter = CompactExperienceAdapter() {
+        val experienceAdapter = CompactExperienceAdapter(onLikeClicked = {
             experienceViewModel.toggleLiked(it, Firebase.auth.currentUser!!.uid)
-        }
+        }, onEditClicked = {
+            experienceViewModel.setSpecificExperience(it)
+            experienceViewModel.setTitle(it.title)
+            experienceViewModel.setDescription(it.description)
+            moviesViewModel.searchMovies(it.title)
+            experienceViewModel.selectMovie(
+                Movie(
+                    id = it.movieId,
+                    title = it.title,
+                    poster_path = it.moviePoster,
+                    genre_ids = emptyList(),
+                    overview = ""
+                ))
+            findNavController().navigate(R.id.experienceView_to_experienceForm)
+        })
 
         setupExperiencesList(experienceAdapter)
         setupSearchView(searchAdapter)
@@ -80,7 +95,10 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                     if (it.data.isEmpty()) {
                         Snackbar.make(
                             requireView(),
-                            getString(R.string.no_experiences_for_movie, binding.sbMovie.text.toString()),
+                            getString(
+                                R.string.no_experiences_for_movie,
+                                binding.sbMovie.text.toString()
+                            ),
                             Snackbar.LENGTH_LONG
                         ).show()
                     }

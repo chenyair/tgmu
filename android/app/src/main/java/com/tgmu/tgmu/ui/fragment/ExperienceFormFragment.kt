@@ -3,6 +3,7 @@ package com.tgmu.tgmu.ui.fragment
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -75,6 +76,11 @@ class ExperienceFormFragment : Fragment() {
 
             if (experienceViewModel.selectedMovie.value != null) {
                 clAddExperienceForm.visibility = View.VISIBLE
+                fun toEditable(text: String?): Editable? {
+                    return Editable.Factory.getInstance().newEditable(text)
+                }
+                tilTitle.editText!!.text = toEditable(experienceViewModel.title.value)
+                tilDescription.editText!!.text = toEditable(experienceViewModel.description.value)
                 llNoSelectionPlaceholder.visibility = View.GONE
             }
             fabBack.setOnClickListener {
