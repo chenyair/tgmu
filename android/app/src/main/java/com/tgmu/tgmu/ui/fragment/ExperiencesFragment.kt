@@ -17,6 +17,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
+import com.tgmu.tgmu.domain.model.ExperienceFormContext
 import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.ui.adapters.CompactExperienceAdapter
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
@@ -49,7 +50,10 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnAddExperience.setOnClickListener {
-            findNavController().navigate(R.id.experienceView_to_experienceForm)
+            experienceViewModel.setDefaultExperience()
+            val action =
+                ExperiencesFragmentDirections.experienceViewToExperienceForm(ExperienceFormContext.CREATE)
+            findNavController().navigate(action)
         }
 
         val searchAdapter = MovieSearchSuggestionsAdapter {
@@ -62,18 +66,9 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
             experienceViewModel.toggleLiked(it, Firebase.auth.currentUser!!.uid)
         }, onEditClicked = {
             experienceViewModel.setSpecificExperience(it)
-            experienceViewModel.setTitle(it.title)
-            experienceViewModel.setDescription(it.description)
-            moviesViewModel.searchMovies(it.title)
-            experienceViewModel.selectMovie(
-                Movie(
-                    id = it.movieId,
-                    title = it.title,
-                    poster_path = it.moviePoster,
-                    genre_ids = emptyList(),
-                    overview = ""
-                ))
-            findNavController().navigate(R.id.experienceView_to_experienceForm)
+            val action =
+                ExperiencesFragmentDirections.experienceViewToExperienceForm(ExperienceFormContext.EDIT)
+            findNavController().navigate(action)
         })
 
         setupExperiencesList(experienceAdapter)

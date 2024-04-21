@@ -7,17 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.storage.FirebaseStorage
 import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.domain.repository.ExperienceRepository
 import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
-import kotlin.math.exp
 
 @HiltViewModel
 class ExperienceViewModel @Inject constructor(private val experienceRepository: ExperienceRepository) :
@@ -26,15 +26,20 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
     val latestExperiences: LiveData<Resource<List<Experience>>> get() = _latestExperiences
 
     private val _specificExperience = MutableLiveData<Resource<Experience>>()
-    private val _selectedMovie = MutableLiveData<Movie>()
-    private val _title = MutableLiveData<String>()
-    private val _description = MutableLiveData<String>()
-    private val _selectedImageUri = MutableLiveData<Uri>()
+
+    //    private val _selectedMovie = MutableLiveData<Movie>()
+//    private val _title = MutableLiveData<String>()
+//    private val _description = MutableLiveData<String>()
     val specificExperience: LiveData<Resource<Experience>> get() = _specificExperience
-    val selectedMovie: LiveData<Movie> get() = _selectedMovie
-    val title: LiveData<String> get() = _title
-    val description: LiveData<String> get() = _description
-    val selectedImageUri: LiveData<Uri> get() = _selectedImageUri
+
+    private val _uploadStatus = MutableLiveData<Resource<Any>>()
+    val uploadStatus: LiveData<Resource<Any>> get() = _uploadStatus
+
+    //    val selectedMovie: LiveData<Movie> get() = _selectedMovie
+//    val title: LiveData<String> get() = _title
+//    val description: LiveData<String> get() = _description
+    private val _fileUploadURI = MutableLiveData<Uri>()
+    val fileUploadURI: LiveData<Uri> get() = _fileUploadURI
 
     init {
         getLatestExperiences()
@@ -61,114 +66,55 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
             }
         }
 
-    fun selectMovie(movie: Movie) =
-        _selectedMovie.postValue(movie)
+    fun setDefaultExperience() =
+        _specificExperience.postValue(
+            Resource.Success(
+                Experience(
+                    id = null,
+                    title = "",
+                    moviePoster = "",
+                    movieName = "",
+                    movieId = 0,
+                    userId = Firebase.auth.currentUser!!.uid,
+                    description = "",
+                    likedUsers = emptyList(),
+                    imgUrl = "",
+                    comments = emptyList(),
+                    createdAt = Date(),
+                )
+            )
+        )
+
+    fun selectMovie(movie: Movie) {
+        val currExperience = specificExperience.value as Resource.Success
+        _specificExperience.postValue(
+            Resource.Success(
+                currExperience.data.copy(
+                    movieId = movie.id,
+                    moviePoster = movie.poster_path!!,
+                    movieName = movie.title
+                )
+            )
+        )
+    }
 
     fun setTitle(title: String) =
-        _title.postValue(title)
+        _specificExperience.postValue(
+            Resource.Success(
+                (specificExperience.value as Resource.Success).data.copy(title = title)
+            )
+        )
+
 
     fun setDescription(description: String) =
-        _description.postValue(description)
-
-    fun selectImage(uri: Uri) =
-        _selectedImageUri.postValue(uri)
-
-    fun postExperience() {
-        if (specificExperience.value is Resource.Success) {
-            updateExperience()
-        } else {
-            addExperience()
-        }
-    }
-
-    private fun updateExperience() {
-        viewModelScope.launch {
-            val initialExperience = (specificExperience.value as Resource.Success).data
-            _specificExperience.postValue(Resource.loading())
-
-            var imgUrl = initialExperience.imgUrl
-            if (imgUrl != selectedImageUri.value.toString()) {
-                // upload new image to storage
-                experienceRepository.uploadImage(selectedImageUri.value!!).collect {
-                    experienceRepository.uploadImage(selectedImageUri.value!!).collect {
-                        if (it is Resource.Success) {
-                            imgUrl = it.data
-                        } else if (it is Resource.Failed) {
-                            _specificExperience.postValue(Resource.failed(it.message))
-                        }
-                    }
-                }
-
-                // delete current image from storage
-                experienceRepository.deleteImage(initialExperience.imgUrl).collect {
-                    if (it is Resource.Failed) {
-                        _specificExperience.postValue(Resource.failed(it.message))
-                    }
-                }
-            }
-
-            val experience = initialExperience.copy(
-                title = title.value!!,
-                description = description.value!!,
-                movieId = selectedMovie.value!!.id,
-                movieName = selectedMovie.value!!.title,
-                moviePoster = selectedMovie.value!!.poster_path!!,
-                imgUrl = imgUrl,
+        _specificExperience.postValue(
+            Resource.Success(
+                (specificExperience.value as Resource.Success).data.copy(description = description)
             )
+        )
 
-            experienceRepository.updateExperience(experience).collect {
-                if (it is Resource.Success) {
-                    val updatedExperiences =
-                        (latestExperiences.value as Resource.Success).data.map { exp ->
-                            if (exp.id == experience.id) experience else exp
-                        }
-                    _latestExperiences.postValue(Resource.Success(updatedExperiences))
-                    _specificExperience.postValue(Resource.Success(experience))
-                } else if (it is Resource.Failed) {
-                    _specificExperience.postValue(Resource.failed(it.message))
-                }
-            }
-        }
-    }
-
-    fun addExperience() =
-        viewModelScope.launch {
-            var imgUrl: String? = null
-            _specificExperience.postValue(Resource.loading()) // Set loading
-            experienceRepository.uploadImage(selectedImageUri.value!!).collect {
-                if (it is Resource.Success) {
-                    imgUrl = it.data
-                } else if (it is Resource.Failed) {
-                    _specificExperience.postValue(Resource.failed(it.message))
-                }
-            }
-
-            val experience = Experience(
-                id = null,
-                title = title.value!!,
-                moviePoster = selectedMovie.value!!.poster_path!!,
-                movieName = selectedMovie.value!!.title,
-                movieId = selectedMovie.value!!.id,
-                userId = Firebase.auth.currentUser!!.uid,
-                description = description.value!!,
-                likedUsers = emptyList(),
-                imgUrl = imgUrl!!,
-                comments = emptyList(),
-                createdAt = Date(),
-            )
-
-            experienceRepository.addExperience(experience).collect {
-                if (it is Resource.Success) {
-                    // Prepend the new experience to the list of experiences
-                    val updatedExperiences =
-                        listOf(it.data) + (latestExperiences.value as Resource.Success).data
-                    setSpecificExperience(it.data)
-                    _latestExperiences.postValue(Resource.Success(updatedExperiences))
-                } else if (it is Resource.Failed) {
-                    _specificExperience.postValue(Resource.failed(it.message))
-                }
-            }
-        }
+    fun selectImageFile(uri: Uri) =
+        _fileUploadURI.postValue(uri)
 
     fun setSpecificExperience(experience: Experience) {
         _specificExperience.postValue(Resource.Success(experience))
@@ -176,7 +122,10 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
 
 
     fun isReadyToUpload(): Boolean {
-        return title.value != null && description.value != null && selectedMovie.value != null && selectedImageUri.value != null
+        (specificExperience.value as Resource.Success).data.apply {
+            val hasImage = fileUploadURI.value != null || imgUrl != ""
+            return title != "" && description != "" && movieId != 0 && hasImage
+        }
     }
 
     fun toggleLiked(experience: Experience, userUID: String) =
@@ -192,4 +141,71 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
                 }
             }
         }
+
+    fun postExperience() {
+        if (!isReadyToUpload()) return _uploadStatus.postValue(Resource.failed("Please fill all fields"))
+        viewModelScope.launch {
+
+            _uploadStatus.postValue(Resource.loading())
+            val initialExperience = (specificExperience.value as Resource.Success).data
+            var imgUrl = initialExperience.imgUrl
+            if (fileUploadURI.value != null) {
+                // upload new image to storage
+                experienceRepository.uploadImage(fileUploadURI.value!!).collect {
+                    if (it is Resource.Success) {
+                        imgUrl = it.data
+                    } else if (it is Resource.Failed) {
+                        _specificExperience.postValue(Resource.failed(it.message))
+                    }
+                }
+
+                // Check if need to delete old image from storage
+                if (initialExperience.imgUrl != "") {
+                    experienceRepository.deleteImage(initialExperience.imgUrl).collect {
+                        if (it is Resource.Failed) {
+                            _uploadStatus.postValue(Resource.failed(it.message))
+                        }
+                    }
+                }
+            }
+
+            val experienceToUpload = initialExperience.copy(
+                imgUrl = imgUrl,
+                createdAt = Date()
+            )
+
+            if (initialExperience.id == null) {
+                processPostExperience(
+                    experienceToUpload,
+                    experienceRepository::addExperience
+                ) { list, experience -> listOf(experience) + list }
+            } else {
+                processPostExperience(
+                    experienceToUpload,
+                    experienceRepository::updateExperience
+                ) { list, experience ->
+                    list.map { exp -> if (exp.id == experience.id) experience else exp }
+                }
+            }
+        }
+    }
+
+    private suspend fun processPostExperience(
+        experienceToUpload: Experience,
+        uploadFunc: suspend (Experience) -> Flow<Resource<Experience>>,
+        makeNewListFunc: (List<Experience>, Experience) -> List<Experience>
+    ) = uploadFunc.invoke(experienceToUpload).collect {
+        if (it is Resource.Success) {
+            val updatedExperiences =
+                makeNewListFunc((latestExperiences.value as Resource.Success).data, it.data)
+            _latestExperiences.postValue(Resource.Success(updatedExperiences))
+            _uploadStatus.postValue(Resource.Success(Any()))
+        } else if (it is Resource.Failed) {
+            _uploadStatus.postValue(
+                Resource.Failed(
+                    it.message ?: "An error occurred while uploading experience"
+                )
+            )
+        }
+    }
 }
