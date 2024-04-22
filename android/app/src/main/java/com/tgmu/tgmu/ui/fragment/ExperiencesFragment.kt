@@ -17,8 +17,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
-import com.tgmu.tgmu.domain.model.ExperienceFormContext
-import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.ui.adapters.CompactExperienceAdapter
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
 import com.tgmu.tgmu.ui.viewmodel.ExperienceViewModel
@@ -52,7 +50,7 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         binding.btnAddExperience.setOnClickListener {
             experienceViewModel.setDefaultExperience()
             val action =
-                ExperiencesFragmentDirections.experienceViewToExperienceForm(ExperienceFormContext.CREATE)
+                ExperiencesFragmentDirections.experienceViewToExperienceForm()
             findNavController().navigate(action)
         }
 
@@ -67,7 +65,7 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         }, onEditClicked = {
             experienceViewModel.setSpecificExperience(it)
             val action =
-                ExperiencesFragmentDirections.experienceViewToExperienceForm(ExperienceFormContext.EDIT)
+                ExperiencesFragmentDirections.experienceViewToExperienceForm(it)
             findNavController().navigate(action)
         })
 

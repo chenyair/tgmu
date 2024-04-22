@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import com.bumptech.glide.request.target.Target
@@ -31,7 +30,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentExperienceFormBinding
 import com.tgmu.tgmu.domain.model.Experience
-import com.tgmu.tgmu.domain.model.ExperienceFormContext
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
 import com.tgmu.tgmu.ui.viewmodel.ExperienceViewModel
 import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
@@ -85,26 +83,8 @@ class ExperienceFormFragment : Fragment() {
                 false
             }
 
-            if (experienceFormArgs.formContext == ExperienceFormContext.EDIT) {
-                experienceViewModel.specificExperience.observe(viewLifecycleOwner) {
-                    when (it) {
-                        is Resource.Success -> {
-                            setupEditView(it.data)
-                        }
-
-                        is Resource.Loading -> {
-                            // TODO: loading
-                        }
-
-                        is Resource.Failed -> {
-                            Snackbar.make(
-                                requireView(),
-                                it.message ?: getString(R.string.something_went_wrong),
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-                }
+            if (experienceFormArgs.previewExperience != null) {
+                setupEditView(experienceFormArgs.previewExperience!!)
             }
             fabBack.setOnClickListener {
                 findNavController().popBackStack()

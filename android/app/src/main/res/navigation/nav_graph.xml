@@ -45,8 +45,10 @@
         android:label="fragment_experience_form"
         tools:layout="@layout/fragment_experience_form" >
         <argument
-            android:name="formContext"
-            app:argType="com.tgmu.tgmu.domain.model.ExperienceFormContext" />
+            android:name="previewExperience"
+            app:nullable="true"
+            android:defaultValue="@null"
+            app:argType="com.tgmu.tgmu.domain.model.Experience" />
     </fragment>
 
 </navigation>
