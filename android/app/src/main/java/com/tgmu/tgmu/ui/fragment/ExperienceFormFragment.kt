@@ -114,7 +114,10 @@ class ExperienceFormFragment : Fragment() {
                 }
                 specificExperience.observe(viewLifecycleOwner) { value ->
                     if (value is Resource.Success) {
-                        validateForm()
+                        // Validate only on changing the initial experience
+                        if (value.data != experienceFormArgs.previewExperience) {
+                            validateForm()
+                        }
                     }
                 }
             }
@@ -141,6 +144,8 @@ class ExperienceFormFragment : Fragment() {
     }
 
     private fun setupEditView(experience: Experience) {
+
+
         binding.apply {
             tiTitle.setText(experience.title)
             tiDescription.setText(experience.description)

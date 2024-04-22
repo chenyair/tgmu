@@ -77,18 +77,6 @@ class CompactExperienceAdapter(
                 .centerCrop()
                 .into(ivExperiencePoster)
 
-            icEdit.apply {
-                if (currUserUID == experience.userId) {
-                    visibility = View.VISIBLE
-                    setOnClickListener {
-                        onEditClicked(experience)
-                    }
-                } else {
-                    visibility = View.GONE
-                }
-            }
-
-
             bindLikes(this, experience)
         }
     }
@@ -106,6 +94,8 @@ class CompactExperienceAdapter(
                 onBindViewHolder(holder, position)
             }
         }
+
+        setupEditButton(holder.binding, differ.currentList[position])
     }
 
     private fun bindLikes(binding: ItemCompactExperienceCardBinding, experience: Experience) {
@@ -155,6 +145,20 @@ class CompactExperienceAdapter(
                     .start()
             }
             .start()
+    }
+
+    private fun setupEditButton(binding: ItemCompactExperienceCardBinding, experience: Experience) {
+        val currUserUID = Firebase.auth.currentUser!!.uid
+        binding.icEdit.apply {
+            if (currUserUID == experience.userId) {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    onEditClicked(experience)
+                }
+            } else {
+                visibility = View.GONE
+            }
+        }
     }
 
     override fun getItemCount(): Int = differ.currentList.size

@@ -83,7 +83,10 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                 is Resource.Success -> {
                     experienceAdapter.differ.submitList(it.data) {
                         binding.cpiExperienceList.visibility = View.GONE
-                        binding.rvExperienceList.layoutManager!!.scrollToPosition(0)
+                        experienceViewModel.uploadStatus.observe(viewLifecycleOwner) { status ->
+                            if (status is Resource.Success)
+                                binding.rvExperienceList.layoutManager!!.scrollToPosition(0)
+                        }
                     }
                     if (it.data.isEmpty()) {
                         Snackbar.make(
