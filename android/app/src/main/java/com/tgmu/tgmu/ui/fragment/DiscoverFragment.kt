@@ -1,6 +1,7 @@
 package com.tgmu.tgmu.ui.fragment
 
 import android.os.Bundle
+import android.transition.TransitionInflater
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.search.SearchView
@@ -30,6 +33,11 @@ class DiscoverFragment : Fragment() {
     private val binding get() = _binding!!
     private val moviesViewModel: MoviesViewModel by viewModels()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedElementReturnTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,8 +50,21 @@ class DiscoverFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val postersAdapter = MoviePostersAdapter()
-        val searchAdapter = MovieSearchSuggestionsAdapter()
+
+        val postersAdapter = MoviePostersAdapter(
+            onPosterClicked = { movie, cardView ->
+                val action =
+                    DiscoverFragmentDirections.actionDiscoverFragmentToMovieDetailsFragment(movie)
+                val extras = FragmentNavigatorExtras(cardView to cardView.transitionName)
+                findNavController().navigate(action, extras)
+            }
+        )
+
+        val searchAdapter = MovieSearchSuggestionsAdapter(onSuggestionClicked = { movie ->
+            val action =
+                DiscoverFragmentDirections.actionDiscoverFragmentToMovieDetailsFragment(movie)
+            findNavController().navigate(action)
+        })
 
         setupPostersList(postersAdapter)
         setupSearchView(searchAdapter)

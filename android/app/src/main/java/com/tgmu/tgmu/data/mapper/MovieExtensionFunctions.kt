@@ -11,7 +11,8 @@ fun MovieEntity.toModel(): Movie {
         id = id,
         title = "title",
         poster_path = "poster_path",
-        genre_ids = emptyList()
+        genre_ids = emptyList(),
+        overview = "overview"
     )
 }
 
@@ -20,7 +21,8 @@ fun TmdbMovie.toModel(): Movie {
         id = id,
         title = title,
         poster_path = poster_path,
-        genre_ids = genre_ids
+        genre_ids = genre_ids,
+        overview = overview
     )
 }
 
