@@ -1,6 +1,7 @@
 package com.tgmu.tgmu.ui.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -9,7 +10,7 @@ import com.tgmu.tgmu.databinding.ItemMovieSearchSuggestionBinding
 import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.utils.Constants
 
-class MovieSearchSuggestionsAdapter(private val onSearchOptionClick: (Movie) -> Unit = {}) :
+class MovieSearchSuggestionsAdapter(private val onSuggestionClicked: (Movie) -> Unit) :
     RecyclerView.Adapter<MovieSearchSuggestionsAdapter.ViewHolder>() {
     inner class ViewHolder(var binding: ItemMovieSearchSuggestionBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -28,7 +29,11 @@ class MovieSearchSuggestionsAdapter(private val onSearchOptionClick: (Movie) -> 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            ItemMovieSearchSuggestionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemMovieSearchSuggestionBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         return ViewHolder(binding)
     }
 
@@ -36,13 +41,13 @@ class MovieSearchSuggestionsAdapter(private val onSearchOptionClick: (Movie) -> 
         val movie = differ.currentList[position]
         holder.binding.apply {
             tvMovieTitle.text = movie.title
-            tvMovieGenres.text = movie.genre_ids.joinToString (", ") {id ->
+            tvMovieGenres.text = movie.genre_ids.joinToString(", ") { id ->
                 Constants.GENRE_MAP[id] ?: ""
             }
         }
 
         holder.itemView.setOnClickListener {
-            onSearchOptionClick(movie)
+            onSuggestionClicked(movie)
         }
     }
 

@@ -9,7 +9,11 @@
         android:id="@+id/discoverFragment"
         android:name="com.tgmu.tgmu.ui.fragment.DiscoverFragment"
         android:label="fragment_discover"
-        tools:layout="@layout/fragment_discover" />
+        tools:layout="@layout/fragment_discover" >
+        <action
+            android:id="@+id/action_discoverFragment_to_movieDetailsFragment"
+            app:destination="@id/movieDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.tgmu.tgmu.ui.fragment.ProfileFragment"
@@ -33,4 +37,13 @@
         android:label="fragment_add_experience"
         tools:layout="@layout/fragment_add_experience" />
 
+    <fragment
+        android:id="@+id/movieDetailsFragment"
+        android:name="com.tgmu.tgmu.ui.fragment.MovieDetailsFragment"
+        android:label="fragment_movie_details"
+        tools:layout="@layout/fragment_movie_details" >
+        <argument
+            android:name="movie"
+            app:argType="com.tgmu.tgmu.domain.model.Movie" />
+    </fragment>
 </navigation>
