@@ -105,7 +105,6 @@ dependencies {
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
-
     // ROOM
     val room_version = "2.6.1"
 
@@ -114,6 +113,9 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
+
+    // Time formatter
+    implementation("org.ocpsoft.prettytime:prettytime:4.0.1.Final")
 }
 
 // Allow references to generated code
