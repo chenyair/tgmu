@@ -11,12 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.annotation.MenuRes
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentMovieDetailsBinding
+import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
 import com.tgmu.tgmu.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,6 +28,8 @@ class MovieDetailsFragment : Fragment() {
     private var _binding: FragmentMovieDetailsBinding? = null
     private val binding get() = _binding!!
     private val movieDetailsArgs: MovieDetailsFragmentArgs by navArgs()
+    private val moviesViewModel: MoviesViewModel by activityViewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +47,9 @@ class MovieDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val movie = movieDetailsArgs.movie
+        moviesViewModel.selectMovie(movie)
+
         val transitionName =
             "${getString(R.string.transition_name_movie_poster)}${movie.id}"
 
@@ -84,13 +90,20 @@ class MovieDetailsFragment : Fragment() {
         popupMenu.menuInflater.inflate(menuRes, popupMenu.menu)
         popupMenu.gravity = Gravity.END
 
-        // Set mark as favorite icon according to movie favorite status
-        popupMenu.menu.findItem(R.id.markAsFavorite).setIcon(R.drawable.ic_star_outlined)
+        val movie = moviesViewModel.selectedMovie.value ?: return
+
+        if (!movie.is_favorite) {
+            popupMenu.menu.findItem(R.id.markAsFavorite).setIcon(R.drawable.ic_star_outlined)
+        } else {
+            val icon = resources.getDrawable(R.drawable.ic_star_filled, null)
+            icon.setTint(resources.getColor(R.color.md_theme_tertiary, null))
+            popupMenu.menu.findItem(R.id.markAsFavorite).setIcon(icon)
+        }
 
         popupMenu.setOnMenuItemClickListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
                 R.id.markAsFavorite -> {
-                    // Handle mark as favorite action
+                    moviesViewModel.toggleFavorite(movie)
                     true
                 }
 

@@ -10,5 +10,6 @@ data class MovieEntity(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "poster_path") val posterPath: String?,
     @ColumnInfo(name = "genre_ids") val genreIds: List<Int>,
-    @ColumnInfo(name = "is_liked") val isLiked: Boolean = false
+    @ColumnInfo(name = "overview") val overview: String,
+    @ColumnInfo(name = "is_favorite") val isFavorite: Boolean = false
 )

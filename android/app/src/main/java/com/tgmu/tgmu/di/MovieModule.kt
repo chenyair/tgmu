@@ -1,6 +1,8 @@
 package com.tgmu.tgmu.di
 
 import com.tgmu.tgmu.BuildConfig
+import com.tgmu.tgmu.data.local.AppDatabase
+import com.tgmu.tgmu.data.local.MovieDao
 import com.tgmu.tgmu.data.remote.BearerAuthInterceptor
 import com.tgmu.tgmu.data.remote.TmdbApi
 import com.tgmu.tgmu.data.repository.MovieRepositoryImpl
@@ -34,7 +36,13 @@ object MovieModule {
 
     @Provides
     @Singleton
-    fun provideMovieRepository(tmdbApi: TmdbApi): MovieRepository {
-        return MovieRepositoryImpl(tmdbApi)
+    fun provideMovieDao(appDatabase: AppDatabase): MovieDao {
+        return appDatabase.movieDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMovieRepository(tmdbApi: TmdbApi, movieDao: MovieDao): MovieRepository {
+        return MovieRepositoryImpl(tmdbApi, movieDao)
     }
 }
