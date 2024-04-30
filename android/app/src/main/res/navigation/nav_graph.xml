@@ -23,7 +23,20 @@
         android:id="@+id/experiencesFragment"
         android:name="com.tgmu.tgmu.ui.fragment.ExperiencesFragment"
         android:label="fragment_experiences"
-        tools:layout="@layout/fragment_experiences" />
+        tools:layout="@layout/fragment_experiences">
+
+        <action
+            android:id="@+id/experienceView_to_addExperience"
+            app:destination="@id/addExperience" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addExperience"
+        android:name="com.tgmu.tgmu.ui.fragment.AddExperienceFragment"
+        android:label="fragment_add_experience"
+        tools:layout="@layout/fragment_add_experience" />
+
     <fragment
         android:id="@+id/movieDetailsFragment"
         android:name="com.tgmu.tgmu.ui.fragment.MovieDetailsFragment"

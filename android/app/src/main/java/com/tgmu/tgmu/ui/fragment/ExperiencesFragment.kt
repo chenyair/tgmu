@@ -1,7 +1,6 @@
 package com.tgmu.tgmu.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,14 +9,13 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.tgmu.tgmu.R
-import com.tgmu.tgmu.databinding.FragmentDiscoverBinding
 import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
 import com.tgmu.tgmu.ui.adapters.CompactExperienceAdapter
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
@@ -34,7 +32,7 @@ import kotlinx.coroutines.launch
 class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
     private var _binding: FragmentExperiencesBinding? = null
     private val binding get() = _binding!!
-    private val experienceViewModel: ExperienceViewModel by viewModels()
+    private val experienceViewModel: ExperienceViewModel by activityViewModels()
     private val moviesViewModel: MoviesViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -48,6 +46,11 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.btnAddExperience.setOnClickListener {
+            findNavController().navigate(R.id.experienceView_to_addExperience)
+        }
+
         val searchAdapter = MovieSearchSuggestionsAdapter {
             binding.sbMovie.setText(it.title)
             binding.svMovie.hide()
@@ -70,7 +73,10 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                 }
 
                 is Resource.Success -> {
-                    experienceAdapter.differ.submitList(it.data)
+                    experienceAdapter.differ.submitList(it.data) {
+                        binding.cpiExperienceList.visibility = View.GONE
+                        binding.rvExperienceList.layoutManager!!.scrollToPosition(0)
+                    }
                     if (it.data.isEmpty()) {
                         Snackbar.make(
                             requireView(),
@@ -78,7 +84,6 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
-                    binding.cpiExperienceList.visibility = View.GONE
                 }
 
                 is Resource.Failed -> {
