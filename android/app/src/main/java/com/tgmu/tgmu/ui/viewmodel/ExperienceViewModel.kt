@@ -91,7 +91,7 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
             Resource.Success(
                 currExperience.data.copy(
                     movieId = movie.id,
-                    moviePoster = movie.poster_path!!,
+                    moviePoster = movie.poster_path ?: "",
                     movieName = movie.title
                 )
             )

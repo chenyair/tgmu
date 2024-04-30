@@ -20,10 +20,8 @@ import java.util.Locale
 
 
 class CompactExperienceAdapter(
-    private val onLikeClicked: (Experience) -> Unit,
-    private val onEditClicked: (Experience) -> Unit
-) :
-    RecyclerView.Adapter<CompactExperienceAdapter.ViewHolder>() {
+    private val onLikeClicked: (Experience) -> Unit, private val onEditClicked: (Experience) -> Unit
+) : RecyclerView.Adapter<CompactExperienceAdapter.ViewHolder>() {
     inner class ViewHolder(var binding: ItemCompactExperienceCardBinding) :
         RecyclerView.ViewHolder(binding.root)
 
@@ -47,15 +45,11 @@ class CompactExperienceAdapter(
     val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): CompactExperienceAdapter.ViewHolder {
-        val binding =
-            ItemCompactExperienceCardBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
+        val binding = ItemCompactExperienceCardBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
         return ViewHolder(binding)
     }
 
@@ -71,9 +65,14 @@ class CompactExperienceAdapter(
             chipExperienceTimeAgo.background.alpha = (255 * 0.10).toInt()
             chipExperienceTimeAgo.text = formatToTimeAgo(experience.createdAt)
 
-            Glide
-                .with(holder.itemView.context)
-                .load("https://image.tmdb.org/t/p/original/${experience.moviePoster ?: ""}")
+            val posterUrl = if (experience.moviePoster.isEmpty()) {
+                "https://critics.io/img/movies/poster-placeholder.png"
+            } else {
+                "https://image.tmdb.org/t/p/original/${experience.moviePoster}"
+            }
+
+            Glide.with(holder.itemView.context)
+                .load(posterUrl)
                 .centerCrop()
                 .into(ivExperiencePoster)
 
@@ -118,8 +117,7 @@ class CompactExperienceAdapter(
                 setImageResource(icon)
                 drawable.setTint(
                     context.resources.getColor(
-                        color,
-                        null
+                        color, null
                     )
                 )
             }
@@ -132,19 +130,14 @@ class CompactExperienceAdapter(
     }
 
     private fun scaleImageView(imageView: ImageView) {
-        imageView.animate()
-            .scaleX(1.2f) // increase scale to 120%
-            .scaleY(1.2f)
-            .setDuration(100) // duration of the scale up animation
+        imageView.animate().scaleX(1.2f) // increase scale to 120%
+            .scaleY(1.2f).setDuration(100) // duration of the scale up animation
             .withEndAction {
                 // scale down after the scale up animation ends
-                imageView.animate()
-                    .scaleX(1f) // back to original size
-                    .scaleY(1f)
-                    .setDuration(100) // duration of the scale down animation
+                imageView.animate().scaleX(1f) // back to original size
+                    .scaleY(1f).setDuration(100) // duration of the scale down animation
                     .start()
-            }
-            .start()
+            }.start()
     }
 
     private fun setupEditButton(binding: ItemCompactExperienceCardBinding, experience: Experience) {
