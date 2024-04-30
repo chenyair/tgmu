@@ -135,7 +135,7 @@ class AddExperienceFragment : Fragment() {
                 alpha = 1f
             } else {
                 isEnabled = false
-                alpha = 0.2f
+                alpha = 0.16f
             }
         }
     }

@@ -20,19 +20,27 @@
         android:layout_height="match_parent"
         android:padding="10dp">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/fabBack"
+            style="?attr/materialCardViewFilledStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="25dp"
             android:layout_marginEnd="0dp"
-            android:backgroundTint="@color/md_theme_surfaceContainerHigh"
-            android:src="@drawable/ic_back"
+            app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+            app:cardCornerRadius="100dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/RoundedCard"
-            app:tint="@color/md_theme_primary" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_back"
+                app:tint="@color/md_theme_primary" />
+
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/tvPostExperience"
@@ -46,23 +54,34 @@
             app:layout_constraintStart_toEndOf="@+id/fabBack"
             app:layout_constraintTop_toTopOf="@+id/fabBack" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewFilledStyle"
             android:id="@+id/fabPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="15dp"
-            android:alpha="0.2"
-            android:backgroundTint="@color/md_theme_primary"
+            android:alpha="0.16"
+            app:cardBackgroundColor="@color/md_theme_primary"
+            app:cardCornerRadius="100dp"
             android:enabled="false"
-            android:src="@drawable/ic_done"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/fabBack"
             app:shapeAppearanceOverlay="@style/RoundedCard"
-            app:tint="@color/md_theme_onPrimary" />
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_done"
+                app:tint="@color/md_theme_onPrimary" />
+
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            style="?attr/materialCardViewElevatedStyle"
+            style="?attr/materialCardViewFilledStyle"
+            app:cardBackgroundColor="@color/md_theme_surfaceContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="20dp"
@@ -80,6 +99,7 @@
                     android:id="@+id/sbMovie"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/md_theme_surfaceDim"
                     android:hint="@string/search_movie"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -92,7 +112,7 @@
                     android:alpha="0.16"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:visibility="invisible">
+                    android:visibility="visible">
 
                     <ImageView
                         android:id="@+id/icTheatersPlaceholder"
@@ -118,7 +138,7 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:paddingHorizontal="20dp"
-                    android:visibility="visible"
+                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="@+id/svMovie"
                     app:layout_constraintTop_toBottomOf="@+id/sbMovie">
 
@@ -173,7 +193,7 @@
                             android:layout_width="200dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:backgroundTint="@color/md_theme_surfaceContainerHigh"
+                            android:backgroundTint="@color/md_theme_surfaceDim"
                             android:drawableLeft="@drawable/ic_upload"
                             android:paddingVertical="15dp"
                             android:text="@string/upload_image"
