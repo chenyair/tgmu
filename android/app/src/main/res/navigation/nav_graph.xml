@@ -38,7 +38,6 @@
             android:name="movie"
             app:argType="com.tgmu.tgmu.domain.model.Movie" />
     </fragment>
-
     <fragment
         android:id="@+id/experienceForm"
         android:name="com.tgmu.tgmu.ui.fragment.ExperienceFormFragment"
@@ -50,5 +49,4 @@
             android:defaultValue="@null"
             app:argType="com.tgmu.tgmu.domain.model.Experience" />
     </fragment>
-
 </navigation>

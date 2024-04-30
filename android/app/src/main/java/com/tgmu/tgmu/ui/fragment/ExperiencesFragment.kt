@@ -33,7 +33,7 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
     private var _binding: FragmentExperiencesBinding? = null
     private val binding get() = _binding!!
     private val experienceViewModel: ExperienceViewModel by activityViewModels()
-    private val moviesViewModel: MoviesViewModel by viewModels()
+    private val moviesViewModel: MoviesViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
