@@ -9,10 +9,11 @@ import com.tgmu.tgmu.domain.model.Movie
 fun MovieEntity.toModel(): Movie {
     return Movie(
         id = id,
-        title = "title",
-        poster_path = "poster_path",
-        genre_ids = emptyList(),
-        overview = "overview"
+        title = title,
+        poster_path = posterPath,
+        genre_ids = genreIds,
+        overview = overview,
+        is_favorite = isFavorite
     )
 }
 
@@ -28,4 +29,15 @@ fun TmdbMovie.toModel(): Movie {
 
 fun TmdbMovieList.toModel(): List<Movie> {
     return results.map { it.toModel() }
+}
+
+fun Movie.toEntity(): MovieEntity {
+    return MovieEntity(
+        id = id,
+        title = title,
+        posterPath = poster_path,
+        genreIds = genre_ids,
+        overview = overview,
+        isFavorite = is_favorite
+    )
 }

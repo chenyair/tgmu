@@ -29,8 +29,13 @@
 
     <TextView
         android:id="@+id/tvMovieTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:textAlignment="center"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
         android:textColor="@color/md_theme_onSurfaceVariant"
         app:layout_constraintBottom_toBottomOf="@+id/cvBack"
