@@ -102,7 +102,6 @@ class CompactExperienceAdapter(
                 onCardClicked(differ.currentList[position])
             }
         }
-
     }
 
     private fun bindLikes(binding: ItemCompactExperienceCardBinding, experience: Experience) {

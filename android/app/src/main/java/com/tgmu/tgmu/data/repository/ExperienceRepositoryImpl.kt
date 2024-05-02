@@ -15,6 +15,7 @@ import com.tgmu.tgmu.domain.repository.ExperienceRepository
 import com.tgmu.tgmu.utils.Resource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
@@ -68,19 +69,17 @@ class ExperienceRepositoryImpl : ExperienceRepository {
         userId: String
     ): Flow<Resource<List<String>>> = flow {
         emit(Resource.loading())
-        try {
-            val likedUsers = experience.likedUsers.toMutableList()
-            if (likedUsers.contains(userId)) {
-                likedUsers.remove(userId)
-            } else {
-                likedUsers.add(userId)
-            }
-            collection.document(experience.id!!).update("liked_users", likedUsers).await()
-            emit(Resource.success(likedUsers))
-        } catch (e: Exception) {
-            Log.e("ExperienceRepository", "toggleUserLike: $e")
-            emit(Resource.failed("An error occurred while toggling like"))
+        val likedUsers = experience.likedUsers.toMutableList()
+        if (likedUsers.contains(userId)) {
+            likedUsers.remove(userId)
+        } else {
+            likedUsers.add(userId)
         }
+        collection.document(experience.id!!).update("liked_users", likedUsers).await()
+        emit(Resource.success(likedUsers.toList()))
+    }.catch { e ->
+        Log.e("ExperienceRepository", "toggleUserLike: $e")
+        emit(Resource.failed("An error occurred while toggling like"))
     }
 
     override suspend fun deleteExperience(experience: Experience): Flow<Resource<String>> = flow {
@@ -106,5 +105,4 @@ class ExperienceRepositoryImpl : ExperienceRepository {
                 emit(Resource.failed("An error occurred while updating experience"))
             }
         }
-
 }

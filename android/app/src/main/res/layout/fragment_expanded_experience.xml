@@ -1,231 +1,259 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.fragment.ExpandedExperienceFragment">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cvBack"
-        style="?attr/materialCardViewFilledStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-        app:cardCornerRadius="100dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:src="@drawable/ic_back"
-            app:tint="@color/md_theme_primary" />
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <TextView
-        android:id="@+id/tvMovieName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-        android:textColor="@color/md_theme_onSurfaceVariant"
-        app:layout_constraintBottom_toBottomOf="@+id/cvBack"
-        app:layout_constraintEnd_toStartOf="@+id/cvMore"
-        app:layout_constraintStart_toEndOf="@+id/cvBack"
-        app:layout_constraintTop_toTopOf="@+id/cvBack" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cvMore"
-        style="?attr/materialCardViewFilledStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="32dp"
-        app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-        app:cardCornerRadius="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:src="@drawable/ic_more_vert"
-            app:tint="@color/md_theme_primary" />
-    </com.google.android.material.card.MaterialCardView>
-
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cvContent"
-        style="?attr/materialCardViewFilledStyle"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
-        app:cardBackgroundColor="@color/md_theme_surfaceContainer"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cvMore">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvBack"
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="64dp"
+            app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+            app:cardCornerRadius="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/clExperienceCardHeader"
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_back"
+                app:tint="@color/md_theme_primary" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvMovieName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textColor="@color/md_theme_onSurfaceVariant"
+            app:layout_constraintBottom_toBottomOf="@+id/cvBack"
+            app:layout_constraintEnd_toStartOf="@+id/cvMore"
+            app:layout_constraintStart_toEndOf="@+id/cvBack"
+            app:layout_constraintTop_toTopOf="@+id/cvBack" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvMore"
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="32dp"
+            app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+            app:cardCornerRadius="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_more_vert"
+                app:tint="@color/md_theme_primary" />
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvContent"
+            style="?attr/materialCardViewFilledStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            app:cardBackgroundColor="@color/md_theme_surfaceContainer"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cvMore">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
-                android:orientation="vertical"
-                android:paddingHorizontal="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/civProfileImage"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    app:layout_constraintBottom_toTopOf="@+id/llReactions"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvUserName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:text="User Name"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                    app:layout_constraintStart_toEndOf="@+id/civProfileImage"
-                    app:layout_constraintTop_toTopOf="@+id/civProfileImage" />
-
-                <TextView
-                    android:id="@+id/tvTimeAgo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:alpha="0.6"
-                    android:text="time ago"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:textColor="@color/md_theme_onSecondaryFixedVariant"
-                    app:layout_constraintStart_toEndOf="@+id/civProfileImage"
-                    app:layout_constraintTop_toBottomOf="@+id/tvUserName" />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/ivExperiencePoster"
-                    android:layout_width="80dp"
-                    android:layout_height="120dp"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clExperienceCardHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="15dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:shapeAppearanceOverlay="@style/RoundedImage" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <LinearLayout
-                    android:id="@+id/llReactions"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="@+id/ivExperiencePoster"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <TextView
-                        android:id="@+id/tvLikeCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                    <ImageView
-                        android:id="@+id/icLikes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:padding="2dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_like"
-                        android:stateListAnimator="@animator/scale" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/civProfileImage"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        app:layout_constraintBottom_toTopOf="@+id/llReactions"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tvCommentCount"
+                        android:id="@+id/tvUserName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="0dp"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                    <ImageView
-                        android:id="@+id/icComments"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:padding="2dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_comment" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvExperienceTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="TITLE"
-                        android:paddingBottom="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="User Name"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                        android:textColor="@color/md_theme_onSurfaceVariant"/>
+                        app:layout_constraintStart_toEndOf="@+id/civProfileImage"
+                        app:layout_constraintTop_toTopOf="@+id/civProfileImage" />
 
                     <TextView
-                        android:id="@+id/tvExperienceDescription"
-                        android:layout_width="match_parent"
+                        android:id="@+id/tvTimeAgo"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="10dp"
-                        android:text="DESCRIPTION"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="@color/md_theme_onSurfaceVariant"/>
+                        android:layout_marginLeft="10dp"
+                        android:alpha="0.6"
+                        android:text="time ago"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                        android:textColor="@color/md_theme_onSecondaryFixedVariant"
+                        app:layout_constraintStart_toEndOf="@+id/civProfileImage"
+                        app:layout_constraintTop_toBottomOf="@+id/tvUserName" />
 
-                    <ImageView
-                        android:id="@+id/ivExperience"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:scaleType="fitCenter"
-                        android:adjustViewBounds="true"
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ivExperiencePoster"
+                        android:layout_width="80dp"
+                        android:layout_height="120dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.5" />
-                </LinearLayout>
+                        app:shapeAppearanceOverlay="@style/RoundedImage" />
 
-            </ScrollView>
-        </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/llReactions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="@+id/ivExperiencePoster"
+                        app:layout_constraintStart_toStartOf="parent">
 
-    </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:id="@+id/tvLikeCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                        <ImageView
+                            android:id="@+id/icLikes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="2dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_like"
+                            android:stateListAnimator="@animator/scale" />
+
+                        <TextView
+                            android:id="@+id/tvCommentCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="0dp"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                        <ImageView
+                            android:id="@+id/icComments"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="2dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_comment" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:id="@+id/tvExperienceTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="10dp"
+                            android:text="TITLE"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                        <TextView
+                            android:id="@+id/tvExperienceDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="10dp"
+                            android:text="DESCRIPTION"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                        <ImageView
+                            android:id="@+id/ivExperience"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.5" />
+                    </LinearLayout>
+
+                </ScrollView>
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/llCommentsBottomSheet"
+        style="@style/Widget.Material3.BottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:orientation="vertical"
+        android:translationZ="10dp"
+        app:cardCornerRadius="26dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:id="@+id/drag_handle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvComments"
+            android:layout_width="match_parent"
+            android:paddingHorizontal="20dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
