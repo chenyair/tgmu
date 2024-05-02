@@ -48,7 +48,6 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnAddExperience.setOnClickListener {
-            experienceViewModel.setDefaultExperience()
             val action =
                 ExperiencesFragmentDirections.experienceViewToExperienceForm()
             findNavController().navigate(action)
@@ -63,7 +62,6 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         val experienceAdapter = CompactExperienceAdapter(onLikeClicked = {
             experienceViewModel.toggleLiked(it, Firebase.auth.currentUser!!.uid)
         }, onEditClicked = {
-            experienceViewModel.setSpecificExperience(it)
             val action =
                 ExperiencesFragmentDirections.experienceViewToExperienceForm(it)
             findNavController().navigate(action)

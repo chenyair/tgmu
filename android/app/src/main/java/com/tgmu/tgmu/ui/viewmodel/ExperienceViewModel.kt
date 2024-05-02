@@ -8,16 +8,17 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.tgmu.tgmu.domain.model.Experience
+import com.tgmu.tgmu.domain.model.ExperienceForm
 import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.domain.repository.ExperienceRepository
 import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
+import kotlin.math.exp
 
 @HiltViewModel
 class ExperienceViewModel @Inject constructor(private val experienceRepository: ExperienceRepository) :
@@ -25,21 +26,11 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
     private val _latestExperiences = MutableLiveData<Resource<List<Experience>>>()
     val latestExperiences: LiveData<Resource<List<Experience>>> get() = _latestExperiences
 
-    private val _specificExperience = MutableLiveData<Resource<Experience>>()
-
-    //    private val _selectedMovie = MutableLiveData<Movie>()
-//    private val _title = MutableLiveData<String>()
-//    private val _description = MutableLiveData<String>()
-    val specificExperience: LiveData<Resource<Experience>> get() = _specificExperience
+    private val _experienceForm = MutableLiveData<ExperienceForm>()
+    val experienceForm: LiveData<ExperienceForm> get() = _experienceForm
 
     private val _uploadStatus = MutableLiveData<Resource<Any>>()
     val uploadStatus: LiveData<Resource<Any>> get() = _uploadStatus
-
-    //    val selectedMovie: LiveData<Movie> get() = _selectedMovie
-//    val title: LiveData<String> get() = _title
-//    val description: LiveData<String> get() = _description
-    private val _fileUploadURI = MutableLiveData<Uri>()
-    val fileUploadURI: LiveData<Uri> get() = _fileUploadURI
 
     init {
         getLatestExperiences()
@@ -66,65 +57,34 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
             }
         }
 
-    fun setDefaultExperience() =
-        _specificExperience.postValue(
-            Resource.Success(
-                Experience(
-                    id = null,
-                    title = "",
-                    moviePoster = "",
-                    movieName = "",
-                    movieId = 0,
-                    userId = Firebase.auth.currentUser!!.uid,
-                    description = "",
-                    likedUsers = emptyList(),
-                    imgUrl = "",
-                    comments = emptyList(),
-                    createdAt = Date(),
-                )
-            )
-        )
-
-    fun selectMovie(movie: Movie) {
-        val currExperience = specificExperience.value as Resource.Success
-        _specificExperience.postValue(
-            Resource.Success(
-                currExperience.data.copy(
-                    movieId = movie.id,
-                    moviePoster = movie.poster_path ?: "",
-                    movieName = movie.title
-                )
+    fun changeExperienceFormData(
+        title: String? = null,
+        description: String? = null,
+        movieId: Int? = null,
+        movieName: String? = null,
+        moviePoster: String? = null,
+        imgFileUri: Uri? = null,
+        existingImgUrl: String? = null
+    ) {
+        val currValue = _experienceForm.value ?: ExperienceForm()
+        _uploadStatus.postValue(Resource.Loading())
+        _experienceForm.postValue(
+            currValue.copy(
+                title = title ?: currValue.title,
+                description = description ?: currValue.description,
+                movieId = movieId ?: currValue.movieId,
+                movieName = movieName ?: currValue.movieName,
+                moviePoster = moviePoster ?: currValue.moviePoster,
+                imgFileUri = imgFileUri ?: currValue.imgFileUri,
+                existingImgUrl = existingImgUrl ?: currValue.existingImgUrl
             )
         )
     }
-
-    fun setTitle(title: String) =
-        _specificExperience.postValue(
-            Resource.Success(
-                (specificExperience.value as Resource.Success).data.copy(title = title)
-            )
-        )
-
-
-    fun setDescription(description: String) =
-        _specificExperience.postValue(
-            Resource.Success(
-                (specificExperience.value as Resource.Success).data.copy(description = description)
-            )
-        )
-
-    fun selectImageFile(uri: Uri) =
-        _fileUploadURI.postValue(uri)
-
-    fun setSpecificExperience(experience: Experience) {
-        _specificExperience.postValue(Resource.Success(experience))
-    }
-
 
     fun isReadyToUpload(): Boolean {
-        (specificExperience.value as Resource.Success).data.apply {
-            val hasImage = fileUploadURI.value != null || imgUrl != ""
-            return title != "" && description != "" && movieId != 0 && hasImage
+        experienceForm.value!!.apply {
+            val hasImage = imgFileUri != null || existingImgUrl.isNotEmpty()
+            return title != "" && description != "" && movieId != null && hasImage
         }
     }
 
@@ -142,25 +102,30 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
             }
         }
 
-    fun postExperience() {
+    fun postExperience(initialExperience: Experience? = null) {
         if (!isReadyToUpload()) return _uploadStatus.postValue(Resource.failed("Please fill all fields"))
         viewModelScope.launch {
 
             _uploadStatus.postValue(Resource.loading())
-            val initialExperience = (specificExperience.value as Resource.Success).data
-            var imgUrl = initialExperience.imgUrl
-            if (fileUploadURI.value != null) {
+            val formValues = experienceForm.value!!
+            var imgUrl = initialExperience?.imgUrl
+            if (formValues.imgFileUri != null) {
                 // upload new image to storage
-                experienceRepository.uploadImage(fileUploadURI.value!!).collect {
-                    if (it is Resource.Success) {
-                        imgUrl = it.data
-                    } else if (it is Resource.Failed) {
-                        _specificExperience.postValue(Resource.failed(it.message))
+                try {
+                    experienceRepository.uploadImage(formValues.imgFileUri!!).collect {
+                        if (it is Resource.Success) {
+                            imgUrl = it.data
+                        } else if (it is Resource.Failed) {
+                            _uploadStatus.postValue(Resource.failed(it.message))
+                            throw Exception("Failed to upload image")
+                        }
                     }
+                } catch (e: Exception) {
+                    return@launch
                 }
 
                 // Check if need to delete old image from storage
-                if (initialExperience.imgUrl != "") {
+                if (initialExperience?.imgUrl?.isNotEmpty() == true) { // Compare nullable
                     experienceRepository.deleteImage(initialExperience.imgUrl).collect {
                         if (it is Resource.Failed) {
                             _uploadStatus.postValue(Resource.failed(it.message))
@@ -169,12 +134,13 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
                 }
             }
 
-            val experienceToUpload = initialExperience.copy(
-                imgUrl = imgUrl,
-                createdAt = Date()
+            val experienceToUpload = formValues.toExperience(
+                userId = Firebase.auth.currentUser!!.uid,
+                imgUrl = imgUrl!!,
+                initialExperience = initialExperience
             )
 
-            if (initialExperience.id == null) {
+            if (initialExperience == null) {
                 processPostExperience(
                     experienceToUpload,
                     experienceRepository::addExperience

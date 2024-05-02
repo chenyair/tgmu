@@ -52,7 +52,8 @@ class ExperienceFormFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 lifecycleScope.launch {
-                    experienceViewModel.selectImageFile(it)
+                    experienceViewModel.changeExperienceFormData(imgFileUri = it)
+                    showImageFromFile(it)
                 }
             }
         }
@@ -84,13 +85,23 @@ class ExperienceFormFragment : Fragment() {
             }
 
             if (experienceFormArgs.previewExperience != null) {
+                val experience = experienceFormArgs.previewExperience!!
+                experienceViewModel.changeExperienceFormData(
+                    title = experience.title,
+                    description = experience.description,
+                    movieName = experience.movieName,
+                    movieId = experience.movieId,
+                    moviePoster = experience.moviePoster,
+                    existingImgUrl = experience.imgUrl
+                )
                 setupEditView(experienceFormArgs.previewExperience!!)
             }
+
             fabBack.setOnClickListener {
                 findNavController().popBackStack()
             }
             fabPost.setOnClickListener {
-                experienceViewModel.postExperience()
+                experienceViewModel.postExperience(experienceFormArgs.previewExperience)
                 watchExperienceUpload()
             }
             fabUploadImage.setOnClickListener {
@@ -100,32 +111,15 @@ class ExperienceFormFragment : Fragment() {
                 selectImageLauncher.launch("image/*")
             }
             tiTitle.addTextChangedListener {
-                experienceViewModel.setTitle(it.toString())
+                experienceViewModel.changeExperienceFormData(title = it.toString())
             }
             tiDescription.addTextChangedListener {
-                experienceViewModel.setDescription(it.toString())
+                experienceViewModel.changeExperienceFormData(description = it.toString())
             }
             experienceViewModel.apply {
-                val requiredValues = listOf(fileUploadURI, specificExperience)
-                fileUploadURI.observe(viewLifecycleOwner) { value ->
-                    if (value != null) {
-                        validateForm()
-                    }
+                experienceForm.observe(viewLifecycleOwner) { value ->
+                    validateForm()
                 }
-                specificExperience.observe(viewLifecycleOwner) { value ->
-                    if (value is Resource.Success) {
-                        // Validate only on changing the initial experience
-                        if (value.data != experienceFormArgs.previewExperience) {
-                            validateForm()
-                        }
-                    }
-                }
-            }
-        }
-
-        experienceViewModel.fileUploadURI.observe(viewLifecycleOwner) {
-            if (it != null) {
-                showImageFromFile()
             }
         }
 
@@ -137,7 +131,11 @@ class ExperienceFormFragment : Fragment() {
                 clAddExperienceForm.visibility = View.VISIBLE
             }
 
-            experienceViewModel.selectMovie(it)
+            experienceViewModel.changeExperienceFormData(
+                moviePoster = it.poster_path,
+                movieId = it.id,
+                movieName = it.title
+            )
         }
 
         setupSearchView(searchAdapter)
@@ -229,13 +227,13 @@ class ExperienceFormFragment : Fragment() {
             }
         }
 
-    private fun showImageFromFile() {
+    private fun showImageFromFile(uri: Uri) {
         binding.apply {
             fabUploadImage.visibility = View.GONE
             fabEditImage.visibility = View.VISIBLE
             ivExperience.apply {
                 visibility = View.VISIBLE
-                setImageURI(experienceViewModel.fileUploadURI.value)
+                setImageURI(uri)
             }
         }
     }
