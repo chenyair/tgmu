@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,6 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.tgmu.tgmu.R
-import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
 import com.tgmu.tgmu.databinding.ItemCompactExperienceCardBinding
 import com.tgmu.tgmu.domain.model.Experience
 import org.ocpsoft.prettytime.PrettyTime
@@ -19,8 +19,9 @@ import java.util.Date
 import java.util.Locale
 
 
-class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) :
-    RecyclerView.Adapter<CompactExperienceAdapter.ViewHolder>() {
+class CompactExperienceAdapter(
+    private val onLikeClicked: (Experience) -> Unit, private val onEditClicked: (Experience) -> Unit
+) : RecyclerView.Adapter<CompactExperienceAdapter.ViewHolder>() {
     inner class ViewHolder(var binding: ItemCompactExperienceCardBinding) :
         RecyclerView.ViewHolder(binding.root)
 
@@ -44,15 +45,11 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
     val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): CompactExperienceAdapter.ViewHolder {
-        val binding =
-            ItemCompactExperienceCardBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
+        val binding = ItemCompactExperienceCardBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
         return ViewHolder(binding)
     }
 
@@ -68,18 +65,16 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
             chipExperienceTimeAgo.background.alpha = (255 * 0.10).toInt()
             chipExperienceTimeAgo.text = formatToTimeAgo(experience.createdAt)
 
-            Glide
-                .with(holder.itemView.context)
-                .load("https://image.tmdb.org/t/p/original/${experience.moviePoster ?: ""}")
-                .centerCrop()
-                .into(ivExperiencePoster)
-
-            if (currUserUID == experience.userId) {
-                icEdit.visibility = View.VISIBLE
+            val posterUrl = if (experience.moviePoster.isEmpty()) {
+                "https://critics.io/img/movies/poster-placeholder.png"
             } else {
-                icEdit.visibility = View.GONE
+                "https://image.tmdb.org/t/p/original/${experience.moviePoster}"
             }
 
+            Glide.with(holder.itemView.context)
+                .load(posterUrl)
+                .centerCrop()
+                .into(ivExperiencePoster)
 
             bindLikes(this, experience)
         }
@@ -98,6 +93,8 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
                 onBindViewHolder(holder, position)
             }
         }
+
+        setupEditButton(holder.binding, differ.currentList[position])
     }
 
     private fun bindLikes(binding: ItemCompactExperienceCardBinding, experience: Experience) {
@@ -120,8 +117,7 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
                 setImageResource(icon)
                 drawable.setTint(
                     context.resources.getColor(
-                        color,
-                        null
+                        color, null
                     )
                 )
             }
@@ -134,19 +130,28 @@ class CompactExperienceAdapter(private val onLikeClicked: (Experience) -> Unit) 
     }
 
     private fun scaleImageView(imageView: ImageView) {
-        imageView.animate()
-            .scaleX(1.2f) // increase scale to 120%
-            .scaleY(1.2f)
-            .setDuration(100) // duration of the scale up animation
+        imageView.animate().scaleX(1.2f) // increase scale to 120%
+            .scaleY(1.2f).setDuration(100) // duration of the scale up animation
             .withEndAction {
                 // scale down after the scale up animation ends
-                imageView.animate()
-                    .scaleX(1f) // back to original size
-                    .scaleY(1f)
-                    .setDuration(100) // duration of the scale down animation
+                imageView.animate().scaleX(1f) // back to original size
+                    .scaleY(1f).setDuration(100) // duration of the scale down animation
                     .start()
+            }.start()
+    }
+
+    private fun setupEditButton(binding: ItemCompactExperienceCardBinding, experience: Experience) {
+        val currUserUID = Firebase.auth.currentUser!!.uid
+        binding.icEdit.apply {
+            if (currUserUID == experience.userId) {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    onEditClicked(experience)
+                }
+            } else {
+                visibility = View.GONE
             }
-            .start()
+        }
     }
 
     override fun getItemCount(): Int = differ.currentList.size

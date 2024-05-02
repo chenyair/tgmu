@@ -121,4 +121,15 @@ class ExperienceRepositoryImpl : ExperienceRepository {
             emit(Resource.failed("An error occurred while uploading image"))
         }
     }
+
+    override suspend fun deleteImage(imageUri: String): Flow<Resource<String>> = flow {
+        emit(Resource.loading())
+        try {
+            FirebaseStorage.getInstance().getReferenceFromUrl(imageUri).delete().await()
+            emit(Resource.success(imageUri))
+        } catch (e: Exception) {
+            Log.e("ExperienceRepository", "deleteImage: $e")
+            emit(Resource.failed("An error occurred while deleting image"))
+        }
+    }
 }

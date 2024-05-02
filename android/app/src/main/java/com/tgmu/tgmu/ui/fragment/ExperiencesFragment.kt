@@ -48,7 +48,10 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnAddExperience.setOnClickListener {
-            findNavController().navigate(R.id.experienceView_to_addExperience)
+            experienceViewModel.setDefaultExperience()
+            val action =
+                ExperiencesFragmentDirections.experienceViewToExperienceForm()
+            findNavController().navigate(action)
         }
 
         val searchAdapter = MovieSearchSuggestionsAdapter {
@@ -57,9 +60,14 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
             experienceViewModel.getExperiencesByMovieId(it.id)
         }
 
-        val experienceAdapter = CompactExperienceAdapter() {
+        val experienceAdapter = CompactExperienceAdapter(onLikeClicked = {
             experienceViewModel.toggleLiked(it, Firebase.auth.currentUser!!.uid)
-        }
+        }, onEditClicked = {
+            experienceViewModel.setSpecificExperience(it)
+            val action =
+                ExperiencesFragmentDirections.experienceViewToExperienceForm(it)
+            findNavController().navigate(action)
+        })
 
         setupExperiencesList(experienceAdapter)
         setupSearchView(searchAdapter)
@@ -75,12 +83,18 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                 is Resource.Success -> {
                     experienceAdapter.differ.submitList(it.data) {
                         binding.cpiExperienceList.visibility = View.GONE
-                        binding.rvExperienceList.layoutManager!!.scrollToPosition(0)
+                        experienceViewModel.uploadStatus.observe(viewLifecycleOwner) { status ->
+                            if (status is Resource.Success)
+                                binding.rvExperienceList.layoutManager!!.scrollToPosition(0)
+                        }
                     }
                     if (it.data.isEmpty()) {
                         Snackbar.make(
                             requireView(),
-                            getString(R.string.no_experiences_for_movie, binding.sbMovie.text.toString()),
+                            getString(
+                                R.string.no_experiences_for_movie,
+                                binding.sbMovie.text.toString()
+                            ),
                             Snackbar.LENGTH_LONG
                         ).show()
                     }

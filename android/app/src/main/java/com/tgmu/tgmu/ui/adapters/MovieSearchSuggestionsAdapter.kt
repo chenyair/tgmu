@@ -10,7 +10,7 @@ import com.tgmu.tgmu.databinding.ItemMovieSearchSuggestionBinding
 import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.utils.Constants
 
-class MovieSearchSuggestionsAdapter(private val onSuggestionClicked: (Movie) -> Unit) :
+class MovieSearchSuggestionsAdapter(private val onSuggestionClicked: (Movie) -> Unit = {}) :
     RecyclerView.Adapter<MovieSearchSuggestionsAdapter.ViewHolder>() {
     inner class ViewHolder(var binding: ItemMovieSearchSuggestionBinding) :
         RecyclerView.ViewHolder(binding.root)
