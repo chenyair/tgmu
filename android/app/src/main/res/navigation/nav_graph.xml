@@ -27,6 +27,19 @@
         <action
             android:id="@+id/experienceView_to_experienceForm"
             app:destination="@id/experienceForm" />
+        <action
+            android:id="@+id/action_experienceView_to_expandedExperience"
+            app:destination="@id/expandedExperienceFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/expandedExperienceFragment"
+        android:name="com.tgmu.tgmu.ui.fragment.ExpandedExperienceFragment"
+        android:label="fragment_experience_view"
+        tools:layout="@layout/fragment_expanded_experience" >
+        <argument
+            android:name="experience"
+            app:argType="com.tgmu.tgmu.domain.model.Experience" />
     </fragment>
 
     <fragment

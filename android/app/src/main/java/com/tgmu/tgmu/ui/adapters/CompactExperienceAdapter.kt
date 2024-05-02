@@ -20,7 +20,9 @@ import java.util.Locale
 
 
 class CompactExperienceAdapter(
-    private val onLikeClicked: (Experience) -> Unit, private val onEditClicked: (Experience) -> Unit
+    private val onCardClicked: (Experience) -> Unit,
+    private val onLikeClicked: (Experience) -> Unit,
+    private val onEditClicked: (Experience) -> Unit
 ) : RecyclerView.Adapter<CompactExperienceAdapter.ViewHolder>() {
     inner class ViewHolder(var binding: ItemCompactExperienceCardBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -94,7 +96,13 @@ class CompactExperienceAdapter(
             }
         }
 
-        setupEditButton(holder.binding, differ.currentList[position])
+        holder.binding.apply {
+            setupEditButton(this, differ.currentList[position])
+            root.setOnClickListener {
+                onCardClicked(differ.currentList[position])
+            }
+        }
+
     }
 
     private fun bindLikes(binding: ItemCompactExperienceCardBinding, experience: Experience) {

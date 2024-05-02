@@ -7,7 +7,7 @@
     android:padding="15dp">
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cwElevated"
+        android:id="@+id/cwExperienceCard"
         style="?attr/materialCardViewElevatedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

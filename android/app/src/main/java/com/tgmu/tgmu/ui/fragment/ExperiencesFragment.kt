@@ -60,14 +60,19 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
             experienceViewModel.getExperiencesByMovieId(it.id)
         }
 
-        val experienceAdapter = CompactExperienceAdapter(onLikeClicked = {
-            experienceViewModel.toggleLiked(it, Firebase.auth.currentUser!!.uid)
-        }, onEditClicked = {
-            experienceViewModel.setSpecificExperience(it)
-            val action =
-                ExperiencesFragmentDirections.experienceViewToExperienceForm(it)
-            findNavController().navigate(action)
-        })
+        val experienceAdapter = CompactExperienceAdapter(
+            onCardClicked = {
+                val action =
+                    ExperiencesFragmentDirections.actionExperienceViewToExpandedExperience(it)
+                findNavController().navigate(action)
+            }, onLikeClicked = {
+                experienceViewModel.toggleLiked(it, Firebase.auth.currentUser!!.uid)
+            }, onEditClicked = {
+                experienceViewModel.setSpecificExperience(it)
+                val action =
+                    ExperiencesFragmentDirections.experienceViewToExperienceForm(it)
+                findNavController().navigate(action)
+            })
 
         setupExperiencesList(experienceAdapter)
         setupSearchView(searchAdapter)
