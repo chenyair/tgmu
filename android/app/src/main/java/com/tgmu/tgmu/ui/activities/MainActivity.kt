@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.ActivityMainBinding
@@ -22,5 +23,12 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment)
         binding.bottomNavigationView.setupWithNavController(navController)
+
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            // In order to get the expected behavior, you have to call default Navigation method manually
+            NavigationUI.onNavDestinationSelected(item, navController)
+
+            return@setOnItemSelectedListener true
+        }
     }
 }

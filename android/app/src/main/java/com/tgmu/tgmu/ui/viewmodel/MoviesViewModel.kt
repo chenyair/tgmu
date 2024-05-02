@@ -24,6 +24,8 @@ class MoviesViewModel @Inject constructor(
 
     private val _searchedMovies = MutableLiveData<Resource<List<Movie>>>()
     val searchedMovies: LiveData<Resource<List<Movie>>> get() = _searchedMovies
+    private val _selectedMovie = MutableLiveData<Movie>()
+    val selectedMovie: LiveData<Movie> get() = _selectedMovie
 
     init {
         getPopularMovies()
@@ -61,5 +63,29 @@ class MoviesViewModel @Inject constructor(
             _posterMovies.postValue(_searchedMovies.value)
         }
 
+    }
+
+    fun selectMovie(movie: Movie) {
+        _selectedMovie.postValue(movie)
+    }
+
+    fun toggleFavorite(movie: Movie) {
+        viewModelScope.launch {
+            movieRepository.toggleFavorite(movie).collect {
+                if (it is Resource.Success) {
+                    _selectedMovie.postValue(movie.copy(is_favorite = it.data))
+
+                    val updatedList = (_posterMovies.value as Resource.Success).data.map { movie ->
+                        if (movie.id == _selectedMovie.value?.id) {
+                            movie.copy(is_favorite = it.data)
+                        } else {
+                            movie
+                        }
+                    }
+
+                    _posterMovies.postValue(Resource.success(updatedList))
+                }
+            }
+        }
     }
 }
