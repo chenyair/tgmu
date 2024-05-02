@@ -11,6 +11,7 @@ import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.domain.model.ExperienceForm
 import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.domain.repository.ExperienceRepository
+import com.tgmu.tgmu.domain.repository.StorageRepository
 import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -21,7 +22,10 @@ import javax.inject.Inject
 import kotlin.math.exp
 
 @HiltViewModel
-class ExperienceViewModel @Inject constructor(private val experienceRepository: ExperienceRepository) :
+class ExperienceViewModel @Inject constructor(
+    private val experienceRepository: ExperienceRepository,
+    private val storageRepository: StorageRepository
+) :
     ViewModel() {
     private val _latestExperiences = MutableLiveData<Resource<List<Experience>>>()
     val latestExperiences: LiveData<Resource<List<Experience>>> get() = _latestExperiences
@@ -112,7 +116,7 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
             if (formValues.imgFileUri != null) {
                 // upload new image to storage
                 try {
-                    experienceRepository.uploadImage(formValues.imgFileUri!!).collect {
+                    storageRepository.uploadImage(formValues.imgFileUri!!).collect {
                         if (it is Resource.Success) {
                             imgUrl = it.data
                         } else if (it is Resource.Failed) {
@@ -126,7 +130,7 @@ class ExperienceViewModel @Inject constructor(private val experienceRepository: 
 
                 // Check if need to delete old image from storage
                 if (initialExperience?.imgUrl?.isNotEmpty() == true) { // Compare nullable
-                    experienceRepository.deleteImage(initialExperience.imgUrl).collect {
+                    storageRepository.deleteImage(initialExperience.imgUrl).collect {
                         if (it is Resource.Failed) {
                             _uploadStatus.postValue(Resource.failed(it.message))
                         }
