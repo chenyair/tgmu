@@ -144,10 +144,9 @@ class ExperienceFormFragment : Fragment() {
     }
 
     private fun setupEditView(experience: Experience) {
-
-
         binding.apply {
             tiTitle.setText(experience.title)
+            tvPostExperience.setText(getString(R.string.edit_experience))
             tiDescription.setText(experience.description)
             fabUploadImage.visibility = View.GONE
             fabEditImage.visibility = View.VISIBLE

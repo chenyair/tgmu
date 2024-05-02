@@ -13,6 +13,7 @@
     <string name="no_experiences_for_movie">There are no experiences for \"%1$s\"</string>
 
     <string name="post_experience">Post experience</string>
+    <string name="edit_experience">Edit experience</string>
     <string name="no_selection_placeholder">Start by selecting a movie</string>
     <string name="describe_experience_hint">Describe your experience…</string>
     <string name="title_experience_hint">Give a title to your experience</string>
