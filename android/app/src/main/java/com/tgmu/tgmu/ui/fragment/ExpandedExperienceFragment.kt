@@ -15,6 +15,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -34,9 +36,19 @@ import java.util.Locale
 
 @AndroidEntryPoint
 class ExpandedExperienceFragment : Fragment() {
-    class ExperienceCommentsBottomSheet : BottomSheetDialogFragment() {
+    class ExperienceCommentsBottomSheet(
+        val comments: List<Comment>,
+        val onNewComment: (Comment) -> Unit
+    ) : BottomSheetDialogFragment() {
         private var _binding: FragmentCommentsBottomSheetBinding? = null
         private val binding get() = _binding!!
+        private val auth: FirebaseAuth = Firebase.auth
+
+        override fun onStart() {
+            super.onStart()
+            val dialog = dialog as BottomSheetDialog
+            dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
         override fun onCreateView(
             inflater: LayoutInflater,
@@ -47,12 +59,31 @@ class ExpandedExperienceFragment : Fragment() {
             return binding.root
         }
 
+
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
+            val commentAdapter = ExperienceCommentAdapter()
+            binding.rvComments.apply {
+                adapter = commentAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+            }
 
-            val parentFragment =
-                (parentFragment as ExpandedExperienceFragment)
-            parentFragment.setupCommentsView(binding)
+            binding.apply {
+                btnPostComment.setOnClickListener {
+                    val comment = Comment(
+                        auth.currentUser!!.uid,
+                        etNewComment.text.toString(),
+                        Date()
+                    )
+                    val comments = commentAdapter.differ.currentList
+                    commentAdapter.differ.submitList(comments + comment)
+
+                    etNewComment.text.clear()
+                    onNewComment(comment)
+                }
+            }
+
+            commentAdapter.differ.submitList(comments)
         }
 
         override fun onDestroyView() {
@@ -71,6 +102,10 @@ class ExpandedExperienceFragment : Fragment() {
     private val experienceViewModel: ExperienceViewModel by activityViewModels()
 
     private val expandedExperienceArgs: ExpandedExperienceFragmentArgs by navArgs()
+
+    override fun onStart() {
+        super.onStart()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -108,14 +143,6 @@ class ExpandedExperienceFragment : Fragment() {
 
                 bindLikes(this, it)
 
-                val commentsBottomSheetDialog = ExperienceCommentsBottomSheet()
-
-                icComments.setOnClickListener { _ ->
-                    commentsBottomSheetDialog.show(
-                        childFragmentManager,
-                        ExperienceCommentsBottomSheet.TAG
-                    )
-                }
 
                 val posterUrl = if (it.moviePoster.isEmpty()) {
                     "https://critics.io/img/movies/poster-placeholder.png"
@@ -142,32 +169,24 @@ class ExpandedExperienceFragment : Fragment() {
                     .into(ivExperience)
             }
         }
+
+        setupCommentsView()
     }
 
-    private fun setupCommentsView(
-        commentsBottomSheetBinding: FragmentCommentsBottomSheetBinding,
-    ) {
-        val commentAdapter = ExperienceCommentAdapter()
+    private fun setupCommentsView() {
         val experience = expandedExperienceArgs.experience
+        val commentsBottomSheetDialog = ExperienceCommentsBottomSheet(experience.comments) {
+            experienceViewModel.addComment(experience.id!!, it)
+        }
 
-        commentAdapter.differ.submitList(experience.comments) {
-            commentsBottomSheetBinding.apply {
-                rvComments.apply {
-                    adapter = commentAdapter
-                    layoutManager = LinearLayoutManager(requireContext())
-                }
-
-                btnPostComment.setOnClickListener {
-                    val comment = Comment(
-                        auth.currentUser!!.uid,
-                        etNewComment.text.toString(),
-                        Date()
+        binding.apply {
+            tvCommentCount.text = experience.comments.size.toString()
+            binding.apply {
+                icComments.setOnClickListener { _ ->
+                    commentsBottomSheetDialog.show(
+                        requireActivity().supportFragmentManager,
+                        ExperienceCommentsBottomSheet.TAG
                     )
-                    val comments = commentAdapter.differ.currentList
-                    commentAdapter.differ.submitList(comments + comment)
-                    binding.tvCommentCount.text = (comments.size + 1).toString()
-                    etNewComment.text.clear()
-                    experienceViewModel.addComment(experience.id!!, comment)
                 }
             }
         }
