@@ -107,8 +107,9 @@ class ExperienceViewModel @Inject constructor(
             }
         }
 
-    fun addComment(experience: Experience, comment: Comment) =
+    fun addComment(experienceId: String, comment: Comment) =
         viewModelScope.launch {
+            val experience = (latestExperiences.value as Resource.Success).data.find { it.id == experienceId }!!
             experienceRepository.addComment(experience, comment).collect {
                 if (it is Resource.Success) {
                     val updatedExperience = experience.copy(comments = it.data.comments)

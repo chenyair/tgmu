@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -155,6 +156,7 @@ class ExpandedExperienceFragment : Fragment() {
                     adapter = commentAdapter
                     layoutManager = LinearLayoutManager(requireContext())
                 }
+
                 btnPostComment.setOnClickListener {
                     val comment = Comment(
                         auth.currentUser!!.uid,
@@ -165,7 +167,7 @@ class ExpandedExperienceFragment : Fragment() {
                     commentAdapter.differ.submitList(comments + comment)
                     binding.tvCommentCount.text = (comments.size + 1).toString()
                     etNewComment.text.clear()
-                    experienceViewModel.addComment(experience, comment)
+                    experienceViewModel.addComment(experience.id!!, comment)
                 }
             }
         }

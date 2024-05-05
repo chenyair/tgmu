@@ -3,6 +3,7 @@ package com.tgmu.tgmu.data.repository
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -28,41 +29,33 @@ class ExperienceRepositoryImpl : ExperienceRepository {
 
     override suspend fun getExperiences(): Flow<Resource<List<Experience>>> = flow {
         emit(Resource.loading())
-        try {
-            val response = collection.get().await()
-
-            val experiences =
-                response.documents.map { it.toObject(FirestoreExperience::class.java)!!.toModel() }
-            emit(Resource.success(experiences))
-        } catch (e: Exception) {
-
-            Log.e("ExperienceRepository", "getExperiences: $e")
-            emit(Resource.failed("An error occurred while getting experiences"))
-        }
+        val response = collection.get().await()
+        val experiences =
+            response.documents.map { it.toObject(FirestoreExperience::class.java)!!.toModel() }
+        emit(Resource.success(experiences))
+    }.catch {
+        Log.e("ExperienceRepository", "getExperiences: $it")
+        emit(Resource.failed("An error occurred while getting experiences"))
     }
 
     override suspend fun getExperiencesByMovieId(id: Int): Flow<Resource<List<Experience>>> = flow {
         emit(Resource.loading())
-        try {
-            val response = collection.whereEqualTo("movie_id", id).get().await()
-            val experiences =
-                response.documents.map { it.toObject(FirestoreExperience::class.java)!!.toModel() }
-            emit(Resource.success(experiences))
-        } catch (e: Exception) {
-            Log.e("ExperienceRepository", "getExperiencesByMovieId: $e")
-            emit(Resource.failed("An error occurred while getting experiences"))
-        }
+        val response = collection.whereEqualTo("movie_id", id).get().await()
+        val experiences =
+            response.documents.map { it.toObject(FirestoreExperience::class.java)!!.toModel() }
+        emit(Resource.success(experiences))
+    }.catch {
+        Log.e("ExperienceRepository", "getExperiencesByMovieId: $it")
+        emit(Resource.failed("An error occurred while getting experiences"))
     }
 
     override suspend fun addExperience(experience: Experience): Flow<Resource<Experience>> = flow {
         emit(Resource.loading())
-        try {
-            val documentReference = collection.add(experience.toFirestoreObject()).await()
-            emit(Resource.success(experience.copy(id = documentReference.id)))
-        } catch (e: Exception) {
-            Log.e("ExperienceRepository", "addExperience: $e")
-            emit(Resource.failed("An error occurred while adding experience"))
-        }
+        val documentReference = collection.add(experience.toFirestoreObject()).await()
+        emit(Resource.success(experience.copy(id = documentReference.id)))
+    }.catch {
+        Log.e("ExperienceRepository", "addExperience: $it")
+        emit(Resource.failed("An error occurred while adding experience"))
     }
 
     override suspend fun toggleUserLike(
@@ -85,39 +78,37 @@ class ExperienceRepositoryImpl : ExperienceRepository {
 
     override suspend fun deleteExperience(experience: Experience): Flow<Resource<String>> = flow {
         emit(Resource.loading())
-        try {
-            collection.document(experience.id!!).delete().await()
-            emit(Resource.success(experience.id))
-        } catch (e: Exception) {
-            Log.e("ExperienceRepository", "deleteExperience: $e")
-            emit(Resource.failed("An error occurred while deleting experience"))
-        }
+        collection.document(experience.id!!).delete().await()
+        emit(Resource.success(experience.id))
+    }.catch {
+        Log.e("ExperienceRepository", "deleteExperience: $it")
+        emit(Resource.failed("An error occurred while deleting experience"))
     }
 
     override suspend fun updateExperience(experience: Experience): Flow<Resource<Experience>> =
         flow {
             emit(Resource.loading())
-            try {
-                Log.d("ExperienceRepository", "updateExperience: $experience")
-                collection.document(experience.id!!).set(experience.toFirestoreObject()).await()
-                emit(Resource.success(experience))
-            } catch (e: Exception) {
-                Log.e("ExperienceRepository", "updateExperience: $e")
-                emit(Resource.failed("An error occurred while updating experience"))
-            }
+            Log.d("ExperienceRepository", "updateExperience: $experience")
+            collection.document(experience.id!!).set(experience.toFirestoreObject()).await()
+            emit(Resource.success(experience))
+        }.catch {
+            Log.e("ExperienceRepository", "updateExperience: $it")
+            emit(Resource.failed("An error occurred while updating experience"))
         }
 
-    override suspend fun addComment(experience: Experience, comment: Comment): Flow<Resource<Experience>> =
+    override suspend fun addComment(
+        experience: Experience,
+        comment: Comment
+    ): Flow<Resource<Experience>> =
         flow {
             emit(Resource.loading())
-            try {
-                val comments = experience.comments + comment
-                val firestoreComments = comments.map { it.toFirestoreObject() }
-                collection.document(experience.id!!).update("comments", firestoreComments).await()
-                emit(Resource.success(experience.copy(comments = comments)))
-            } catch (e: Exception) {
-                Log.e("ExperienceRepository", "addComment: $e")
-                emit(Resource.failed("An error occurred while adding comment"))
-            }
+            val firestoreComment = comment.toFirestoreObject()
+            collection.document(experience.id!!)
+                .update("comments", FieldValue.arrayUnion(firestoreComment)).await()
+            val updatedExperience = experience.copy(comments = experience.comments + comment)
+            emit(Resource.success(updatedExperience))
+        }.catch {
+            Log.e("ExperienceRepository", "addComment: $it")
+            emit(Resource.failed("An error occurred while adding comment"))
         }
 }
