@@ -44,4 +44,5 @@
 
     <string name="show_experiences">Show Experiences</string>
     <string name="mark_as_favorite">Mark as Favorite</string>
+    <string name="leave_a_comment_hint">Leave a comment...</string>
 </resources>

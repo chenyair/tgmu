@@ -10,6 +10,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.tgmu.tgmu.data.mapper.toFirestoreObject
 import com.tgmu.tgmu.data.mapper.toModel
 import com.tgmu.tgmu.data.remote.FirestoreExperience
+import com.tgmu.tgmu.domain.model.Comment
 import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.domain.repository.ExperienceRepository
 import com.tgmu.tgmu.utils.Resource
@@ -103,6 +104,20 @@ class ExperienceRepositoryImpl : ExperienceRepository {
             } catch (e: Exception) {
                 Log.e("ExperienceRepository", "updateExperience: $e")
                 emit(Resource.failed("An error occurred while updating experience"))
+            }
+        }
+
+    override suspend fun addComment(experience: Experience, comment: Comment): Flow<Resource<Experience>> =
+        flow {
+            emit(Resource.loading())
+            try {
+                val comments = experience.comments + comment
+                val firestoreComments = comments.map { it.toFirestoreObject() }
+                collection.document(experience.id!!).update("comments", firestoreComments).await()
+                emit(Resource.success(experience.copy(comments = comments)))
+            } catch (e: Exception) {
+                Log.e("ExperienceRepository", "addComment: $e")
+                emit(Resource.failed("An error occurred while adding comment"))
             }
         }
 }

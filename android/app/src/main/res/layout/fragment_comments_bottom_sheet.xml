@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llCommentsBottomSheet"
+    style="@style/Widget.Material3.BottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="540dp"
+    android:orientation="vertical"
+    android:translationZ="10dp"
+    app:cardCornerRadius="26dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_handle"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvComments"
+        android:layout_width="match_parent"
+        android:layout_height="440dp"
+        android:paddingHorizontal="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/llCommentInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/drag_handle" />
+
+    <LinearLayout
+        android:id="@+id/llCommentInput"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:background="@color/md_theme_surfaceContainerHighest"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+    <EditText
+        android:id="@+id/etNewComment"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:maxLines="1"
+        android:hint="@string/leave_a_comment_hint"
+        android:background="@color/md_theme_surfaceContainerHighest"
+        android:paddingHorizontal="12dp"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        android:textColor="@color/md_theme_primary"
+        android:textColorHint="@color/md_theme_secondary"/>
+
+        <ImageView
+            android:id="@+id/btnPostComment"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:tint="@color/md_theme_primary"
+            style="?android:buttonBarButtonStyle"
+            android:paddingBottom="5dp"
+            android:src="@drawable/ic_arrow_forward"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
