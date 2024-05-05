@@ -144,13 +144,6 @@
                         app:layout_constraintBottom_toBottomOf="@+id/ivExperiencePoster"
                         app:layout_constraintStart_toStartOf="parent">
 
-                        <TextView
-                            android:id="@+id/tvLikeCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
                         <ImageView
                             android:id="@+id/icLikes"
                             android:layout_width="wrap_content"
@@ -162,12 +155,10 @@
                             android:stateListAnimator="@animator/scale" />
 
                         <TextView
-                            android:id="@+id/tvCommentCount"
+                            android:id="@+id/tvLikeCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="0dp"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                         <ImageView
@@ -176,8 +167,17 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:padding="2dp"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="3dp"
                             android:scaleType="centerInside"
                             android:src="@drawable/ic_comment" />
+
+                        <TextView
+                            android:id="@+id/tvCommentCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
