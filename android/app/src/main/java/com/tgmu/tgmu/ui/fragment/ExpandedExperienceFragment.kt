@@ -6,9 +6,9 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.graphics.Color
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -63,6 +63,8 @@ class ExpandedExperienceFragment : Fragment() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             val commentAdapter = ExperienceCommentAdapter()
+            commentAdapter.differ.submitList(comments)
+
             binding.rvComments.apply {
                 adapter = commentAdapter
                 layoutManager = LinearLayoutManager(requireContext())
@@ -83,7 +85,24 @@ class ExpandedExperienceFragment : Fragment() {
                 }
             }
 
-            commentAdapter.differ.submitList(comments)
+
+            binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+                val r = Rect()
+                binding.root.getWindowVisibleDisplayFrame(r)
+                val screenHeight = binding.root.rootView.height
+
+                val keypadHeight = screenHeight - r.bottom
+                val params = binding.rvComments.layoutParams
+                val density = resources.displayMetrics.density
+
+                if (keypadHeight > screenHeight * 0.15) {
+                    params.height = (200 * density).toInt()
+                    binding.rvComments.layoutParams = params
+                } else {
+                    params.height = (400 * density).toInt()
+                    binding.rvComments.layoutParams = params
+                }
+            }
         }
 
         override fun onDestroyView() {
