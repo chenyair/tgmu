@@ -57,9 +57,10 @@ class UsersDetailsViewModel @Inject constructor(
     }
 
     fun updateUserDetails() {
+        if (_updateUserDetailsForm.value == null || !isUpdateUserDetailsFormValid()) return
+
         viewModelScope.launch {
             val updatedUserDetails = _updateUserDetailsForm.value!!.toUserDetails()
-            // TODO: Validate updatedUserDetails
 
             userDetailsRepository.updateUserDetails(updatedUserDetails).collect {
                 Log.d("UsersDetailsViewModel", "updateUserDetails: $it")
@@ -87,6 +88,10 @@ class UsersDetailsViewModel @Inject constructor(
     fun startUpdateUserDetailsForm(userDetails: UserDetails) {
         _updateUserDetailsForm.value =
             UpdateUserDetailsForm(userDetails.fullName, userDetails.birthdate, userDetails.email)
+    }
+
+    fun isUpdateUserDetailsFormValid(): Boolean {
+        return _updateUserDetailsForm.value!!.fullName.isNotBlank() && _updateUserDetailsForm.value!!.birthdate != null
     }
 
     fun logOut() {

@@ -115,29 +115,37 @@ class ProfileFragment : Fragment() {
             }
 
             btnSave.setOnClickListener {
-                usersDetailsViewModel.updateUserDetails()
+                if (usersDetailsViewModel.isUpdateUserDetailsFormValid()) {
+                    usersDetailsViewModel.updateUserDetails()
 
-                usersDetailsViewModel.userDetailsUpdate.observe(viewLifecycleOwner) {
-                    when (it) {
-                        is Resource.Loading -> {
-                            lpiUpdateProfile.visibility = View.VISIBLE
-                        }
+                    usersDetailsViewModel.userDetailsUpdate.observe(viewLifecycleOwner) {
+                        when (it) {
+                            is Resource.Loading -> {
+                                lpiUpdateProfile.visibility = View.VISIBLE
+                            }
 
-                        is Resource.Success -> {
-                            dialog.dismiss()
-                            setupUserDetails(format)
-                        }
+                            is Resource.Success -> {
+                                dialog.dismiss()
+                                setupUserDetails(format)
+                            }
 
-                        is Resource.Failed -> {
-                            dialog.dismiss()
-                            Snackbar.make(
-                                binding.root,
-                                getString(R.string.update_failed),
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                            Log.e("ProfileFragment", "onViewCreated: ${it.message}")
+                            is Resource.Failed -> {
+                                dialog.dismiss()
+                                Snackbar.make(
+                                    binding.root,
+                                    getString(R.string.update_failed),
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                                Log.e("ProfileFragment", "onViewCreated: ${it.message}")
+                            }
                         }
                     }
+                } else {
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.fill_all_fields),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
             btnCancel.setOnClickListener {
