@@ -66,9 +66,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="@+id/chipExperienceTimeAgo"
-                app:layout_constraintEnd_toEndOf="@+id/ivExperiencePoster"
-                app:layout_constraintStart_toStartOf="@+id/ivExperiencePoster"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/chipExperienceTimeAgo">
+
+                <ImageView
+                    android:id="@+id/icLikes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="2dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_like"
+                    android:stateListAnimator="@animator/scale" />
 
                 <TextView
                     android:id="@+id/tvLikeCount"
@@ -78,32 +87,22 @@
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                 <ImageView
-                    android:id="@+id/icLikes"
+                    android:id="@+id/icComments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:padding="2dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="3dp"
                     android:scaleType="centerInside"
-                    android:stateListAnimator="@animator/scale"
-                    android:src="@drawable/ic_like" />
+                    android:src="@drawable/ic_comment" />
 
                 <TextView
                     android:id="@+id/tvCommentCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="0dp"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                <ImageView
-                    android:id="@+id/icComments"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="2dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_comment" />
 
             </LinearLayout>
 
