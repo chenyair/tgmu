@@ -21,12 +21,14 @@ import com.tgmu.tgmu.ui.adapters.CompactExperienceAdapter
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
 import com.tgmu.tgmu.ui.viewmodel.ExperienceViewModel
 import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
+import com.tgmu.tgmu.ui.viewmodel.UsersDetailsViewModel
 import com.tgmu.tgmu.utils.Constants
 import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {

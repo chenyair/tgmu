@@ -41,6 +41,8 @@
             android:background="@color/md_theme_surfaceContainerHighest"
             android:hint="@string/leave_a_comment_hint"
             android:maxLines="1"
+            android:inputType="text"
+            android:scrollHorizontally="true"
             android:paddingHorizontal="12dp"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             android:textColor="@color/md_theme_primary"
