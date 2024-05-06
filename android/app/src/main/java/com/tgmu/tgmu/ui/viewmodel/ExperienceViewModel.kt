@@ -172,6 +172,8 @@ class ExperienceViewModel @Inject constructor(
                     list.map { exp -> if (exp.id == experience.id) experience else exp }
                 }
             }
+
+            _experienceForm.postValue(ExperienceForm())
         }
     }
 

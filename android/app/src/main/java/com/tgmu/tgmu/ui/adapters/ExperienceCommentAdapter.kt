@@ -1,13 +1,21 @@
 package com.tgmu.tgmu.ui.adapters
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.ItemExperienceCommentBinding
 import com.tgmu.tgmu.domain.model.Comment
+import com.tgmu.tgmu.domain.model.PopulatedComment
 import org.ocpsoft.prettytime.PrettyTime
 import java.util.Date
 import java.util.Locale
@@ -16,12 +24,18 @@ class ExperienceCommentAdapter : RecyclerView.Adapter<ExperienceCommentAdapter.V
     inner class ViewHolder(var binding: ItemExperienceCommentBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    private val differCallback = object : DiffUtil.ItemCallback<Comment>() {
-        override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
-            return oldItem.user_id == newItem.user_id && oldItem.createdAt == newItem.createdAt
+    private val differCallback = object : DiffUtil.ItemCallback<PopulatedComment>() {
+        override fun areItemsTheSame(
+            oldItem: PopulatedComment,
+            newItem: PopulatedComment
+        ): Boolean {
+            return oldItem.userId == newItem.userId && oldItem.createdAt == newItem.createdAt
         }
 
-        override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean {
+        override fun areContentsTheSame(
+            oldItem: PopulatedComment,
+            newItem: PopulatedComment
+        ): Boolean {
             return oldItem == newItem
         }
     }
@@ -42,11 +56,15 @@ class ExperienceCommentAdapter : RecyclerView.Adapter<ExperienceCommentAdapter.V
         val comment = differ.currentList[position]
         holder.binding.apply {
             tvComment.text = comment.text
-            tvUserName.text = comment.user_id
+            tvUserName.text = comment.userName
             tvTimeAgo.text = formatToTimeAgo(comment.createdAt)
-            Glide.with(root)
-                .load("https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg")
+            val context = holder.itemView.context
+            val defaultAvatar =
+                generateInitialsBitmap(context, comment.userName)
+            Glide.with(context)
+                .load(defaultAvatar)
                 .into(civProfileImage)
+            civProfileImage.bringToFront()
         }
     }
 
@@ -55,6 +73,27 @@ class ExperienceCommentAdapter : RecyclerView.Adapter<ExperienceCommentAdapter.V
         return prettyTime.format(time)
     }
 
+    private fun generateInitialsBitmap(
+        context: Context,
+        fullName: String
+    ): Bitmap {
+        val initials = fullName.split(" ").map { it.first() }.joinToString("").uppercase()
+        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = Paint().apply {
+            color = Color.WHITE
+            textSize = 40f
+            textAlign = Paint.Align.CENTER
+        }
+        canvas.drawColor(ContextCompat.getColor(context, R.color.md_theme_tertiaryContainer))
+        canvas.drawText(
+            if (initials.length <= 2) initials else "${initials.first()}${initials.last()}",
+            bitmap.width / 2f,
+            bitmap.height / 2f - (paint.descent() + paint.ascent()) / 2,
+            paint
+        )
+        return bitmap
+    }
 
     override fun getItemCount(): Int = differ.currentList.size
 }
