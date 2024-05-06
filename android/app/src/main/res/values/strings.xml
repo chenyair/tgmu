@@ -43,7 +43,8 @@
 
     <string name="show_experiences">Show experiences</string>
     <string name="mark_as_favorite">Mark as favorite</string>
-
+    <string name="movie_removed_from_favorites">Movie removed from favorites</string>
+    <string name="movie_marked_as_favorite">Movie marked as favorite</string>
     <string name="dark_mode">Dark mode</string>
     <string name="edit_profile">Edit profile</string>
     <string name="edit_your_profile">Edit your profile</string>

@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.Snackbar
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentMovieDetailsBinding
 import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
@@ -104,6 +105,11 @@ class MovieDetailsFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.markAsFavorite -> {
                     moviesViewModel.toggleFavorite(movie)
+                    Snackbar.make(
+                        binding.root,
+                        getString(if (movie.is_favorite) R.string.movie_removed_from_favorites else R.string.movie_marked_as_favorite),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                     true
                 }
 
