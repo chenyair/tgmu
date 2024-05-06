@@ -8,5 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface UserDetailsRepository {
 
     suspend fun getUserDetails(email: String): Flow<Resource<UserDetails>>
+    suspend fun getUserDetailsByAuthUid(authUid: String): Flow<Resource<UserDetails>>
     suspend fun createUserDetails(userDetails: UserDetails): Flow<Resource<UserDetails>>
 }

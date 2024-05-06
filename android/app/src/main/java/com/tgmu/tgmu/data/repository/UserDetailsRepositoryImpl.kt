@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import com.tgmu.tgmu.data.mapper.toFirestoreObject
+import kotlinx.coroutines.flow.catch
 
 class UserDetailsRepositoryImpl : UserDetailsRepository {
     private lateinit var collection: CollectionReference
@@ -41,6 +42,23 @@ class UserDetailsRepositoryImpl : UserDetailsRepository {
             emit(Resource.failed("An error communicating with firebase occurred"))
         }
     }
+
+    override suspend fun getUserDetailsByAuthUid(authUid: String): Flow<Resource<UserDetails>> =
+        flow {
+            emit(Resource.loading())
+            val result = collection.whereEqualTo("auth_uid", authUid).get().await()
+            if (result.isEmpty) {
+                emit(Resource.failed("User not found"))
+            } else {
+                Log.d("UserDetailsRepository", "getUserDetails: ${result.documents.first()}")
+                val userDetails =
+                    result.documents.first().toObject(FirestoreUserDetails::class.java)
+                emit(Resource.success(userDetails!!.toModel()))
+            }
+        }.catch {
+            Log.e("UserDetailsRepository", "getUserDetails: $it")
+            emit(Resource.failed("An error communicating with firebase occurred"))
+        }
 
     override suspend fun createUserDetails(userDetails: UserDetails): Flow<Resource<UserDetails>> =
         flow {

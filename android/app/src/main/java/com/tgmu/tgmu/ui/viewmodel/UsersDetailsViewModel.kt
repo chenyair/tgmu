@@ -20,7 +20,6 @@ class UsersDetailsViewModel @Inject constructor(
 
     private var _currentUserDetails = MutableLiveData<Resource<UserDetails>>()
 
-
     val currentUserDetails: LiveData<Resource<UserDetails>>
         get() = _currentUserDetails
 
@@ -41,9 +40,18 @@ class UsersDetailsViewModel @Inject constructor(
         _currentUserDetails.value = Resource.failed(message)
     }
 
-    fun createAndUpdateUserDetails(email: String, fullName: String, birthdate: Date) {
+    fun createAndUpdateUserDetails(
+        email: String,
+        fullName: String,
+        birthdate: Date,
+        authUid: String
+    ) {
         viewModelScope.launch {
-            userDetailsRepository.createUserDetails(UserDetails(email, fullName, birthdate))
+            userDetailsRepository.createUserDetails(
+                UserDetails(
+                    email, fullName, birthdate, authUid
+                )
+            )
                 .collect {
                     Log.d("UsersDetailsViewModel", "createUserDetails: $it")
                     _currentUserDetails.value = it

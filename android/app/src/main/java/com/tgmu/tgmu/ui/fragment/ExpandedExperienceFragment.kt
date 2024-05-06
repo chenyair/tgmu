@@ -9,10 +9,13 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -26,22 +29,32 @@ import com.tgmu.tgmu.databinding.FragmentCommentsBottomSheetBinding
 import com.tgmu.tgmu.databinding.FragmentExpandedExperienceBinding
 import com.tgmu.tgmu.domain.model.Comment
 import com.tgmu.tgmu.domain.model.Experience
+import com.tgmu.tgmu.domain.model.PopulatedComment
 import com.tgmu.tgmu.ui.adapters.ExperienceCommentAdapter
+import com.tgmu.tgmu.ui.viewmodel.CommentsViewModel
 import com.tgmu.tgmu.ui.viewmodel.ExperienceViewModel
+import com.tgmu.tgmu.ui.viewmodel.UsersDetailsViewModel
 import com.tgmu.tgmu.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import org.ocpsoft.prettytime.PrettyTime
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ExpandedExperienceFragment : Fragment() {
+
+    @AndroidEntryPoint
     class ExperienceCommentsBottomSheet(
-        val comments: List<Comment>,
+        val comments: List<PopulatedComment>,
         val onNewComment: (Comment) -> Unit
     ) : BottomSheetDialogFragment() {
         private var _binding: FragmentCommentsBottomSheetBinding? = null
         private val binding get() = _binding!!
+
+        @Inject
+        lateinit var usersDetailsViewModel: UsersDetailsViewModel
+
         private val auth: FirebaseAuth = Firebase.auth
 
         override fun onStart() {
@@ -59,32 +72,45 @@ class ExpandedExperienceFragment : Fragment() {
             return binding.root
         }
 
-
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             val commentAdapter = ExperienceCommentAdapter()
-            commentAdapter.differ.submitList(comments)
 
             binding.rvComments.apply {
                 adapter = commentAdapter
                 layoutManager = LinearLayoutManager(requireContext())
             }
 
-            binding.apply {
-                btnPostComment.setOnClickListener {
-                    val comment = Comment(
-                        auth.currentUser!!.uid,
-                        etNewComment.text.toString(),
-                        Date()
-                    )
-                    val comments = commentAdapter.differ.currentList
-                    commentAdapter.differ.submitList(comments + comment)
+            commentAdapter.differ.submitList(comments.asReversed()) {
+                binding.apply {
+                    rvComments.apply {
+                        adapter = commentAdapter
+                        layoutManager = LinearLayoutManager(requireContext())
+                    }
 
-                    etNewComment.text.clear()
-                    onNewComment(comment)
+                    btnPostComment.setOnClickListener {
+                        val comment = Comment(
+                            auth.currentUser!!.uid,
+                            etNewComment.text.toString(),
+                            Date()
+                        )
+                        val currComments = commentAdapter.differ.currentList
+                        val currUser =
+                            usersDetailsViewModel.currentUserDetails.value as Resource.Success
+                        val newPopulatedComment = PopulatedComment(
+                            comment.userId,
+                            comment.text,
+                            comment.createdAt,
+                            currUser.data.fullName
+                        )
+                        commentAdapter.differ.submitList(listOf(newPopulatedComment) + currComments) {
+                            binding.rvComments.layoutManager!!.scrollToPosition(0)
+                        }
+                        etNewComment.text.clear()
+                        onNewComment(comment)
+                    }
                 }
             }
-
 
             binding.root.viewTreeObserver.addOnGlobalLayoutListener {
                 val r = Rect()
@@ -119,6 +145,7 @@ class ExpandedExperienceFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
     private val experienceViewModel: ExperienceViewModel by activityViewModels()
+    private val commentsViewModel: CommentsViewModel by viewModels()
 
     private val expandedExperienceArgs: ExpandedExperienceFragmentArgs by navArgs()
 
@@ -138,6 +165,7 @@ class ExpandedExperienceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = Firebase.auth
+        commentsViewModel.populateComments(expandedExperienceArgs.experience.comments)
 
         binding.apply {
             cvBack.setOnClickListener {
@@ -193,19 +221,27 @@ class ExpandedExperienceFragment : Fragment() {
     }
 
     private fun setupCommentsView() {
-        val experience = expandedExperienceArgs.experience
-        val commentsBottomSheetDialog = ExperienceCommentsBottomSheet(experience.comments) {
-            experienceViewModel.addComment(experience.id!!, it)
-        }
+        commentsViewModel.currExperienceComments.observe(viewLifecycleOwner) { populatedComments ->
+            experienceViewModel.latestExperiences.observe(viewLifecycleOwner) { latestExperiences ->
+                if (latestExperiences is Resource.Success) {
+                    val experience =
+                        latestExperiences.data.find { it.id == expandedExperienceArgs.experience.id }!!
+                    if (populatedComments is Resource.Success) {
+                        val commentsBottomSheetDialog =
+                            ExperienceCommentsBottomSheet(populatedComments.data) {
+                                experienceViewModel.addComment(experience.id!!, it)
+                            }
 
-        binding.apply {
-            tvCommentCount.text = experience.comments.size.toString()
-            binding.apply {
-                icComments.setOnClickListener { _ ->
-                    commentsBottomSheetDialog.show(
-                        requireActivity().supportFragmentManager,
-                        ExperienceCommentsBottomSheet.TAG
-                    )
+                        binding.apply {
+                            tvCommentCount.text = experience.comments.size.toString()
+                            icComments.setOnClickListener { _ ->
+                                commentsBottomSheetDialog.show(
+                                    requireActivity().supportFragmentManager,
+                                    ExperienceCommentsBottomSheet.TAG
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

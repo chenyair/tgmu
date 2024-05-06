@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:minHeight="70dp"
+    android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/civProfileImage"
@@ -27,8 +28,8 @@
         android:id="@+id/tvTimeAgo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:alpha="0.6"
         android:layout_marginTop="-3dp"
+        android:alpha="0.6"
         android:text="time ago"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         android:textColor="@color/md_theme_onSecondaryFixedVariant"
