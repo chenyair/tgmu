@@ -45,4 +45,12 @@
     <string name="show_experiences">Show Experiences</string>
     <string name="mark_as_favorite">Mark as Favorite</string>
     <string name="leave_a_comment_hint">Leave a comment...</string>
+
+    <string name="dark_mode">Dark mode</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="edit_your_profile">Edit your profile</string>
+    <string name="update_failed">Updating the user profile failed. Please try again</string>
+    <string name="fill_all_fields">Some fields are empty please make sure all fields are set</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 </resources>
