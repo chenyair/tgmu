@@ -56,4 +56,23 @@ class UserDetailsRepositoryImpl : UserDetailsRepository {
                 emit(Resource.failed("An error communicating with firebase occurred"))
             }
         }
+
+    override suspend fun updateUserDetails(userDetails: UserDetails): Flow<Resource<UserDetails>> =
+        flow {
+            emit(Resource.loading())
+            try {
+                val result = collection.whereEqualTo("email", userDetails.email).get().await()
+                if (result.isEmpty) {
+                    emit(Resource.failed("User not found"))
+                } else {
+                    val docId = result.documents.first().id
+                    collection.document(docId).set(userDetails.toFirestoreObject()).await()
+                    emit(Resource.success(userDetails))
+                }
+            } catch (e: Exception) {
+                Log.e("UserDetailsRepository", "updateUserDetails: $e")
+                emit(Resource.failed("An error communicating with firebase occurred"))
+            }
+
+        }
 }

@@ -9,4 +9,5 @@ interface UserDetailsRepository {
 
     suspend fun getUserDetails(email: String): Flow<Resource<UserDetails>>
     suspend fun createUserDetails(userDetails: UserDetails): Flow<Resource<UserDetails>>
+    suspend fun updateUserDetails(userDetails: UserDetails): Flow<Resource<UserDetails>>
 }
