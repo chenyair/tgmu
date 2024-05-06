@@ -24,18 +24,10 @@
         android:name="com.tgmu.tgmu.ui.fragment.ExperiencesFragment"
         android:label="fragment_experiences"
         tools:layout="@layout/fragment_experiences">
-
         <action
-            android:id="@+id/experienceView_to_addExperience"
-            app:destination="@id/addExperience" />
-
+            android:id="@+id/experienceView_to_experienceForm"
+            app:destination="@id/experienceForm" />
     </fragment>
-
-    <fragment
-        android:id="@+id/addExperience"
-        android:name="com.tgmu.tgmu.ui.fragment.AddExperienceFragment"
-        android:label="fragment_add_experience"
-        tools:layout="@layout/fragment_add_experience" />
 
     <fragment
         android:id="@+id/movieDetailsFragment"
@@ -45,5 +37,16 @@
         <argument
             android:name="movie"
             app:argType="com.tgmu.tgmu.domain.model.Movie" />
+    </fragment>
+    <fragment
+        android:id="@+id/experienceForm"
+        android:name="com.tgmu.tgmu.ui.fragment.ExperienceFormFragment"
+        android:label="fragment_experience_form"
+        tools:layout="@layout/fragment_experience_form" >
+        <argument
+            android:name="previewExperience"
+            app:nullable="true"
+            android:defaultValue="@null"
+            app:argType="com.tgmu.tgmu.domain.model.Experience" />
     </fragment>
 </navigation>

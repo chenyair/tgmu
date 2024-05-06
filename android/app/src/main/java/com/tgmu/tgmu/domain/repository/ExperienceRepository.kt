@@ -17,6 +17,4 @@ interface ExperienceRepository {
     suspend fun deleteExperience(experience: Experience): Flow<Resource<String>>
 
     suspend fun updateExperience(experience: Experience): Flow<Resource<Experience>>
-
-    suspend fun uploadImage(imageUri: Uri): Flow<Resource<String>>
 }

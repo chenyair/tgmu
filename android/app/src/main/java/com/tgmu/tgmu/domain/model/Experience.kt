@@ -1,7 +1,10 @@
 package com.tgmu.tgmu.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.util.Date
 
+@Parcelize
 data class Experience(
     val id: String?,
     val title: String,
@@ -14,4 +17,4 @@ data class Experience(
     val imgUrl: String,
     val comments: List<Comment>,
     val createdAt: Date,
-)
+) : Parcelable

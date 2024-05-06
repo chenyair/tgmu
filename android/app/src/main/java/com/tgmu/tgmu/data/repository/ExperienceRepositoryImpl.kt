@@ -22,7 +22,7 @@ import javax.inject.Inject
 import kotlin.math.exp
 
 class ExperienceRepositoryImpl : ExperienceRepository {
-    private var collection: CollectionReference = Firebase.firestore.collection("experiences")
+    private val collection: CollectionReference = Firebase.firestore.collection("experiences")
 
     override suspend fun getExperiences(): Flow<Resource<List<Experience>>> = flow {
         emit(Resource.loading())
@@ -107,18 +107,4 @@ class ExperienceRepositoryImpl : ExperienceRepository {
             }
         }
 
-    override suspend fun uploadImage(imageUri: Uri): Flow<Resource<String>> = flow {
-        emit(Resource.loading())
-        val ref = FirebaseStorage.getInstance().reference.child("images/${UUID.randomUUID()}")
-
-        try {
-            val response = ref.putFile(imageUri).await()
-            response.metadata?.reference?.downloadUrl?.await()?.toString()?.let {
-                emit(Resource.success(it))
-            } ?: throw Exception("Could not access metadata.reference.downloadUrl")
-        } catch (e: Exception) {
-            Log.e("ExperienceRepository", "uploadImage: $e")
-            emit(Resource.failed("An error occurred while uploading image"))
-        }
-    }
 }
