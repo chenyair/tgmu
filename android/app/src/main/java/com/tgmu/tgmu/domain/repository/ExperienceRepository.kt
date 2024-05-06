@@ -1,6 +1,7 @@
 package com.tgmu.tgmu.domain.repository
 
 import android.net.Uri
+import com.tgmu.tgmu.domain.model.Comment
 import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.utils.Resource
 import kotlinx.coroutines.flow.Flow
@@ -17,4 +18,6 @@ interface ExperienceRepository {
     suspend fun deleteExperience(experience: Experience): Flow<Resource<String>>
 
     suspend fun updateExperience(experience: Experience): Flow<Resource<Experience>>
+
+    suspend fun addComment(experience: Experience, comment: Comment): Flow<Resource<Experience>>
 }

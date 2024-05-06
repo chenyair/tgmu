@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.tgmu.tgmu.domain.model.Comment
 import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.domain.model.ExperienceForm
 import com.tgmu.tgmu.domain.model.Movie
@@ -106,6 +107,20 @@ class ExperienceViewModel @Inject constructor(
             }
         }
 
+    fun addComment(experienceId: String, comment: Comment) =
+        viewModelScope.launch {
+            val experience = (latestExperiences.value as Resource.Success).data.find { it.id == experienceId }!!
+            experienceRepository.addComment(experience, comment).collect {
+                if (it is Resource.Success) {
+                    val updatedExperience = experience.copy(comments = it.data.comments)
+                    val updatedExperiences = (latestExperiences.value as Resource.Success).data.map { exp ->
+                        if (exp.id == updatedExperience.id) updatedExperience else exp
+                    }
+                    _latestExperiences.postValue(Resource.Success(updatedExperiences))
+                }
+            }
+        }
+
     fun postExperience(initialExperience: Experience? = null) {
         if (!isReadyToUpload()) return _uploadStatus.postValue(Resource.failed("Please fill all fields"))
         viewModelScope.launch {
@@ -157,6 +172,8 @@ class ExperienceViewModel @Inject constructor(
                     list.map { exp -> if (exp.id == experience.id) experience else exp }
                 }
             }
+
+            _experienceForm.postValue(ExperienceForm())
         }
     }
 

@@ -202,7 +202,8 @@ class LoginActivity : AppCompatActivity() {
                                         usersDetailsViewModel.createAndUpdateUserDetails(
                                             auth.currentUser?.email!!,
                                             auth.currentUser?.displayName!!,
-                                            Date()
+                                            Date(),
+                                            auth.currentUser?.uid!!
                                         )
                                     } else {
                                         usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)
