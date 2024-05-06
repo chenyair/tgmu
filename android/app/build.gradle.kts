@@ -118,8 +118,6 @@ dependencies {
 
     // Time formatter
     implementation("org.ocpsoft.prettytime:prettytime:4.0.1.Final")
-
-    implementation("de.hdodenhof:circleimageview:3.1.0")
 }
 
 // Allow references to generated code
