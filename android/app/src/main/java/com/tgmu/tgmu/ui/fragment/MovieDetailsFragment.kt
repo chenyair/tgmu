@@ -113,11 +113,6 @@ class MovieDetailsFragment : Fragment() {
                     true
                 }
 
-                R.id.showExperiences -> {
-                    // Handle show experiences action
-                    true
-                }
-
                 else -> false
             }
         }
