@@ -128,11 +128,13 @@ class RegisterActivity : AppCompatActivity() {
                     val birthdate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(
                         binding.tiBirthdate.editText?.text.toString()
                     )!!
+                    val authUid = auth.currentUser?.uid!!
 
                     usersDetailsViewModel.createAndUpdateUserDetails(
                         email,
                         fullName,
-                        birthdate
+                        birthdate,
+                        authUid
                     )
                 } else {
                     val exception = task.exception

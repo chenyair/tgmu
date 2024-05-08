@@ -8,7 +8,7 @@ import com.tgmu.tgmu.domain.model.Experience
 
 fun FirestoreExperience.Comment.toModel(): Comment =
     Comment(
-        user_id = userId,
+        userId = userId,
         text = text,
         createdAt = createdAt
     )
@@ -29,7 +29,7 @@ fun FirestoreExperience.toModel(): Experience =
     )
 
 fun Comment.toFirestoreObject(): FirestoreExperience.Comment = FirestoreExperience.Comment(
-    userId = user_id,
+    userId = userId,
     text = text,
     createdAt = createdAt
 )

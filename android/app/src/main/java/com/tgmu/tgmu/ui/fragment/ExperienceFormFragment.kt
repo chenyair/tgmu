@@ -1,14 +1,17 @@
 package com.tgmu.tgmu.ui.fragment
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import com.bumptech.glide.request.target.Target
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -16,11 +19,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
 import com.tgmu.tgmu.R
-import com.tgmu.tgmu.databinding.FragmentAddExperienceBinding
+import com.tgmu.tgmu.databinding.FragmentExperienceFormBinding
+import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
 import com.tgmu.tgmu.ui.viewmodel.ExperienceViewModel
 import com.tgmu.tgmu.ui.viewmodel.MoviesViewModel
@@ -32,27 +41,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AddExperienceFragment : Fragment() {
-    private var _binding: FragmentAddExperienceBinding? = null
-    private val binding get() = _binding!!
+class ExperienceFormFragment : Fragment() {
+    private var _binding: FragmentExperienceFormBinding? = null
+    private val binding get(): FragmentExperienceFormBinding = _binding!!
     private val experienceViewModel: ExperienceViewModel by activityViewModels()
     private val moviesViewModel: MoviesViewModel by viewModels()
+    private val experienceFormArgs: ExperienceFormFragmentArgs by navArgs()
 
     private val selectImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 lifecycleScope.launch {
-                    experienceViewModel.selectImage(it)
-                }
-
-                // Show the uploaded image with option to replace
-                binding.apply {
-                    fabUploadImage.visibility = View.GONE
-                    fabEditImage.visibility = View.VISIBLE
-                    ivExperience.apply {
-                        visibility = View.VISIBLE
-                        setImageURI(it)
-                    }
+                    experienceViewModel.changeExperienceFormData(imgFileUri = it)
+                    showImageFromFile(it)
                 }
             }
         }
@@ -62,7 +63,7 @@ class AddExperienceFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentAddExperienceBinding.inflate(inflater, container, false)
+        _binding = FragmentExperienceFormBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -83,11 +84,24 @@ class AddExperienceFragment : Fragment() {
                 false
             }
 
+            if (experienceFormArgs.previewExperience != null) {
+                val experience = experienceFormArgs.previewExperience!!
+                experienceViewModel.changeExperienceFormData(
+                    title = experience.title,
+                    description = experience.description,
+                    movieName = experience.movieName,
+                    movieId = experience.movieId,
+                    moviePoster = experience.moviePoster,
+                    existingImgUrl = experience.imgUrl
+                )
+                setupEditView(experienceFormArgs.previewExperience!!)
+            }
+
             fabBack.setOnClickListener {
                 findNavController().popBackStack()
             }
             fabPost.setOnClickListener {
-                experienceViewModel.addExperience()
+                experienceViewModel.postExperience(experienceFormArgs.previewExperience)
                 watchExperienceUpload()
             }
             fabUploadImage.setOnClickListener {
@@ -97,19 +111,14 @@ class AddExperienceFragment : Fragment() {
                 selectImageLauncher.launch("image/*")
             }
             tiTitle.addTextChangedListener {
-                experienceViewModel.setTitle(it.toString())
+                experienceViewModel.changeExperienceFormData(title = it.toString())
             }
             tiDescription.addTextChangedListener {
-                experienceViewModel.setDescription(it.toString())
+                experienceViewModel.changeExperienceFormData(description = it.toString())
             }
             experienceViewModel.apply {
-                val requiredValues = listOf(selectedImageUri, selectedMovie, title, description)
-                for (item in requiredValues) {
-                    item.observe(viewLifecycleOwner) { value ->
-                        if (value != null) {
-                            validateForm()
-                        }
-                    }
+                experienceForm.observe(viewLifecycleOwner) { value ->
+                    validateForm()
                 }
             }
         }
@@ -122,10 +131,60 @@ class AddExperienceFragment : Fragment() {
                 clAddExperienceForm.visibility = View.VISIBLE
             }
 
-            experienceViewModel.selectMovie(it)
+            experienceViewModel.changeExperienceFormData(
+                moviePoster = it.poster_path,
+                movieId = it.id,
+                movieName = it.title
+            )
         }
 
         setupSearchView(searchAdapter)
+    }
+
+    private fun setupEditView(experience: Experience) {
+        binding.apply {
+            tiTitle.setText(experience.title)
+            tvPostExperience.setText(getString(R.string.edit_experience))
+            tiDescription.setText(experience.description)
+            fabUploadImage.visibility = View.GONE
+            fabEditImage.visibility = View.VISIBLE
+            cpiExperienceImage.visibility = View.VISIBLE
+            Glide
+                .with(requireContext())
+                .load(experience.imgUrl)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        ivExperience.visibility = View.GONE
+                        cpiExperienceImage.visibility = View.GONE
+                        Toast.makeText(requireContext(), "Error loading image", Toast.LENGTH_SHORT)
+                            .show()
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        cpiExperienceImage.visibility = View.GONE
+                        ivExperience.visibility = View.VISIBLE
+                        return false
+                    }
+                })
+                .fitCenter()
+                .into(ivExperience)
+            ivExperience.visibility = View.VISIBLE
+            sbMovie.setText(experience.movieName)
+            llNoSelectionPlaceholder.visibility = View.GONE
+            clAddExperienceForm.visibility = View.VISIBLE
+        }
     }
 
     private fun validateForm() {
@@ -141,7 +200,7 @@ class AddExperienceFragment : Fragment() {
     }
 
     private fun watchExperienceUpload() =
-        experienceViewModel.uploadedExperience.observe(viewLifecycleOwner)
+        experienceViewModel.uploadStatus.observe(viewLifecycleOwner)
         {
             when (it) {
                 is Resource.Loading -> {
@@ -167,6 +226,17 @@ class AddExperienceFragment : Fragment() {
                 }
             }
         }
+
+    private fun showImageFromFile(uri: Uri) {
+        binding.apply {
+            fabUploadImage.visibility = View.GONE
+            fabEditImage.visibility = View.VISIBLE
+            ivExperience.apply {
+                visibility = View.VISIBLE
+                setImageURI(uri)
+            }
+        }
+    }
 
     private fun setupSearchView(
         searchAdapter: MovieSearchSuggestionsAdapter,
