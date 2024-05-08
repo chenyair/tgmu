@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/showExperiences"
-        android:icon="@drawable/ic_confirmation_number"
-        android:title="@string/show_experiences" />
-    <item
         android:id="@+id/markAsFavorite"
         android:title="@string/mark_as_favorite" />
 </menu>
