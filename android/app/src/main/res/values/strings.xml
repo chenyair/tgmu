@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TGMU</string>
+    <string name="title_discover">Discover</string>
+    <string name="title_experiences">Experiences</string>
+    <string name="title_profile">Profile</string>
+    <string name="search_movie">Search for a movie</string>
+
+    <string name="show_popular_movies">Show popular movies</string>
+    <string name="show_posters_containing">Show posters containing \"%1$s\"</string>
+
+    <string name="show_recent_experiences">Show recent experiences</string>
+    <string name="no_experiences_for_movie">There are no experiences for \"%1$s\"</string>
+
+    <string name="post_experience">Post experience</string>
+    <string name="edit_experience">Edit experience</string>
+    <string name="no_selection_placeholder">Start by selecting a movie</string>
+    <string name="describe_experience_hint">Describe your experience…</string>
+    <string name="title_experience_hint">Give a title to your experience</string>
+
+    <string name="upload_image">Upload an image</string>
+
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="full_name">Full Name</string>
+    <string name="birthdate">Birthdate</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="or">or</string>
+    <string name="register">Register</string>
+    <string name="required_email">Email is required</string>
+    <string name="required_password">Password is required</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="invalid_password_length">Password must be at least 8 characters</string>
+    <string name="email_password_sign_in_failed">Sign in failed. Please check your email and password.</string>
+    <string name="google_sign_in_failed">Sign in with google failed. Please try again.</string>
+
+    <string name="back">Back</string>
+    <string name="register_failed">Registration failed. Please try again.</string>
+    <string name="something_went_wrong">Something went wrong. Please try again.</string>
+
+    <string name="transition_name_movie_poster">moviePosterTransition</string>
+
+    <string name="show_experiences">Show Experiences</string>
+    <string name="mark_as_favorite">Mark as Favorite</string>
+    <string name="leave_a_comment_hint">Leave a comment...</string>
+
+    <string name="dark_mode">Dark mode</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="edit_your_profile">Edit your profile</string>
+    <string name="update_failed">Updating the user profile failed. Please try again</string>
+    <string name="fill_all_fields">Some fields are empty please make sure all fields are set</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+</resources>
