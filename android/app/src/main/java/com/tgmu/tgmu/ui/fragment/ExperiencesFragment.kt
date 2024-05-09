@@ -112,12 +112,15 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                             }
                         }
                         if (experiences.isEmpty()) {
+                            val errorText = if (filterStatus) getString(R.string.no_personal_experiences)
+                            else getString(
+                                R.string.no_experiences_for_movie,
+                                binding.sbMovie.text.toString()
+                            )
+
                             Snackbar.make(
                                 requireView(),
-                                getString(
-                                    R.string.no_experiences_for_movie,
-                                    binding.sbMovie.text.toString()
-                                ),
+                                errorText,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
