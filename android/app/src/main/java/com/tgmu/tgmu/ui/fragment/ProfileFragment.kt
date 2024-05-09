@@ -5,15 +5,18 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -42,11 +45,18 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
+
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
 
     @Inject
     lateinit var usersDetailsViewModel: UsersDetailsViewModel
+    private val selectImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                usersDetailsViewModel.changeUpdateUserDetailsFormData(imageUrl = it.toString())
+            }
+        }
 
 
     override fun onCreateView(
@@ -54,6 +64,7 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -97,6 +108,20 @@ class ProfileFragment : Fragment() {
             tiBirthdate.editText!!.setText(format.format(formData.birthdate))
             tiBirthdate.editText!!.addTextChangedListener { text ->
                 usersDetailsViewModel.changeUpdateUserDetailsFormData(birthdate = format.parse(text.toString()))
+            }
+
+            usersDetailsViewModel.updateUserDetailsForm.observe(viewLifecycleOwner) {
+                val defaultAvatar =
+                    generateInitialsBitmap(it.fullName)
+
+                Glide.with(this@ProfileFragment)
+                    .load(it.imageUrl)
+                    .error(defaultAvatar)
+                    .into(ivAvatarEdit)
+            }
+
+            ivAvatarEdit.setOnClickListener {
+                selectImageLauncher.launch("image/*")
             }
 
             val datePicker =
@@ -161,7 +186,7 @@ class ProfileFragment : Fragment() {
             val defaultAvatar =
                 generateInitialsBitmap(userDetails.fullName)
             Glide.with(this@ProfileFragment)
-                .load(auth.currentUser?.photoUrl)
+                .load(userDetails.imageUrl)
                 .error(defaultAvatar)
                 .into(ivAvatar)
             ivAvatar.bringToFront()

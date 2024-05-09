@@ -8,12 +8,14 @@ fun FirestoreUserDetails.toModel() = UserDetails(
     email = email!!,
     fullName = fullName!!,
     birthdate = birthdate!!,
-    authUid = authUid!!
+    authUid = authUid!!,
+    imageUrl = imageUrl!!
 )
 
 fun UserDetails.toFirestoreObject() = FirestoreUserDetails(
     email = email,
     fullName = fullName,
     birthdate = birthdate,
-    authUid = authUid
+    authUid = authUid,
+    imageUrl = imageUrl
 )

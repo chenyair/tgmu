@@ -101,7 +101,8 @@ class ExpandedExperienceFragment : Fragment() {
                             comment.userId,
                             comment.text,
                             comment.createdAt,
-                            currUser.data.fullName
+                            currUser.data.fullName,
+                            currUser.data.imageUrl
                         )
                         commentAdapter.differ.submitList(listOf(newPopulatedComment) + currComments) {
                             binding.rvComments.layoutManager!!.scrollToPosition(0)
@@ -296,7 +297,8 @@ class ExpandedExperienceFragment : Fragment() {
             val userBitMap =
                 generateInitialsBitmap(userDetails.fullName)
             Glide.with(this@ExpandedExperienceFragment)
-                .load(userBitMap)
+                .load(userDetails.imageUrl)
+                .error(userBitMap)
                 .into(civProfileImage)
             civProfileImage.bringToFront()
 
