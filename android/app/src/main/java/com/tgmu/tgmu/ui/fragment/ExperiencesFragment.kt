@@ -17,6 +17,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.tgmu.tgmu.R
 import com.tgmu.tgmu.databinding.FragmentExperiencesBinding
+import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.ui.adapters.CompactExperienceAdapter
 import com.tgmu.tgmu.ui.adapters.MovieSearchSuggestionsAdapter
 import com.tgmu.tgmu.ui.viewmodel.ExperienceViewModel
@@ -28,7 +29,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
@@ -55,6 +55,10 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
             findNavController().navigate(action)
         }
 
+        binding.btnSwitchExperienceView.setOnClickListener {
+            experienceViewModel.toggleFilterExperiences()
+        }
+
         val searchAdapter = MovieSearchSuggestionsAdapter {
             binding.sbMovie.setText(it.title)
             binding.svMovie.hide()
@@ -79,39 +83,57 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
     }
 
     private fun setupExperiencesList(experienceAdapter: CompactExperienceAdapter) {
-        experienceViewModel.latestExperiences.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Loading -> {
-                    binding.cpiExperienceList.visibility = View.VISIBLE
-                }
-
-                is Resource.Success -> {
-                    experienceAdapter.differ.submitList(it.data) {
-                        binding.cpiExperienceList.visibility = View.GONE
-                        experienceViewModel.uploadStatus.observe(viewLifecycleOwner) { status ->
-                            if (status is Resource.Success)
-                                binding.rvExperienceList.layoutManager!!.scrollToPosition(0)
-                        }
+        experienceViewModel.isExperiencesFiltered.observe(viewLifecycleOwner) { filterStatus ->
+            experienceViewModel.latestExperiences.observe(viewLifecycleOwner) {
+                when (it) {
+                    is Resource.Loading -> {
+                        binding.cpiExperienceList.visibility = View.VISIBLE
                     }
-                    if (it.data.isEmpty()) {
-                        Snackbar.make(
-                            requireView(),
-                            getString(
+
+                    is Resource.Success -> {
+                        var experiences: List<Experience>
+                        if (filterStatus) {
+                            experiences =
+                                it.data.filter { experience -> experience.userId == Firebase.auth.currentUser!!.uid }
+                            binding.btnSwitchExperienceView.text =
+                                getString(R.string.show_all_experiences)
+                        } else {
+                            experiences = it.data
+                            binding.btnSwitchExperienceView.text =
+                                getString(R.string.show_only_my_experiences)
+                        }
+
+                        experienceAdapter.differ.submitList(experiences) {
+                            binding.cpiExperienceList.visibility = View.GONE
+                            binding.rvExperienceList.layoutManager!!.scrollToPosition(0)
+                            experienceViewModel.uploadStatus.observe(viewLifecycleOwner) { status ->
+                                if (status is Resource.Success)
+                                    binding.rvExperienceList.layoutManager!!.scrollToPosition(0)
+                            }
+                        }
+                        if (experiences.isEmpty()) {
+                            val errorText = if (filterStatus) getString(R.string.no_personal_experiences)
+                            else getString(
                                 R.string.no_experiences_for_movie,
                                 binding.sbMovie.text.toString()
-                            ),
+                            )
+
+                            Snackbar.make(
+                                requireView(),
+                                errorText,
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+
+                    is Resource.Failed -> {
+                        binding.cpiExperienceList.visibility = View.GONE
+                        Snackbar.make(
+                            requireView(),
+                            it.message ?: getString(R.string.something_went_wrong),
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
-                }
-
-                is Resource.Failed -> {
-                    binding.cpiExperienceList.visibility = View.GONE
-                    Snackbar.make(
-                        requireView(),
-                        it.message ?: getString(R.string.something_went_wrong),
-                        Snackbar.LENGTH_LONG
-                    ).show()
                 }
             }
         }

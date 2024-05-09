@@ -10,7 +10,6 @@ import com.google.firebase.auth.auth
 import com.tgmu.tgmu.domain.model.Comment
 import com.tgmu.tgmu.domain.model.Experience
 import com.tgmu.tgmu.domain.model.ExperienceForm
-import com.tgmu.tgmu.domain.model.Movie
 import com.tgmu.tgmu.domain.repository.ExperienceRepository
 import com.tgmu.tgmu.domain.repository.StorageRepository
 import com.tgmu.tgmu.utils.Resource
@@ -18,9 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import java.util.Date
 import javax.inject.Inject
-import kotlin.math.exp
 
 @HiltViewModel
 class ExperienceViewModel @Inject constructor(
@@ -37,8 +34,12 @@ class ExperienceViewModel @Inject constructor(
     private val _uploadStatus = MutableLiveData<Resource<Any>>()
     val uploadStatus: LiveData<Resource<Any>> get() = _uploadStatus
 
+    private val _isExperiencesFiltered = MutableLiveData<Boolean>()
+    val isExperiencesFiltered: LiveData<Boolean> get() = _isExperiencesFiltered
+
     init {
         getLatestExperiences()
+        _isExperiencesFiltered.postValue(false)
     }
 
     fun getLatestExperiences() =
@@ -61,6 +62,10 @@ class ExperienceViewModel @Inject constructor(
                 _latestExperiences.postValue(it)
             }
         }
+
+    fun toggleFilterExperiences() {
+        _isExperiencesFiltered.postValue(!isExperiencesFiltered.value!!)
+    }
 
     fun changeExperienceFormData(
         title: String? = null,

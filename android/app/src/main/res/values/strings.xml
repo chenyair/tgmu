@@ -55,4 +55,7 @@
     <string name="fill_all_fields">Some fields are empty please make sure all fields are set</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="show_only_my_experiences">Show only my experiences</string>
+    <string name="show_all_experiences">Show latest experiences</string>
+    <string name="no_personal_experiences">You have no experiences yet</string>
 </resources>
