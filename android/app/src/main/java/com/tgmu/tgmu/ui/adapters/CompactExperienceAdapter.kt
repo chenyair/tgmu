@@ -99,7 +99,7 @@ class CompactExperienceAdapter(
         holder.binding.apply {
             setupEditButton(this, differ.currentList[position])
             root.setOnClickListener {
-                onCardClicked(differ.currentList[position])
+                onCardClicked(differ.currentList[holder.adapterPosition])
             }
         }
     }
