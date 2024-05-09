@@ -134,7 +134,8 @@ class RegisterActivity : AppCompatActivity() {
                         email,
                         fullName,
                         birthdate,
-                        authUid
+                        authUid,
+                        ""
                     )
                 } else {
                     val exception = task.exception

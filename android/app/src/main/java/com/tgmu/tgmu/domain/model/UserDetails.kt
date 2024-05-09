@@ -6,5 +6,6 @@ data class UserDetails(
     val email: String,
     val fullName: String,
     val birthdate: Date,
-    val authUid: String
+    val authUid: String,
+    val imageUrl: String
 )

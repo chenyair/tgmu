@@ -1,5 +1,6 @@
 package com.tgmu.tgmu.ui.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tgmu.tgmu.domain.model.UpdateUserDetailsForm
 import com.tgmu.tgmu.domain.model.UserDetails
+import com.tgmu.tgmu.domain.repository.StorageRepository
 import com.tgmu.tgmu.domain.repository.UserDetailsRepository
 import com.tgmu.tgmu.utils.Resource
 import kotlinx.coroutines.launch
@@ -16,7 +18,8 @@ import javax.inject.Singleton
 
 @Singleton
 class UsersDetailsViewModel @Inject constructor(
-    private val userDetailsRepository: UserDetailsRepository
+    private val userDetailsRepository: UserDetailsRepository,
+    private val storageRepository: StorageRepository
 ) : ViewModel() {
 
     private var _currentUserDetails = MutableLiveData<Resource<UserDetails>>()
@@ -50,12 +53,13 @@ class UsersDetailsViewModel @Inject constructor(
         email: String,
         fullName: String,
         birthdate: Date,
-        authUid: String
+        authUid: String,
+        imageUrl: String
     ) {
         viewModelScope.launch {
             userDetailsRepository.createUserDetails(
                 UserDetails(
-                    email, fullName, birthdate, authUid
+                    email, fullName, birthdate, authUid, imageUrl
                 )
             )
                 .collect {
@@ -70,9 +74,35 @@ class UsersDetailsViewModel @Inject constructor(
 
         val userDetailsBeforeUpdate = (currentUserDetails.value as Resource.Success).data
         viewModelScope.launch {
+            _userDetailsUpdate.value = Resource.loading()
+            var imageUrl = userDetailsBeforeUpdate.imageUrl
+            if (updateUserDetailsForm.value!!.imageUrl != userDetailsBeforeUpdate.imageUrl) {
+                try {
+                    // Upload new image
+                    storageRepository.uploadImage(Uri.parse(updateUserDetailsForm.value!!.imageUrl))
+                        .collect() {
+                            if (it is Resource.Success) {
+                                imageUrl = it.data
+                            }
+                            if (it is Resource.Failed) {
+                                throw Exception("Failed to upload image")
+                            }
+                        }
+
+                    if (userDetailsBeforeUpdate.imageUrl != "") {
+                        // Delete old image
+                        storageRepository.deleteImage(userDetailsBeforeUpdate.imageUrl)
+                    }
+                } catch (e: Exception) {
+                    _userDetailsUpdate.value = Resource.failed("Failed to upload image")
+                    return@launch
+                }
+            }
+
             val updatedUserDetails = _updateUserDetailsForm.value!!.toUserDetails(
                 email = userDetailsBeforeUpdate.email,
-                authUid = userDetailsBeforeUpdate.authUid
+                authUid = userDetailsBeforeUpdate.authUid,
+                imageUrl = imageUrl
             )
 
             userDetailsRepository.updateUserDetails(updatedUserDetails).collect {
@@ -89,16 +119,18 @@ class UsersDetailsViewModel @Inject constructor(
     fun changeUpdateUserDetailsFormData(
         fullName: String? = null,
         birthdate: Date? = null,
+        imageUrl: String? = null
     ) {
         _updateUserDetailsForm.value = _updateUserDetailsForm.value!!.copy(
             fullName = fullName ?: _updateUserDetailsForm.value!!.fullName,
             birthdate = birthdate ?: _updateUserDetailsForm.value!!.birthdate,
+            imageUrl = imageUrl ?: _updateUserDetailsForm.value!!.imageUrl
         )
     }
 
     fun startUpdateUserDetailsForm(userDetails: UserDetails) {
         _updateUserDetailsForm.value =
-            UpdateUserDetailsForm(userDetails.fullName, userDetails.birthdate)
+            UpdateUserDetailsForm(userDetails.fullName, userDetails.birthdate, userDetails.imageUrl)
     }
 
     fun isUpdateUserDetailsFormValid(): Boolean {

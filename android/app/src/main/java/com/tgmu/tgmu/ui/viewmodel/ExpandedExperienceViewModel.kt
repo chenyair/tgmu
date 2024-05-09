@@ -38,7 +38,8 @@ class ExpandedExperienceViewModel @Inject constructor(
                 comment.userId,
                 comment.text,
                 comment.createdAt,
-                user.data.fullName
+                user.data.fullName,
+                user.data.imageUrl
             )
         }
         _currExperiencePopulatedComments.postValue(Resource.success(populatedComments))

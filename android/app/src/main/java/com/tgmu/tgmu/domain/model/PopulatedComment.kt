@@ -7,4 +7,5 @@ data class PopulatedComment(
     val text: String,
     val createdAt: Date,
     val userName: String,
+    val userImageUrl: String
 )

@@ -203,7 +203,8 @@ class LoginActivity : AppCompatActivity() {
                                             auth.currentUser?.email!!,
                                             auth.currentUser?.displayName!!,
                                             Date(),
-                                            auth.currentUser?.uid!!
+                                            auth.currentUser?.uid!!,
+                                            ""
                                         )
                                     } else {
                                         usersDetailsViewModel.getUserDetails(auth.currentUser?.email!!)

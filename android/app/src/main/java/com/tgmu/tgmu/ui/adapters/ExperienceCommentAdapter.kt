@@ -62,7 +62,8 @@ class ExperienceCommentAdapter : RecyclerView.Adapter<ExperienceCommentAdapter.V
             val defaultAvatar =
                 generateInitialsBitmap(context, comment.userName)
             Glide.with(context)
-                .load(defaultAvatar)
+                .load(comment.userImageUrl)
+                .error(defaultAvatar)
                 .into(civProfileImage)
             civProfileImage.bringToFront()
         }
