@@ -29,8 +29,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import kotlin.math.exp
 
 @AndroidEntryPoint
 class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
@@ -95,11 +93,14 @@ class ExperiencesFragment : Fragment(R.layout.fragment_experiences) {
                     is Resource.Success -> {
                         var experiences: List<Experience>
                         if (filterStatus) {
-                            experiences = it.data.filter { experience -> experience.userId == Firebase.auth.currentUser!!.uid }
-                            binding.btnSwitchExperienceView.text = getString(R.string.show_all_experiences)
+                            experiences =
+                                it.data.filter { experience -> experience.userId == Firebase.auth.currentUser!!.uid }
+                            binding.btnSwitchExperienceView.text =
+                                getString(R.string.show_all_experiences)
                         } else {
                             experiences = it.data
-                            binding.btnSwitchExperienceView.text = getString(R.string.show_only_my_experiences)
+                            binding.btnSwitchExperienceView.text =
+                                getString(R.string.show_only_my_experiences)
                         }
 
                         experienceAdapter.differ.submitList(experiences) {
